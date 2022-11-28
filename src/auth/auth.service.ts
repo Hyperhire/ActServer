@@ -1,8 +1,10 @@
-const registerUser = async () => {
+import userService from '../user/user.service'
+
+const registerUser = async <RegisterUserDto>(body: RegisterUserDto) => {
     try {
-
+        return userService.createUser(body)
     } catch (error) {
-
+        return error
     }
 }
 
@@ -39,4 +41,4 @@ const checkNickName = async () => {
 }
 
 
-export { registerUser, registerOrganization, loginOrg, loginUser, checkNickName }
+export default { registerUser, registerOrganization, loginOrg, loginUser, checkNickName }

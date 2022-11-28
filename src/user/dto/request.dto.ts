@@ -1,9 +1,10 @@
 import { IsDateString, IsEmail, IsOptional, IsString } from "class-validator"
+import { Types } from "mongoose"
 
 export class BaseUserDto {
 
     @IsString()
-    _id: string
+    _id: Types.ObjectId
 
     @IsString()
     @IsEmail()
