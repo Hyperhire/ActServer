@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose'
+import { ModelNames } from '../../common/constants/model.constants'
 
 interface User {
     name: string,
@@ -17,6 +18,6 @@ const schema = new Schema<User>({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 })
-const UserModel = model<User>("User", schema)
+const UserModel = model<User>(ModelNames.User, schema)
 
 export { UserModel }

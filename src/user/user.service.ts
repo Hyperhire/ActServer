@@ -1,12 +1,37 @@
 import { UserModel } from "./schema/user.schema"
 
 
-const getUser = async (id: string) => {
+const getUserByNickName = async (id: string) => {
+    try {
 
+    } catch (error) {
+
+    }
 }
+
+const createUser = async (id: string) => {
+    try {
+
+    } catch (error) {
+
+    }
+}
+
+const getUserByEmail = async () => {
+    try {
+
+    } catch (error) {
+
+    }
+}
+
 
 const partialUpdate = async (id: string, body: any) => {
+    try {
 
+    } catch (error) {
+
+    }
 }
 
-export { getUser, partialUpdate }
+export { getUserByNickName, partialUpdate, getUserByEmail, createUser }
