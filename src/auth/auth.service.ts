@@ -1,6 +1,11 @@
+import { compareHash } from '../common/helper/crypto.helper'
+import { encode } from '../common/helper/jwt.helper'
+import { UserDto } from '../user/dto/request.dto'
 import userService from '../user/user.service'
+import { LoginDto, RegisterUserDto } from './dto/request.dto'
+import { LoginResponse } from './dto/response.dto'
 
-const registerUser = async <RegisterUserDto>(body: RegisterUserDto) => {
+const registerUser = async (body: RegisterUserDto) => {
     try {
         return userService.createUser(body)
     } catch (error) {
@@ -8,7 +13,7 @@ const registerUser = async <RegisterUserDto>(body: RegisterUserDto) => {
     }
 }
 
-const registerOrganization = async () => {
+const registerOrg = async () => {
     try {
 
     } catch (error) {
@@ -16,11 +21,19 @@ const registerOrganization = async () => {
     }
 }
 
-const loginUser = async () => {
+const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
     try {
-
+        const user: UserDto = await userService.getUserByEmail(loginDto.email)
+        const isEqualHash = await compareHash(loginDto.password, user.password)
+        if (!isEqualHash) {
+            throw "password missmatch"
+        }
+        const token = encode({ id: user._id.toString() })
+        return {
+            token
+        }
     } catch (error) {
-
+        throw error
     }
 }
 
@@ -41,4 +54,4 @@ const checkNickName = async () => {
 }
 
 
-export default { registerUser, registerOrganization, loginOrg, loginUser, checkNickName }
+export default { registerUser, registerOrg, loginOrg, loginUser, checkNickName }

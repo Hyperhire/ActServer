@@ -3,6 +3,7 @@ import { Types } from "mongoose"
 
 export class BaseUserDto {
 
+    @IsOptional()
     @IsString()
     _id: Types.ObjectId
 
@@ -19,4 +20,13 @@ export class BaseUserDto {
     @IsDateString()
     @IsOptional()
     updatedAt: Date
+
+    constructor() {
+
+    }
+}
+
+export class UserDto extends BaseUserDto {
+    @IsString()
+    password: string
 }

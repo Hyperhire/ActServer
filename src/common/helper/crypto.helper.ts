@@ -1,5 +1,5 @@
-import { createHmac } from "crypto"
-import { config } from "src/config/config"
+import { createHmac, timingSafeEqual } from "crypto"
+import { config } from "../../config/config"
 
 const makeHash = async (password: string): Promise<string> => {
     try {
@@ -8,10 +8,19 @@ const makeHash = async (password: string): Promise<string> => {
         const digest = update.digest("hex")
         return digest
     } catch (error) {
-        return error
+        throw error
     }
 
 }
 
+const compareHash = async (password: string, hash: string) => {
+    try {
+        const buffPassword = Buffer.from(await makeHash(password))
+        const buffHash = Buffer.from(hash)
+        return timingSafeEqual(buffPassword, buffHash)
+    } catch (error) {
+        throw error
+    }
+}
 
-export { makeHash }
+export { makeHash, compareHash }

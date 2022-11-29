@@ -8,8 +8,8 @@ import { connectDB } from './database/mongo-connection'
 import morganMiddleware from './logger/morgan.logger';
 
 const app: Express = express()
+app.use(express.json())
 app.use(morganMiddleware)
-
 
 app.use(router)
 
