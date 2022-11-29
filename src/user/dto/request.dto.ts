@@ -7,11 +7,12 @@ export class BaseUserDto {
     @IsString()
     _id: Types.ObjectId
 
-    @IsString()
     @IsEmail()
     email: string
 
-    @IsString()
+    @IsString({
+        message: "Nickname is required"
+    })
     nickname: string
 
     @IsDateString()

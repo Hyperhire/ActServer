@@ -6,11 +6,18 @@ import { BaseUserDto, UserDto } from "./dto/request.dto"
 import { UserModel } from "./schema/user.schema"
 
 
-const getUserByNickName = async (id: string) => {
+const getUserByNickName = async (nickname: string) => {
     try {
-
+        const user: BaseUserDto = await UserModel.findOne({
+            nickname: nickname
+        })
+        if (user) {
+            throw "nickname already taken"
+        }
+        return true
     } catch (error) {
-
+        logger.error(error)
+        throw error
     }
 }
 

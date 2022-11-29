@@ -1,12 +1,15 @@
-import { validateOrReject } from "class-validator";
+import { validateOrReject, ValidationError } from "class-validator";
 import { logger } from '../../logger/winston.logger'
 
 const validateBody = async <T extends object>(body: T) => {
     try {
-        await validateOrReject(body)
+        await validateOrReject(body, { validationError: { target: false } })
     } catch (errors) {
         logger.error("validation error: " + errors)
-        return errors
+        throw {
+            message: "Validation Error",
+            errors
+        }
     }
 }
 

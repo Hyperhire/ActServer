@@ -1,18 +1,21 @@
-import { IsEmail, IsString } from "class-validator"
+import { IsEmail, IsOptional, IsString } from "class-validator"
 import { BaseOrgDto } from "../../orgs/dto/request.dto"
 import { BaseUserDto } from "../../user/dto/request.dto"
 
 export class RegisterUserDto extends BaseUserDto {
-    @IsString()
+    @IsString({
+        message: "Password is required"
+    })
     password: string
-
     constructor() {
         super()
     }
 }
 
 export class RegisterOrgDto extends BaseOrgDto {
-    @IsString()
+    @IsString({
+        message: "Password is required"
+    })
     password: string
 
     constructor() {
@@ -22,8 +25,14 @@ export class RegisterOrgDto extends BaseOrgDto {
 
 
 export class LoginDto {
-    @IsEmail()
+    @IsEmail({}, { message: "email is required" })
     email: string
     @IsString()
     password: string
+}
+
+export class QueryDto {
+    @IsString()
+    @IsOptional()
+    nickname: string
 }
