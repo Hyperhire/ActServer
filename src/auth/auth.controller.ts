@@ -3,7 +3,7 @@ import { Request, Router, Response } from 'express'
 import { validateBody } from '../common/helper/validate.helper'
 import { logger } from '../logger/winston.logger'
 import authService from './auth.service'
-import { LoginDto, RegisterUserDto } from './dto/request.dto'
+import { LoginDto, RegisterOrgDto, RegisterUserDto } from './dto/request.dto'
 
 const router = Router()
 
@@ -19,19 +19,27 @@ router.post("/user/login", async (request: Request, response: Response) => {
     }
 })
 
-router.post("/org/login", (request: Request, response: Response) => {
+router.post("/org/login", async (request: Request, response: Response) => {
     try {
-
+        const loginDto = plainToInstance(LoginDto, request.body)
+        await validateBody<LoginDto>(loginDto)
+        const result = await authService.loginUser(loginDto)
+        response.json(result)
     } catch (error) {
-        return response.json(error)
+        logger.error(error)
+        return response.status(400).json({ error })
     }
 })
 
-router.post("/org/register", (request: Request, response: Response) => {
+router.post("/org/register", async (request: Request, response: Response) => {
     try {
-
+        const orgDto = plainToInstance(RegisterOrgDto, request.body)
+        await validateBody<LoginDto>(orgDto)
+        const result = await authService.registerOrg(orgDto)
+        response.json(result)
     } catch (error) {
-        return response.json(error)
+        logger.error(error)
+        return response.status(400).json({ error })
     }
 })
 

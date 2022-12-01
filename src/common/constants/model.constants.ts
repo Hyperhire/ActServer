@@ -1,6 +1,7 @@
 const ModelNames = {
     User: "User",
-    UserSettings: "UserSetting"
+    UserSettings: "UserSetting",
+    Org: "Org"
 }
 
 export { ModelNames }
