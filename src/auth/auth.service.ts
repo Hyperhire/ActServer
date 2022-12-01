@@ -26,6 +26,9 @@ const registerOrg = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error> 
 const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
     try {
         const user: UserDto = await userService.getUserByEmail(loginDto.email)
+        if(!user){
+            throw "User not found"
+        }
         const isEqualHash = await compareHash(loginDto.password, user.password)
         if (!isEqualHash) {
             throw "password missmatch"
