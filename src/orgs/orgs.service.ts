@@ -26,7 +26,7 @@ const createOrgUser = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error
         const passwordHash = await makeHash(orgDto.password)
         orgDto.password = passwordHash
         let org: OrgDto = await getOrgUserByEmail(orgDto.email)
-        delete org.password
+        
         if (org) {
             throw "Email already exists"
         }
