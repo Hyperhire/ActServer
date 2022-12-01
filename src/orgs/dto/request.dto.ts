@@ -1,4 +1,5 @@
 import { IsEmail, IsString } from "class-validator"
+import { Types } from "mongoose"
 
 export class BaseOrgDto {
     @IsEmail()
@@ -15,4 +16,12 @@ export class BaseOrgDto {
     managerMobile: string
     @IsString()
     homepage: string
+}
+
+export class OrgDto extends BaseOrgDto {
+    @IsString()
+    password: string
+
+    @IsString()
+    _id: Types.ObjectId
 }

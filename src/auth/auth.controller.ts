@@ -3,7 +3,7 @@ import { Request, Router, Response } from 'express'
 import { validateBody } from '../common/helper/validate.helper'
 import { logger } from '../logger/winston.logger'
 import authService from './auth.service'
-import { LoginDto, RegisterOrgDto, RegisterUserDto } from './dto/request.dto'
+import { LoginDto, QueryDto, RegisterOrgDto, RegisterUserDto } from './dto/request.dto'
 
 const router = Router()
 
@@ -54,5 +54,31 @@ router.post("/user/register", async (request: Request, response: Response) => {
         return response.status(400).json({ error })
     }
 })
+
+router.get("/user", async (request: Request, response: Response) => {
+    try {
+        const queryDto = plainToInstance(QueryDto, request.query)
+        await validateBody<QueryDto>(queryDto)
+        const result = await authService.checkUserNickName(queryDto)
+        response.json(result)
+    } catch (error) {
+        logger.error(error)
+        return response.status(400).json({ error })
+    }
+})
+
+router.get("/org", async (request: Request, response: Response) => {
+    try {
+        const queryDto = plainToInstance(QueryDto, request.query)
+        await validateBody<QueryDto>(queryDto)
+        const result = await authService.checkOrgNickName(queryDto)
+        response.json(result)
+    } catch (error) {
+        logger.error(error)
+        return response.status(400).json({ error })
+    }
+})
+
+
 
 export default router

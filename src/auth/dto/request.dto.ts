@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString } from "class-validator"
+import { IsBoolean, IsEmail, IsOptional, IsString } from "class-validator"
 import { BaseOrgDto } from "../../orgs/dto/request.dto"
 import { BaseUserDto } from "../../user/dto/request.dto"
 
@@ -7,6 +7,10 @@ export class RegisterUserDto extends BaseUserDto {
         message: "Password is required"
     })
     password: string
+
+    @IsBoolean()
+    receiveReceipt: boolean = false
+
     constructor() {
         super()
     }

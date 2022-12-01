@@ -3,6 +3,7 @@ import { RegisterUserDto } from '../auth/dto/request.dto'
 import { makeHash } from '../common/helper/crypto.helper'
 import { logger } from '../logger/winston.logger'
 import { BaseUserDto, UserDto } from "./dto/request.dto"
+import { UserSettingsModel } from './schema/user-settings.schema'
 import { UserModel } from "./schema/user.schema"
 
 
@@ -25,10 +26,18 @@ const createUser = async (userDto: RegisterUserDto): Promise<BaseUserDto | Error
     try {
         const passwordHash = await makeHash(userDto.password)
         userDto.password = passwordHash
-        const user: BaseUserDto = await UserModel.create(userDto)
+        let user: BaseUserDto = await getUserByEmail(userDto.email)
+        if (user) {
+            throw "Email already exists"
+        }
+        user = await UserModel.create(userDto)
+        const userSettings = await UserSettingsModel.create({
+            user_id: user._id,
+            receiveReceipt: userDto.receiveReceipt
+        })
         return user
     } catch (error) {
-        throw "User already exists"
+        throw error
     }
 }
 

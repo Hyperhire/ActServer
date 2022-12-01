@@ -31,3 +31,4 @@ export class UserDto extends BaseUserDto {
     @IsString()
     password: string
 }
+
