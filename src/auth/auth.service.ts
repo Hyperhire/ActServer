@@ -1,5 +1,6 @@
 import { compareHash } from '../common/helper/crypto.helper'
 import { encode } from '../common/helper/jwt.helper'
+import { logger } from '../logger/winston.logger'
 import { BaseOrgDto, OrgDto } from '../orgs/dto/request.dto'
 import orgsService from '../orgs/orgs.service'
 import { UserDto } from '../user/dto/request.dto'
@@ -11,7 +12,8 @@ const registerUser = async (body: RegisterUserDto) => {
     try {
         return await userService.createUser(body)
     } catch (error) {
-        return error
+        logger.debug(error)
+        throw error
     }
 }
 
