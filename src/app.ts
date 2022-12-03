@@ -6,8 +6,10 @@ import { config } from './config/config'
 import router from './router';
 import { connectDB } from './database/mongo-connection'
 import morganMiddleware from './logger/morgan.logger';
+import cors from 'cors'
 
 const app: Express = express()
+app.use(cors())
 app.use(express.json())
 app.use(morganMiddleware)
 

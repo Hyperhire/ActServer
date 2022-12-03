@@ -30,6 +30,7 @@ const createOrgUser = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error
         if (org) {
             throw "Email already exists"
         }
+        
         org = await OrgModel.create(orgDto)
 
         return org
