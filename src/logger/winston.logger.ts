@@ -1,6 +1,7 @@
 import { config } from '../config/config';
-import { createLogger, format, transports, Logger } from 'winston'
+import { createLogger, format, transports, Logger, Logform } from 'winston'
 
+const logFormat = format.printf(info => `${info.timestamp} : ${info.message}`)
 
 const options = {
     file: {
@@ -18,8 +19,9 @@ const options = {
         level: "debug",
         handleExceptions: true,
         format: format.combine(
+            format.timestamp(),
             format.colorize(),
-            format.simple()
+            logFormat
         ),
     },
 };
@@ -32,3 +34,5 @@ export const logger: Logger = createLogger({
     ],
     exitOnError: false
 })
+
+

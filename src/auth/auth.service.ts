@@ -17,6 +17,11 @@ const registerUser = async (body: RegisterUserDto) => {
     }
 }
 
+/**
+ * 
+ * @param orgDto 
+ * @returns 
+ */
 const registerOrg = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error> => {
     try {
         return await orgsService.createOrgUser(orgDto)
@@ -25,6 +30,12 @@ const registerOrg = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error> 
     }
 }
 
+
+/**
+ * 
+ * @param loginDto 
+ * @returns 
+ */
 const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
     try {
         const user: UserDto = await userService.getUserByEmail(loginDto.email)
@@ -44,6 +55,11 @@ const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
     }
 }
 
+/**
+ * 
+ * @param loginDto 
+ * @returns 
+ */
 const loginOrg = async (loginDto: LoginDto) => {
     try {
         const org: OrgDto = await orgsService.getOrgUserByEmail(loginDto.email)
@@ -60,6 +76,11 @@ const loginOrg = async (loginDto: LoginDto) => {
     }
 }
 
+/**
+ * 
+ * @param queryDto 
+ * @returns 
+ */
 const checkUserNickName = async (queryDto: QueryDto) => {
     try {
         return await userService.getUserByNickName(queryDto.nickname)
@@ -68,6 +89,11 @@ const checkUserNickName = async (queryDto: QueryDto) => {
     }
 }
 
+/**
+ * 
+ * @param queryDto 
+ * @returns 
+ */
 const checkOrgNickName = async (queryDto: QueryDto) => {
     try {
         return await orgsService.getOrgUserByNickName(queryDto.nickname)

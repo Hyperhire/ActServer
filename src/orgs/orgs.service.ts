@@ -1,5 +1,6 @@
 
 import { RegisterOrgDto, RegisterUserDto } from '../auth/dto/request.dto'
+import { PaginationDto } from '../common/dto/request.dto'
 import { makeHash } from '../common/helper/crypto.helper'
 import { logger } from '../logger/winston.logger'
 import { BaseOrgDto, OrgDto } from "./dto/request.dto"
@@ -26,11 +27,11 @@ const createOrgUser = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error
         const passwordHash = await makeHash(orgDto.password)
         orgDto.password = passwordHash
         let org: OrgDto = await getOrgUserByEmail(orgDto.email)
-        
+
         if (org) {
             throw "Email already exists"
         }
-        
+
         org = await OrgModel.create(orgDto)
 
         return org
@@ -59,4 +60,14 @@ const partialUpdate = async (id: string, body: any) => {
     }
 }
 
-export default { getOrgUserByEmail, partialUpdate, getOrgUserByNickName, createOrgUser }
+
+const getList = async (paginationDto: PaginationDto): Promise<Array<BaseOrgDto>> => {
+    try {
+        const orgs: Array<BaseOrgDto> = await OrgModel.find({}).skip(paginationDto.page * paginationDto.limit).limit(paginationDto.limit).sort({ createdAt: -1 }).select("-password")
+        return orgs
+    } catch (error) {
+        throw error
+    }
+}
+
+export default { getOrgUserByEmail, partialUpdate, getOrgUserByNickName, createOrgUser, getList }

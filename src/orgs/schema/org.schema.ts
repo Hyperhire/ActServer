@@ -13,6 +13,7 @@ interface Org {
     managerMobile: string
     homepage: string
     corporateId: string
+    images: string
 }
 
 const schema = new Schema<Org>({
@@ -26,7 +27,8 @@ const schema = new Schema<Org>({
     managerName: { type: String },
     managerMobile: { type: String },
     homepage: { type: String },
-    corporateId: { type: String }
+    corporateId: { type: String },
+    images: { type: String, default: "https://media.istockphoto.com/id/870402320/photo/a-social-worker-meeting-with-a-group-of-villagers.jpg?s=612x612&w=is&k=20&c=JAQOTjAdXVOlOa8kdmuv7nhXJfw8H6SGI9QqLIRvpTU="}
 })
 const OrgModel = model<Org>(ModelNames.Org, schema)
 

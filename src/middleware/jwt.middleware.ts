@@ -5,9 +5,9 @@ import { logger } from '../logger/winston.logger'
 
 const verifyToken = (req: Request, res: Response, next: Function) => {
     try {
-        const token = req.headers["authorization"].split(" ")[0]
+        const token = req.headers["authorization"].split(" ")[1]
         const decoded = decode(token)
-        logger.debug(decoded)
+        logger.info(decoded)
         req["user"] = decoded
         next()
     } catch (error) {
@@ -16,4 +16,4 @@ const verifyToken = (req: Request, res: Response, next: Function) => {
     }
 }
 
-export { verifyToken }
+export default { verifyToken }

@@ -23,7 +23,7 @@ router.post("/org/login", async (request: Request, response: Response) => {
     try {
         const loginDto = plainToInstance(LoginDto, request.body)
         await validateBody<LoginDto>(loginDto)
-        const result = await authService.loginUser(loginDto)
+        const result = await authService.loginOrg(loginDto)
         response.json(result)
     } catch (error) {
         logger.error(error)

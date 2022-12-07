@@ -8,7 +8,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node dist/app.js",
-    "dev": "nodemon ./src/app.ts",
+    "dev": "NODE_ENV=development nodemon ./src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,6 +23,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.3",
     "morgan": "^1.10.0",
+    "reflect-metadata": "^0.1.13",
     "winston": "^3.8.2"
   },
   "devDependencies": {
