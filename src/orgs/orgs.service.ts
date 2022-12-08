@@ -1,6 +1,6 @@
 
 import { RegisterOrgDto, RegisterUserDto } from '../auth/dto/request.dto'
-import { PaginationDto } from '../common/dto/request.dto'
+import { IdDto, PaginationDto } from '../common/dto/request.dto'
 import { makeHash } from '../common/helper/crypto.helper'
 import { logger } from '../logger/winston.logger'
 import { BaseOrgDto, OrgDto } from "./dto/request.dto"
@@ -70,4 +70,15 @@ const getList = async (paginationDto: PaginationDto): Promise<Array<BaseOrgDto>>
     }
 }
 
-export default { getOrgUserByEmail, partialUpdate, getOrgUserByNickName, createOrgUser, getList }
+const getOrgById = async (idDto: IdDto): Promise<BaseOrgDto> => {
+    try {
+        const campaign: BaseOrgDto = await OrgModel.findOne({
+            _id: idDto.id
+        })
+        return campaign
+    } catch (error) {
+        throw error
+    }
+}
+
+export default { getOrgUserByEmail, partialUpdate, getOrgUserByNickName, createOrgUser, getList, getOrgById }

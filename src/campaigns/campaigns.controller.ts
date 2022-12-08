@@ -6,7 +6,7 @@ import campaignsService from './campaigns.service'
 import { CreateCampaignDto } from './dto/request.dto'
 import { CampaignDto, CampaignOrgDto } from './dto/response.dto'
 import jwtMiddleware from './../middleware/jwt.middleware'
-import { PaginationDto } from '../common/dto/request.dto'
+import { IdDto, PaginationDto } from '../common/dto/request.dto'
 
 const router = Router()
 
@@ -28,6 +28,18 @@ router.get("/:page/:limit", async (request: Request, response: Response) => {
         await validateBody<PaginationDto>(paginationDto)
         const campaigns: Array<CampaignOrgDto> = await campaignsService.getList(paginationDto)
         return response.status(400).json(campaigns)
+    } catch (error) {
+        logger.error(error)
+        return response.status(400).json({ error })
+    }
+})
+
+router.get("/:id", async (request: Request, response: Response) => {
+    try {
+        const idDto = plainToInstance(IdDto, request.params)
+        await validateBody<IdDto>(idDto)
+        const campaign: CampaignDto = await campaignsService.getCampaignById(idDto)
+        return response.status(400).json(campaign)
     } catch (error) {
         logger.error(error)
         return response.status(400).json({ error })

@@ -1,5 +1,5 @@
 import { ModelNames } from "../common/constants/model.constants";
-import { PaginationDto } from "../common/dto/request.dto";
+import { IdDto, PaginationDto } from "../common/dto/request.dto";
 import { logger } from "../logger/winston.logger";
 import { CreateCampaignDto } from "./dto/request.dto";
 import { CampaignDto, CampaignOrgDto } from "./dto/response.dto";
@@ -72,7 +72,20 @@ const getList = async (paginationDto: PaginationDto): Promise<Array<CampaignOrgD
     }
 }
 
+
+const getCampaignById = async (idDto: IdDto): Promise<CampaignDto> => {
+    try {
+        const campaign: CampaignDto = await CampaignModel.findOne({
+            _id: idDto.id
+        })
+        return campaign
+    } catch (error) {
+        throw error
+    }
+}
+
 export default {
     create,
-    getList
+    getList,
+    getCampaignById
 }

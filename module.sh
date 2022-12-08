@@ -19,5 +19,4 @@ if [ $1=="module" ] && [ $2=="create" ]; then
     touch "${controller_path}"
     echo $"${controller}" >$controller_path
     touch "${service_path}"
-
 fi
