@@ -133,10 +133,6 @@ const staticData = async (): Promise<Static> => {
 
 const createHomePage = async () => {
     try {
-        const homePage = await HomeModel.find({})
-        if (homePage || homePage.length > 0) {
-            return homePage[0]
-        }
         const homeenum = ["BANNER", "ORGS", "CAMPAIGNS", "NOTICES", "FAQS", "STATIC"]
         console.log(homeenum)
         const homeSchema = {
