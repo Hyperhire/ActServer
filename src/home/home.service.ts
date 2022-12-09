@@ -112,10 +112,10 @@ const notices = async (): Promise<Array<Notice>> => {
 
 const faqs = async (): Promise<Array<FAQ>> => {
     try {
-        return await faqService.getFaqs({
-            page: 0,
-            limit: 3
-        })
+        const paginationDto: PaginationDto = new PaginationDto()
+        paginationDto.limit = 3
+        paginationDto.page = 0
+        return await faqService.getFaqs(paginationDto)
     } catch (error) {
         throw error
     }
