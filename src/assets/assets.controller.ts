@@ -11,7 +11,7 @@ router.post("/", async (request: Request, response: Response) => {
     try {
         const assetCreate = plainToInstance(CreateAsset, request.body)
         await validateBody<CreateAsset>(assetCreate)
-        const response = await assetService.createAsset(assetCreate)
+        const response = assetService.createAsset(assetCreate)
     } catch (error) {
         logger.error(error)
         return response.status(400).json({ error })

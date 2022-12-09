@@ -30,5 +30,14 @@ export class CampaignOrgDto {
     end_at: Date
 
     org: BaseOrgDto
+    images: Array<string>
+
+    @IsOptional()
+    short_description: string
+    @IsOptional()
+    long_description: string
+
+    @IsOptional()
+    target: string
 }
 

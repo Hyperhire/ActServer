@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from "class-validator"
+import { IsEmail, IsOptional, IsString } from "class-validator"
 import { Types } from "mongoose"
 
 export class BaseOrgDto {
@@ -16,6 +16,8 @@ export class BaseOrgDto {
     managerMobile: string
     @IsString()
     homepage: string
+    @IsOptional()
+    image: string
 }
 
 export class OrgDto extends BaseOrgDto {

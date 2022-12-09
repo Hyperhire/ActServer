@@ -3,7 +3,8 @@ const ModelNames = {
     UserSettings: "UserSetting",
     Org: "Org",
     Campaign: "Campaign",
-    FAQ: "faq"
+    FAQ: "faq",
+    Home: "home"
 }
 
 export { ModelNames }

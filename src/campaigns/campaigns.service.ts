@@ -1,4 +1,3 @@
-import { ModelNames } from "../common/constants/model.constants";
 import { IdDto, PaginationDto } from "../common/dto/request.dto";
 import { logger } from "../logger/winston.logger";
 import { CreateCampaignDto } from "./dto/request.dto";

@@ -13,7 +13,7 @@ interface Org {
     managerMobile: string
     homepage: string
     corporateId: string
-    images: string,
+    image: string,
     shortDescription: string
     longDescription: string,
     icon: string
@@ -34,7 +34,7 @@ const schema = new Schema<Org>({
     shortDescription: { type: String },
     longDescription: { type: String },
     icon: { type: String, default: "https://cdn-icons-png.flaticon.com/512/5153/5153006.png" },
-    images: { type: String, default: "https://media.istockphoto.com/id/870402320/photo/a-social-worker-meeting-with-a-group-of-villagers.jpg?s=612x612&w=is&k=20&c=JAQOTjAdXVOlOa8kdmuv7nhXJfw8H6SGI9QqLIRvpTU=" }
+    image: { type: String, default: "https://media.istockphoto.com/id/870402320/photo/a-social-worker-meeting-with-a-group-of-villagers.jpg?s=612x612&w=is&k=20&c=JAQOTjAdXVOlOa8kdmuv7nhXJfw8H6SGI9QqLIRvpTU=" }
 })
 const OrgModel = model<Org>(ModelNames.Org, schema)
 

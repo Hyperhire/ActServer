@@ -63,7 +63,7 @@ const partialUpdate = async (id: string, body: any) => {
 
 const getList = async (paginationDto: PaginationDto): Promise<Array<BaseOrgDto>> => {
     try {
-        const orgs: Array<BaseOrgDto> = await OrgModel.find({}).skip(paginationDto.page * paginationDto.limit).limit(paginationDto.limit).sort({ createdAt: -1 }).select("-password name short_description")
+        const orgs: Array<BaseOrgDto> = await OrgModel.find({}).skip(paginationDto.page * paginationDto.limit).limit(paginationDto.limit).sort({ createdAt: -1 }).select("-password")
         return orgs
     } catch (error) {
         throw error
