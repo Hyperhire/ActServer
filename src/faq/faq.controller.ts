@@ -8,7 +8,7 @@ import faqService from './faq.service'
 
 const router = Router()
 
-router.get("/", async (request: Request, response: Response) => {
+router.get("/:page/:limit", async (request: Request, response: Response) => {
     try {
         const paginationDto = plainToInstance(PaginationDto, request.params)
         await validateBody<PaginationDto>(paginationDto)
@@ -22,7 +22,7 @@ router.get("/", async (request: Request, response: Response) => {
 
 router.post("/", async (request: Request, response: Response) => {
     try {
-        const faqDto = plainToInstance(Array<FAQDto>, request.params)
+        const faqDto = plainToInstance(Array<FAQDto>, request.body)
         await validateBody<Array<FAQDto>>(faqDto)
         const faqs: Array<FAQDto> = await faqService.createFaq(faqDto)
         return response.status(200).json(faqs)
