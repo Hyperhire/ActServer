@@ -22,7 +22,7 @@ const getOrgUserByNickName = async (nickname: string) => {
     }
 }
 
-const createOrgUser = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error> => {
+const createOrg = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error> => {
     try {
         const passwordHash = await makeHash(orgDto.password)
         orgDto.password = passwordHash
@@ -61,9 +61,9 @@ const partialUpdate = async (id: string, body: any) => {
 }
 
 
-const getList = async (paginationDto: PaginationDto): Promise<Array<BaseOrgDto>> => {
+const getList = async (): Promise<Array<BaseOrgDto>> => {
     try {
-        const orgs: Array<BaseOrgDto> = await OrgModel.find({}).skip(paginationDto.page * paginationDto.limit).limit(paginationDto.limit).sort({ createdAt: -1 }).select("-password")
+        const orgs: Array<BaseOrgDto> = await OrgModel.find({}).sort({ createdAt: -1 }).select("-password")
         return orgs
     } catch (error) {
         throw error
@@ -81,4 +81,4 @@ const getOrgById = async (idDto: IdDto): Promise<BaseOrgDto> => {
     }
 }
 
-export default { getOrgUserByEmail, partialUpdate, getOrgUserByNickName, createOrgUser, getList, getOrgById }
+export default { getOrgUserByEmail, partialUpdate, getOrgUserByNickName, createOrg, getList, getOrgById }

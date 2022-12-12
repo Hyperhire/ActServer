@@ -11,10 +11,10 @@ const router: Router = Router()
 
 router.use("/hello", test)
 router.use("/auth", auth)
-router.use("/orgs", orgs)
 router.use("/campaign", campaigns)
 
 router.use("/faq", faqs)
-router.use("/banner", banner)
+router.use("/api/v1/orgs", orgs)
+router.use("/api/v1/banner", banner)
 
 export default router
