@@ -24,8 +24,6 @@ router.post("/", async (request: Request, response: Response) => {
 router.get("/", async (request: Request, response: Response) => {
   try {
     const orgs: Array<BaseOrgDto> = await orgsService.getList();
-    // response.status(201);
-    // response.send({ data: "hello" });
     return response.status(201).json({ data: orgs });
   } catch (error) {
     logger.error(error);
