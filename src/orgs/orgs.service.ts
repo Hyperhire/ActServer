@@ -1,9 +1,9 @@
 
 import { RegisterOrgDto, RegisterUserDto } from '../auth/dto/request.dto'
+import { BaseOrgDto, OrgDto } from "./dto/request.dto"
 import { IdDto, PaginationDto } from '../common/dto/request.dto'
 import { makeHash } from '../common/helper/crypto.helper'
 import { logger } from '../logger/winston.logger'
-import { BaseOrgDto, OrgDto } from "./dto/request.dto"
 import { OrgModel } from "./schema/org.schema"
 
 
@@ -61,9 +61,9 @@ const partialUpdate = async (id: string, body: any) => {
 }
 
 
-const getList = async (): Promise<Array<BaseOrgDto>> => {
+const getList = async (): Promise<Array<any>> => {
     try {
-        const orgs: Array<BaseOrgDto> = await OrgModel.find({}).sort({ createdAt: -1 }).select("-password")
+        const orgs: Array<any> = await OrgModel.find({}).sort({ createdAt: -1 }).select("-password")
         return orgs
     } catch (error) {
         throw error

@@ -16,18 +16,16 @@ router.post("/", jwtMiddleware.verifyToken, async (request: Request, response: R
         const createCampaignDto = plainToInstance(CreateCampaignDto, request.body)
         await validateBody<CreateCampaignDto>(createCampaignDto)
         const campaign: CampaignDto = await campaignsService.create(createCampaignDto)
-        return response.status(400).json(campaign)
+        return response.status(201).json({data: campaign})
     } catch (error) {
         logger.error(error)
         return response.status(400).json({ error })
     }
 })
-router.get("/:page/:limit", async (request: Request, response: Response) => {
+router.get("/", async (request: Request, response: Response) => {
     try {
-        const paginationDto = plainToInstance(PaginationDto, request.params)
-        await validateBody<PaginationDto>(paginationDto)
-        const campaigns: Array<CampaignOrgDto> = await campaignsService.getList(paginationDto)
-        return response.status(400).json(campaigns)
+        const campaigns = await campaignsService.getList()
+        return response.status(201).json({data: campaigns})
     } catch (error) {
         logger.error(error)
         return response.status(400).json({ error })
@@ -36,10 +34,22 @@ router.get("/:page/:limit", async (request: Request, response: Response) => {
 
 router.get("/:id", async (request: Request, response: Response) => {
     try {
-        const idDto = plainToInstance(IdDto, request.params)
-        await validateBody<IdDto>(idDto)
-        const campaign: CampaignDto = await campaignsService.getCampaignById(idDto)
-        return response.status(400).json(campaign)
+        // const idDto = plainToInstance(IdDto, request.params)
+        // await validateBody<IdDto>(idDto)
+        const campaign = await campaignsService.getCampaignById(request.params.id)
+        return response.status(201).json({data: campaign})
+    } catch (error) {
+        logger.error(error)
+        return response.status(400).json({ error })
+    }
+})
+
+router.get("/list-by-org/:id", async (request: Request, response: Response) => {
+    try {
+        // const idDto = plainToInstance(IdDto, request.params)
+        // await validateBody<IdDto>(idDto)
+        const campaign = await campaignsService.getCampaignByOrgId(request.params.id)
+        return response.status(201).json({data: campaign})
     } catch (error) {
         logger.error(error)
         return response.status(400).json({ error })
