@@ -1,12 +1,15 @@
-import { Request, Router, Response } from 'express'
+import { Request, Router, Response } from "express";
 
-const router = Router()
+const router = Router();
 
 router.get("/", (request: Request, response: Response) => {
-    response.json({
-        status: 200,
-        timestamp: new Date().toISOString()
-    })
-})
+  response.json({
+    status: 200,
+    data: {
+      text: "hello, this is conan from hyperhire",
+      timestamp: new Date()
+    }
+  });
+});
 
-export default router
+export default router;
