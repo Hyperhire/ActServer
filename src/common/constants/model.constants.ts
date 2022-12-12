@@ -4,7 +4,8 @@ const ModelNames = {
     Org: "Org",
     Campaign: "Campaign",
     FAQ: "faq",
-    Home: "home"
+    Home: "home",
+    Banner: "banner"
 }
 
 export { ModelNames }
