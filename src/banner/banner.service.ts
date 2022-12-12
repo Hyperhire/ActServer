@@ -1,4 +1,5 @@
 
+import { Types } from 'mongoose';
 import { logger } from '../logger/winston.logger'
 import { BannerModel } from './schema/banner.schema'
 
@@ -28,4 +29,19 @@ const getBanners: ()=> any = async () => {
     }
 }
 
-export default {createBanner, getBanners};
+const updateBanner: any = async (bannerId, updateData) => {
+    try {
+        const updatedBanner = await BannerModel.findOneAndUpdate(
+            { _id: bannerId}, 
+            updateData,
+            { new: true }
+        )
+        
+        return updatedBanner;
+    } catch (error) {
+        logger.error(error)
+        throw error
+    }
+}
+
+export default {createBanner, getBanners, updateBanner};

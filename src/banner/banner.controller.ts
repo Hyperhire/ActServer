@@ -17,4 +17,13 @@ router.get("/",async (request: Request, response: Response) => {
     response.send({data: banners})
 })
 
+router.patch("/:id",async (request: Request, response: Response) => { 
+    const bannerId = request.params.id;
+    const updateData = request.body;
+    const banner = await bannerService.updateBanner(bannerId, updateData)
+    
+    response.status(201);
+    response.send({data: banner})
+})
+
 export default router
