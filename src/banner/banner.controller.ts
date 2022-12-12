@@ -1,0 +1,13 @@
+import { Request, Router, Response } from 'express'
+import bannerService from './banner.service'
+
+const router = Router()
+
+router.post("/",async (request: Request, response: Response) => { 
+    const newBanner = await bannerService.createBanner(request.body)
+    
+    response.status(201);
+    response.send(newBanner)
+})
+
+export default router
