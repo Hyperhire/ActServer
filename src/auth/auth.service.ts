@@ -24,7 +24,7 @@ const registerUser = async (body: RegisterUserDto) => {
  */
 const registerOrg = async (orgDto: RegisterOrgDto): Promise<BaseOrgDto | Error> => {
     try {
-        return await orgsService.createOrgUser(orgDto)
+        return await orgsService.createOrg(orgDto)
     } catch (error) {
         throw error
     }

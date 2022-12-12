@@ -4,6 +4,7 @@ import bannerService from "./banner.service";
 const router = Router();
 
 router.post("/", async (request: Request, response: Response) => {
+//   console.log("request from get banner", request.params, request.query);
   const newBanner = await bannerService.createBanner(request.body);
 
   response.status(201);
@@ -11,7 +12,7 @@ router.post("/", async (request: Request, response: Response) => {
 });
 
 router.get("/", async (request: Request, response: Response) => {
-//   console.log("request from get banner", request.params, request.query);
+  //   console.log("request from get banner", request.params, request.query);
   const banners = await bannerService.getBanners();
 
   response.status(201);

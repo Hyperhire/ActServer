@@ -13,7 +13,8 @@ const schema = new Schema<Banner>({
     type: String
   },
   imageUrl: {
-    type: String
+    type: String,
+    required: true
   },
   show: {
     type: Boolean,
