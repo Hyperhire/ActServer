@@ -7,7 +7,7 @@ router.post("/",async (request: Request, response: Response) => {
     const newBanner = await bannerService.createBanner(request.body)
     
     response.status(201);
-    response.send(newBanner)
+    response.send({data:newBanner})
 })
 
 router.get("/",async (request: Request, response: Response) => { 
