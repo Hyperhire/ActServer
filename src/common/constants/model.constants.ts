@@ -1,11 +1,13 @@
 const ModelNames = {
-    User: "User",
-    UserSettings: "UserSetting",
-    Org: "Org",
-    Campaign: "Campaign",
-    FAQ: "faq",
-    Home: "home",
-    Banner: "banner"
-}
+  User: "User",
+  UserSettings: "UserSetting",
+  Org: "Org",
+  Campaign: "Campaign",
+  FAQ: "faq",
+  Home: "home",
+  Banner: "banner",
+  News: "news",
+  Notice: "notice"
+};
 
-export { ModelNames }
+export { ModelNames };
