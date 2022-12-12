@@ -6,6 +6,7 @@ import campaigns from './campaigns/campaigns.controller'
 
 import home from './home/home.controller'
 import faqs from './faq/faq.controller'
+import banner from './banner/banner.controller'
 
 const router: Router = Router()
 
@@ -15,5 +16,6 @@ router.use("/orgs", orgs)
 router.use("/campaigns", campaigns)
 router.use("/faqs", faqs)
 router.use("/home", home)
+router.use("/banner", banner)
 
 export default router
