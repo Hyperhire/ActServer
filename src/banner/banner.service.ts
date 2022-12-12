@@ -14,4 +14,18 @@ const createBanner: (bannerData: any)=> any = async (bannerData) => {
     }
 }
 
-export default {createBanner};
+const getBanners: ()=> any = async () => {
+    try {
+        const filter = {
+            show: true
+        }
+        const banners = await BannerModel.find(filter)
+        
+        return banners;
+    } catch (error) {
+        logger.error(error)
+        throw error
+    }
+}
+
+export default {createBanner, getBanners};

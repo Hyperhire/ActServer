@@ -10,4 +10,11 @@ router.post("/",async (request: Request, response: Response) => {
     response.send(newBanner)
 })
 
+router.get("/",async (request: Request, response: Response) => { 
+    const banners = await bannerService.getBanners()
+    
+    response.status(201);
+    response.send({data: banners})
+})
+
 export default router
