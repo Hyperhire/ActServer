@@ -4,7 +4,8 @@ import { ModelNames } from '../../common/constants/model.constants'
 interface Banner {
     clickUrl: string,
     imageUrl: string,
-    show: boolean
+    show: boolean,
+    sequence: number
 }
 
 const schema = new Schema<Banner>({
@@ -16,6 +17,9 @@ const schema = new Schema<Banner>({
     },
     show: {
         type: Boolean
+    },
+    sequence: {
+        type: Number
     }
 });
 
