@@ -11,16 +11,22 @@ import banner from "./api/v1/banner/banner.controller";
 
 const router: Router = Router();
 
-router.use("/hello", test);
+router.use("/test", test);
 
 router.use("/auth", auth);
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: 가입 및 Authentication
+ */
+router.use("/api/v1/auth", auth);
 /**
  * @swagger
  * tags:
  *   name: User
  *   description: 유저 조회
  */
-router.use("/api/v1/user", auth);
 /**
  * @swagger
  * tags:
