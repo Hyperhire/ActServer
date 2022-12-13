@@ -7,6 +7,7 @@ interface Order {
   pgStatus: string;
   method: string;
   paidStatus: string;
+  kakaoTID: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,7 +17,8 @@ const schema = new Schema<Order>({
     donationId: { type: Schema.Types.ObjectId },
     pgStatus: { type: String },
     method: { type: String },
-    paidStatus: { type: String },  // ["notyet", "cancel", "complete"]
+    paidStatus: { type: String },  // ["notyet", "cancel", "approved"]
+    kakaoTID: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 })

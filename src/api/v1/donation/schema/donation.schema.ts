@@ -3,6 +3,7 @@ import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Donation {
   userId: Types.ObjectId;
+  name: string;
   type: string;
   orgId: string;
   campaignId: string;
@@ -17,6 +18,7 @@ interface Donation {
 
 const schema = new Schema<Donation>({
     userId: { type: Schema.Types.ObjectId },
+    name: { type: String },
     type: { type: String },
     orgId: { type: String },
     campaignId: { type: String },
