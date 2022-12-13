@@ -1,8 +1,8 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Donation {
-  name: string;
+  userId: Types.ObjectId;
   type: string;
   orgId: string;
   campaignId: string;
@@ -16,7 +16,7 @@ interface Donation {
 }
 
 const schema = new Schema<Donation>({
-    name: { type: String },
+    userId: { type: Schema.Types.ObjectId },
     type: { type: String },
     orgId: { type: String },
     campaignId: { type: String },

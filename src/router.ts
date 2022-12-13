@@ -8,6 +8,7 @@ import notices from "./api/v1/notices/notice.controller";
 import news from "./api/v1/news/news.controller";
 import faqs from "./api/v1/faq/faq.controller";
 import banner from "./api/v1/banner/banner.controller";
+import donation from "./api/v1/donation/donation.controller";
 
 const router: Router = Router();
 
@@ -63,5 +64,6 @@ router.use("/api/v1/faq", faqs);
  *   description: Banner 조회
  */
 router.use("/api/v1/banner", banner);
+router.use("/api/v1/donation", donation);
 
 export default router;

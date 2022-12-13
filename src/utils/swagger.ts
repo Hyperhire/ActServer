@@ -18,6 +18,7 @@ const options = {
         "./src/news/news.controller.ts",
         "./src/notices/notice.controller.ts",
         "./src/orgs/org.controller.ts",
+        "./src/api/v1/donation/donation.controller.ts",
         "./src/router.ts",
     ],
 };
