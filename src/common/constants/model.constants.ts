@@ -8,7 +8,8 @@ const ModelNames = {
   Banner: "banner",
   News: "news",
   Notice: "notice",
-  Donation: "donation"
+  Donation: "donation",
+  Order: "order"
 };
 
 export { ModelNames };
