@@ -1,26 +1,34 @@
-import * as dotenv from 'dotenv'
-dotenv.config()
+import * as dotenv from "dotenv";
+dotenv.config();
 
 import express, { Express } from "express";
-import { config } from './config/config'
-import router from './router';
-import { connectDB } from './database/mongo-connection'
-import morganMiddleware from './logger/morgan.logger';
-import cors from 'cors'
+import { config } from "./config/config";
+import router from "./router";
+import { connectDB } from "./database/mongo-connection";
+import morganMiddleware from "./logger/morgan.logger";
+import swagger from "./utils/swagger";
+import cors from "cors";
 
-const app: Express = express()
-app.use(cors())
-app.use(express.json())
-app.use(morganMiddleware)
+const app: Express = express();
+app.use(cors());
+app.use(express.json());
+app.use(morganMiddleware);
 
-app.use(router)
+app.use(
+  "/api-docs",
+  swagger.swaggerUi.serve,
+  swagger.swaggerUi.setup(swagger.specs)
+);
 
-connectDB().then(() => {
-    console.log("connected to mongo")
+app.use(router);
+
+connectDB()
+  .then(() => {
+    console.log("connected to mongo");
     app.listen(config.port || 4001, () => {
-        console.log(`server started on ${config.port}`)
-    })
-}).catch(error => {
-    console.error(error)
-})
-
+      console.log(`server started on ${config.port}`);
+    });
+  })
+  .catch(error => {
+    console.error(error);
+  });
