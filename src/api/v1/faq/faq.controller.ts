@@ -1,20 +1,20 @@
-import { Request, Router, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
-import { FAQDto } from './dto/request.dto'
-import faqService from './faq.service'
-import { logger } from '../../../logger/winston.logger'
+import { Request, Router, Response } from "express";
+import { plainToInstance } from "class-transformer";
+import { FAQDto } from "./dto/request.dto";
+import faqService from "./faq.service";
+import { logger } from "../../../logger/winston.logger";
 
-const router = Router()
+const router = Router();
 
 router.get("/", async (request: Request, response: Response) => {
-    try {
-        const faqs: Array<FAQDto> = await faqService.getFaqs()
-        return response.status(201).json(faqs)
-    } catch (error) {
-        logger.error(error)
-        return response.status(400).json({ error })
-    }
-})
+  try {
+    const faqs: Array<FAQDto> = await faqService.getFaqs();
+    return response.status(201).json({ data: faqs });
+  } catch (error) {
+    logger.error(error);
+    return response.status(400).json({ error });
+  }
+});
 
 // router.post("/", async (request: Request, response: Response) => {
 //     try {
@@ -28,4 +28,4 @@ router.get("/", async (request: Request, response: Response) => {
 //     }
 // })
 
-export default router
+export default router;
