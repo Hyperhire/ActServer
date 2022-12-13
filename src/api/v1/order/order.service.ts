@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { DonationModel } from "../donation/schema/donation.schema";
 import { OrderModel } from "./schema/order.schema"
 
@@ -47,4 +48,39 @@ const getOrderAndDonation = async (orderId) => {
     }
 }
 
-export default { createOrder, updateOrder, getOrderAndDonation }
+const getMyOrders = async (userId) => {
+    try {
+        const orders = await OrderModel.aggregate([
+            { $match: { 
+                "userId": new Types.ObjectId(userId),
+                paidStatus: "approved"
+            }},
+            {
+                $lookup: {
+                    from: "donations",
+                    localField:"donationId",
+                    foreignField:"_id",
+                    as: "donation"
+                }
+            },
+            {
+                $unwind: {
+                  path: "$donation",
+                  preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            }
+        ])
+        return orders;
+    } catch (error) {
+        throw error
+    }
+}
+
+
+
+export default { createOrder, updateOrder, getOrderAndDonation, getMyOrders }
