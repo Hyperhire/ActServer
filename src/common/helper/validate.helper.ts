@@ -1,5 +1,5 @@
 import { validateOrReject, ValidationError } from "class-validator";
-import { logger } from '../../logger/winston.logger'
+import { logger } from "../../logger/winston.logger";
 
 const validateBody = async <T extends object>(body: T) => {
     try {
