@@ -21,7 +21,7 @@ router.get("/", async (request: Request, response: Response) => {
   try {
     const news = await newsService.getNews();
 
-    return response.status(201).json({ data: news });
+    return response.status(200).json({ data: news });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
@@ -34,7 +34,7 @@ router.get("/:id", async (request: Request, response: Response) => {
     const newsId = request.params.id;
     const news = await newsService.getNewsById(newsId);
 
-    return response.status(201).json({ data: news[0] });
+    return response.status(200).json({ data: news[0] });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
@@ -47,7 +47,7 @@ router.get("/list-by-org/:id", async (request: Request, response: Response) => {
     const newsId = request.params.id;
     const news = await newsService.getNewsByOrgId(newsId);
 
-    return response.status(201).json({ data: news });
+    return response.status(200).json({ data: news });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });

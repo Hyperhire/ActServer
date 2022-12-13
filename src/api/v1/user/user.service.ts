@@ -28,9 +28,7 @@ const createUser = async userDto => {
     }
     const passwordHash = await makeHash(userDto.password);
     userDto.password = passwordHash;
-    // TODO: make KAS Wallet
     const wallet = await KasWallet.createWallet();
-    // TODO: include KAS Wallet data
     userDto.wallet = wallet
 
     const user = await UserModel.create(userDto);

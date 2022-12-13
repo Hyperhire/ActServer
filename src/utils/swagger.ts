@@ -12,6 +12,7 @@ const options = {
         basePath: "/",
     },
     apis: [
+        "./src/api/v1/auth/auth.controller.ts",
         "./src/banner/banner.controller.ts",
         "./src/campaigns/campaigns.controller.ts",
         "./src/faq/faq.controller.ts",
