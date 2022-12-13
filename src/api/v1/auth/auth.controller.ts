@@ -12,18 +12,26 @@ import {
 
 const router = Router();
 
+// user login
+/*
+{
+  "email":"conan.kim22@hyperhire.in",
+  "password":"hello",
+}
+*/
 router.post("/user/login", async (request: Request, response: Response) => {
   try {
     const loginDto = plainToInstance(LoginDto, request.body);
     await validateBody<LoginDto>(loginDto);
     const result = await authService.loginUser(loginDto);
-    response.json(result);
+    return response.status(201).json({ data: result });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
   }
 });
 
+// org login
 router.post("/org/login", async (request: Request, response: Response) => {
   try {
     const loginDto = plainToInstance(LoginDto, request.body);
@@ -36,11 +44,32 @@ router.post("/org/login", async (request: Request, response: Response) => {
   }
 });
 
-router.post("/org/register", async (request: Request, response: Response) => {
+// user register
+/*
+{
+    "email":"conan.kim22@hyperhire.in",
+    "nickname":"cococonan11",
+    "name":"HAHA",
+    "password":"qlqjsgn1!",
+    "loginType":"EMAIL",
+    "constant":{
+        "getGovernmentReceiptService":true,
+        "isEmailVerified":true,
+        "agreeTnc":true,
+        "agreePrivacyPolicy":true
+    },
+    "indInfo":{
+        "name":"김주현현",
+        "mobile":"01029222406",
+        "dateOfBirth":"2022-12-12T17:14:18.446+00:00"
+    }
+}
+*/
+router.post("/user/register", async (request: Request, response: Response) => {
   try {
-    const orgDto = plainToInstance(RegisterOrgDto, request.body);
-    await validateBody<LoginDto>(orgDto);
-    const result = await authService.registerOrg(orgDto);
+    // const user = plainToInstance(RegisterUserDto, request.body);
+    // await validateBody<RegisterUserDto>(user);
+    const result = await authService.registerUser(request.body);
     response.json(result);
   } catch (error) {
     logger.error(error);
@@ -48,11 +77,12 @@ router.post("/org/register", async (request: Request, response: Response) => {
   }
 });
 
-router.post("/user/register", async (request: Request, response: Response) => {
+// org register
+router.post("/org/register", async (request: Request, response: Response) => {
   try {
-    const user = plainToInstance(RegisterUserDto, request.body);
-    await validateBody<RegisterUserDto>(user);
-    const result = await authService.registerUser(user);
+    const orgDto = plainToInstance(RegisterOrgDto, request.body);
+    await validateBody<LoginDto>(orgDto);
+    const result = await authService.registerOrg(orgDto);
     response.json(result);
   } catch (error) {
     logger.error(error);

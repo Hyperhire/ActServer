@@ -24,4 +24,23 @@ router.get("/nft", (request: Request, response: Response) => {
   });
 });
 
+router.post(
+  "/create-kas-wallet",
+  async (request: Request, response: Response) => {
+    try {
+      console.log("create kas wallet");
+      const wallet = await KasWallet.createWallet();
+      return response.status(200).json({
+        data: {
+          text: "hello, this is conan from hyperhire",
+          timestamp: new Date(),
+          wallet
+        }
+      });
+    } catch (error) {
+      return response.status(400).json({ error });
+    }
+  }
+);
+
 export default router;
