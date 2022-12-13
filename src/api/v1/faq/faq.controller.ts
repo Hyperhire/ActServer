@@ -9,7 +9,7 @@ const router = Router();
 router.get("/", async (request: Request, response: Response) => {
   try {
     const faqs: Array<FAQDto> = await faqService.getFaqs();
-    return response.status(201).json({ data: faqs });
+    return response.status(200).json({ data: faqs });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
@@ -21,7 +21,7 @@ router.get("/", async (request: Request, response: Response) => {
 //         const faqDto = plainToInstance(Array<FAQDto>, request.body)
 //         await validateBody<Array<FAQDto>>(faqDto)
 //         const faqs: Array<FAQDto> = await faqService.createFaq(faqDto)
-//         return response.status(200).json(faqs)
+//         return response.status(201).json(faqs)
 //     } catch (error) {
 //         logger.error(error)
 //         return response.status(400).json({ error })

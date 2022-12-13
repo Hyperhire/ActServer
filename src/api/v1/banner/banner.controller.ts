@@ -15,7 +15,7 @@ router.get("/", async (request: Request, response: Response) => {
   //   console.log("request from get banner", request.params, request.query);
   const banners = await bannerService.getBanners();
 
-  response.status(201);
+  response.status(200);
   response.send({ data: banners });
 });
 
@@ -24,7 +24,7 @@ router.patch("/:id", async (request: Request, response: Response) => {
   const updateData = request.body;
   const banner = await bannerService.updateBanner(bannerId, updateData);
 
-  response.status(201);
+  response.status(200);
   response.send({ data: banner });
 });
 
