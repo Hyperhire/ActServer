@@ -14,10 +14,6 @@ export class CreateDonationDTO {
 
     @IsBoolean()
     isRecurring: boolean
-
-    @IsNumber()
-    @IsOptional()
-    recurringCount: number
     
     @IsString()
     @IsOptional()
@@ -25,8 +21,4 @@ export class CreateDonationDTO {
     
     @IsNumber()
     amount: number
-
-    @IsString()
-    @IsOptional()
-    nftId: string
 }
