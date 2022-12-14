@@ -33,7 +33,7 @@ router.post(
 router.get("/", async (request: Request, response: Response) => {
   try {
     const campaigns = await campaignsService.getList();
-    return response.status(201).json({ data: campaigns });
+    return response.status(200).json({ data: campaigns });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
@@ -43,7 +43,7 @@ router.get("/", async (request: Request, response: Response) => {
 router.get("/:id", async (request: Request, response: Response) => {
   try {
     const campaign = await campaignsService.getCampaignById(request.params.id);
-    return response.status(201).json({ data: campaign[0] });
+    return response.status(200).json({ data: campaign[0] });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
@@ -57,7 +57,7 @@ router.get("/list-by-org/:id", async (request: Request, response: Response) => {
     const campaign = await campaignsService.getCampaignByOrgId(
       request.params.id
     );
-    return response.status(201).json({ data: campaign });
+    return response.status(200).json({ data: campaign });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
