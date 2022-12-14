@@ -18,7 +18,7 @@ const schema = new Schema<Order>({
     pgStatus: { type: String },
     method: { type: String },
     paidStatus: { type: String },  // ["notyet", "cancel", "approved"]
-    kakaoTID: { type: String },
+    kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 })

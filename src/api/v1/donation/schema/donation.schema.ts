@@ -3,9 +3,11 @@ import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Donation {
   name: string;
+  userId: Types.ObjectId;
   type: string;
   orgId: string;
   campaignId: string;
+  method: string;
   isRecurring: boolean;
   recurringCount: number;
   recurringOn: string;
@@ -17,9 +19,11 @@ interface Donation {
 
 const schema = new Schema<Donation>({
     name: { type: String },
+    userId: { type: Schema.Types.ObjectId },
     type: { type: String },
     orgId: { type: String },
     campaignId: { type: String },
+    method: { type: String }, // [kakao. naver, card]
     isRecurring: { type: Boolean },
     recurringCount: { type: Number },
     recurringOn: { type: String },
