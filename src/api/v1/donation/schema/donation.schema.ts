@@ -3,9 +3,11 @@ import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Donation {
   name: string;
+  userId: Types.ObjectId;
   type: string;
   orgId: string;
   campaignId: string;
+  method: string;
   isRecurring: boolean;
   recurringCount: number;
   recurringOn: string;
@@ -15,6 +17,8 @@ interface Donation {
 }
 
 const schema = new Schema<Donation>({
+  name: { type: String },
+  userId: { type: Schema.Types.ObjectId },
   name: { type: String },
   type: { type: String, enums: ["ORG", "CAMPAIGN"], isRequired: true },
   orgId: { type: String },
@@ -26,6 +30,7 @@ const schema = new Schema<Donation>({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
+
 const DonationModel = model<Donation>(ModelNames.Donation, schema);
 
 export { DonationModel };

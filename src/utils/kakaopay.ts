@@ -7,7 +7,7 @@ const kakaopayReady = async (order,donation) => {
             "cid": process.env.KAKAOPAY_CID,
             "partner_order_id": order._id,
             "partner_user_id": order.userId,
-            "item_name": donation.name,
+            "item_name": `${donation._id}_${donation.isRecurring}`,
             "item_code": order.donationId,
             "quantity": 1,
             "total_amount": donation.amount,

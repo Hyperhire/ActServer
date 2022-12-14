@@ -4,8 +4,6 @@ import { ModelNames } from "../../../../common/constants/model.constants";
 interface Order {
   userId: Types.ObjectId;
   donationId: Types.ObjectId;
-  pgStatus: string;
-  method: string;
   paidStatus: string;
   kakaoTID: string;
   createdAt: Date;
@@ -15,10 +13,8 @@ interface Order {
 const schema = new Schema<Order>({
     userId: { type: Schema.Types.ObjectId },
     donationId: { type: Schema.Types.ObjectId },
-    pgStatus: { type: String },
-    method: { type: String },
     paidStatus: { type: String },  // ["notyet", "cancel", "approved"]
-    kakaoTID: { type: String },
+    kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 })

@@ -8,11 +8,7 @@ const createOrder = async (orderData) => {
             orderData
         )
 
-        const donation = await DonationModel.findOne({
-            _id: orderData.donationId
-        })
-
-        return {order: newOrder, donation};
+        return newOrder;
     } catch (error) {
         throw error
     }

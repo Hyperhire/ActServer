@@ -11,17 +11,13 @@ const createDonation = async (donationData) => {
     }
 }
 
-const getAllDonations = async () => {
+const getMy = async (userId) => {
     try {
-        const recurringDonations = await DonationModel.find({isRecurring: true}).sort({ amount: 1})
-        const nonRecurringDonations = await DonationModel.find({isRecurring: false}).sort({ amount: 1})
-        return {
-            recurringDonations,
-            nonRecurringDonations
-        };
+        const donations = await DonationModel.find({ userId }).sort({ createdAt: -1})
+        return donations;
     } catch (error) {
         throw error
     }
 }
 
-export default { createDonation, getAllDonations }
+export default { createDonation, getMy }
