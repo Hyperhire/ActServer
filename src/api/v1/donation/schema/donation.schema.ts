@@ -19,7 +19,6 @@ interface Donation {
 const schema = new Schema<Donation>({
   name: { type: String },
   userId: { type: Schema.Types.ObjectId },
-  name: { type: String },
   type: { type: String, enums: ["ORG", "CAMPAIGN"], isRequired: true },
   orgId: { type: String },
   campaignId: { type: String },
