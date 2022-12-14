@@ -6,6 +6,7 @@ import orderService from "./order.service";
 
 const router = Router();
 
+
 /**
    * @swagger
    *  /api/v1/order/my:
@@ -69,22 +70,22 @@ const router = Router();
    *                    ]
    *                }
    */
-router.get("/my", 
-    jwtMiddleware.verifyToken,
-    async (request: Request, response: Response) => {
-        try {
-            const orders = await orderService.getMyOrders(request["user"].id)
-            
-            return response.status(200).json({
-                data: orders
-            });
+router.get(
+  "/my",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const orders = await orderService.getMyOrders(request["user"].id);
 
-        } catch (error) {
-            logger.error(error);
-            return response.status(400).json({ error });
-        } 
+      return response.status(200).json({
+        data: orders
+      });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
     }
-)
+  }
+);
 
 /**
    * @swagger
@@ -127,25 +128,32 @@ router.get("/my",
    *                    }
    *                }
    */
-router.post("/approve/kakao", 
-    jwtMiddleware.verifyToken,
-    async (request: Request, response: Response) => {
-  try {
-    const orderId = request.body.orderId;
-    const pg_token = request.body.pg_token;
-    
-    const {order, donation} = await orderService.getOrderAndDonation(orderId);
-    
-    await kakaopayApprove(order, donation, pg_token);
-    
-    const updatedOrder = await orderService.updateOrder(orderId, { paidStatus: "approved"})
+router.post(
+  "/approve/kakao",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const orderId = request.body.orderId;
+      const pg_token = request.body.pg_token;
 
-    return response.status(200).json({ data: updatedOrder});
+      const { order, donation } = await orderService.getOrderAndDonation(
+        orderId
+      );
 
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
+      await kakaopayApprove(order, donation, pg_token);
+
+      const updatedOrder = await orderService.updateOrder(orderId, {
+        paidStatus: "approved"
+      });
+
+      //TODO: NFT Creation with information
+
+      return response.status(200).json({ data: updatedOrder });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
   }
-});
+);
 
 export default router;
