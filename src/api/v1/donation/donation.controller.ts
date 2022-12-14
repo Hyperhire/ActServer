@@ -3,7 +3,9 @@ import { Request, Router, Response } from "express";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import orderService from "../order/order.service";
 import donationService from "./donation.service";
+import { kakaopayReady, kakaopayApprove } from "../../../utils/kakaopay";
 import { CreateDonationDTO } from "./dto/create-donation.dto";
 
 const router = Router();
@@ -68,17 +70,31 @@ const router = Router();
    *            application/json:
    *                {
    *                    "data": {
-   *                        "userId": "6397e53dbea9b5b5dbdb7472",
-   *                        "type": "org",
-   *                        "orgId": "6396bc8fd2df1a7c6cd2a42a",
-   *                        "method": "kakao",
-   *                        "isRecurring": false,
-   *                        "recurringOn": "1",
-   *                        "amount": 10000,
-   *                        "_id": "63995e98bd61d8d7fd43a939",
-   *                        "createdAt": "2022-12-14T05:26:48.818Z",
-   *                        "updatedAt": "2022-12-14T05:26:48.818Z",
-   *                        "__v": 0
+   *                        "donation": {
+   *                            "userId": "6397e53dbea9b5b5dbdb7472",
+   *                            "type": "org",
+   *                            "orgId": "6396bc8fd2df1a7c6cd2a42a",
+   *                            "method": "kakao",
+   *                            "isRecurring": false,
+   *                            "amount": 10000,
+   *                            "_id": "63997909d50e5aa68ee605c3",
+   *                            "createdAt": "2022-12-14T07:19:37.968Z",
+   *                            "updatedAt": "2022-12-14T07:19:37.968Z",
+   *                            "__v": 0
+   *                        },
+   *                        "order": {
+   *                            "userId": "6397e53dbea9b5b5dbdb7472",
+   *                            "donationId": "63997909d50e5aa68ee605c3",
+   *                            "paidStatus": "notyet",
+   *                            "_id": "6399790ad50e5aa68ee605c5",
+   *                            "createdAt": "2022-12-14T07:19:38.106Z",
+   *                            "updatedAt": "2022-12-14T07:19:38.106Z",
+   *                            "__v": 0
+   *                        }
+   *                    },
+   *                    "redirectURLS": {
+   *                        "web": "https://online-pay.kakao.com/mockup/v1/30f518af22fa38478c0f0e53414418b92c305e0b20a699cb6f89344ed91ab8d3/info",
+   *                        "mobile": "https://online-pay.kakao.com/mockup/v1/30f518af22fa38478c0f0e53414418b92c305e0b20a699cb6f89344ed91ab8d3/mInfo"
    *                    }
    *                }
    */
@@ -92,8 +108,32 @@ router.post("/",
         userId: request["user"].id,
         ...request.body
     }
-    const donation = await donationService.createDonation(donationData);
-    return response.status(201).json({ data: donation });
+    const newDonation = await donationService.createDonation(donationData);
+
+    const orderData = {
+        userId: request["user"].id,
+        donationId: newDonation._id,
+        paidStatus: "notyet" 
+    }
+
+    const newOrder = await orderService.createOrder(orderData);
+    const kakaopayReadyResult = await kakaopayReady(newOrder, newDonation);
+    await orderService.updateOrder(newOrder._id, { kakaoTID: kakaopayReadyResult.data.tid})
+
+        return response.status(201).json({ 
+        data: {
+            donation: newDonation,
+            order: newOrder
+        },
+        redirectURLS: {
+            web: kakaopayReadyResult.data.next_redirect_pc_url,
+            mobile: kakaopayReadyResult.data.next_redirect_mobile_url
+        }
+    });
+    // return response.status(201).json({ data: {
+    //     donation: newDonation
+    //     } 
+    // });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
