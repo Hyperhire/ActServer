@@ -29,9 +29,20 @@ const createUser = async userDto => {
     const passwordHash = await makeHash(userDto.password);
     userDto.password = passwordHash;
     const wallet = await KasWallet.createWallet();
-    userDto.wallet = wallet
+    userDto.wallet = wallet;
 
     const user = await UserModel.create(userDto);
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getUserById = async (userId: string) => {
+  try {
+    const user = await UserModel.findOne({
+      id: userId
+    });
     return user;
   } catch (error) {
     throw error;
@@ -54,4 +65,10 @@ const partialUpdate = async (id: string, body: any) => {
   } catch (error) {}
 };
 
-export default { getUserByNickName, partialUpdate, getUserByEmail, createUser };
+export default {
+  getUserByNickName,
+  partialUpdate,
+  getUserById,
+  getUserByEmail,
+  createUser
+};

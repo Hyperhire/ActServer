@@ -100,12 +100,29 @@ const mintNft = async () => {
   }
 };
 
+const mintNftNew = async (uri, userWallet) => {
+  try {
+    const now = new Date().getTime();
+    const receipt = await caver.kas.kip17.mint(
+      process.env.KAS_NFT_CONTRACT_ADDRESS,
+      userWallet,
+      now,
+      uri
+    );
+    return receipt;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 const KasWallet = {
   hello,
   createWallet,
   registerNftImage,
   createMetadata,
-  mintNft
+  mintNft,
+  mintNftNew
 };
 
 export default KasWallet;

@@ -11,7 +11,7 @@ import { CreateDonationDTO } from "./dto/create-donation.dto";
 const router = Router();
 
 // 만드는건 어드민에서나 필요할듯해서 일단 swagger 작성 안함.
-// :TODO need to restrict can make only admin(verify the user type)
+// TODO: need to restrict can make only admin(verify the user type)
 /**
    * @swagger
    *  /api/v1/donation:
@@ -27,8 +27,8 @@ const router = Router();
    *          required: true
    *          schema:
    *              type: string
-   *              example: "org"
-   *          description: 기관, 캠페인 중 하나
+   *              example: "ORG"
+   *          description: ORG, CAMPAIGN 중 하나
    *        - name: orgId
    *          in: body
    *          required: false
@@ -50,13 +50,20 @@ const router = Router();
    *              type: boolean
    *              example: "truee"
    *          description: type을 캠페인으로 선택했다면 해당 ID
+   *        - name: recurringOn
+   *          in: body
+   *          required: false
+   *          schema:
+   *              type: string
+   *              example: "FIRST"
+   *          description: 결제 방식 - FIRST TENTH TWENTIETH 중 하나
    *        - name: method
    *          in: body
    *          required: true
    *          schema:
    *              type: string
-   *              example: "kakao"
-   *          description: 결제 방식
+   *              example: "KAKAO"
+   *          description: 결제 방식 - KAKAO NAVER 중 하나
    *        - name: amount
    *          in: body
    *          required: true
@@ -158,7 +165,7 @@ router.get("/my",
     jwtMiddleware.verifyToken,
     async (request: Request, response: Response) => {
   try {
-    const donations = await donationService.getMy(request["user"].id);
+    const donations = await donationService.getMyDonation(request["user"].id);
     
     return response.status(200).json({ data: donations });
   } catch (error) {

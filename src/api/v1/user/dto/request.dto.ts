@@ -1,4 +1,4 @@
-import { IsDateString, IsEmail, IsOptional, IsString } from "class-validator"
+import { IsDateString, IsEmail, IsObject, IsOptional, IsString } from "class-validator"
 import { Types } from "mongoose"
 
 export class BaseUserDto {
@@ -30,5 +30,8 @@ export class BaseUserDto {
 export class UserDto extends BaseUserDto {
     @IsString()
     password: string
+    @IsObject()
+    @IsOptional()
+    wallet: object;
 }
 

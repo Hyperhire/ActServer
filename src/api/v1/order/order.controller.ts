@@ -1,11 +1,47 @@
 import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import { kakaopayApprove } from "../../../utils/kakaopay";
+import {
+  kakaopayApprove,
+  kakaopayApproveNew,
+  kakaopayReadyNew
+} from "../../../utils/kakaopay";
 import orderService from "./order.service";
+import KasWallet from "./../../../utils/kasWallet";
+import userService from "../user/user.service";
 
 const router = Router();
 
+router.post(
+  "/",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const userId = request["user"].id;
+      // TODO: Create basic order with status 'notyet'
+      const order = await orderService.createOrder({ userId, ...request.body });
+
+      // TODO: Create Kakao PG
+      const kakaopayReadyResult = await kakaopayReadyNew(order);
+      await orderService.updateOrder(order._id, {
+        kakaoTID: kakaopayReadyResult.data.tid
+      });
+
+      return response.status(201).json({
+        data: {
+          order,
+          redirectURLS: {
+            web: kakaopayReadyResult.data.next_redirect_pc_url,
+            mobile: kakaopayReadyResult.data.next_redirect_mobile_url
+          }
+        }
+      });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
 
 /**
    * @swagger
@@ -146,7 +182,44 @@ router.post(
         paidStatus: "approved"
       });
 
-      //TODO: NFT Creation with information
+      return response.status(200).json({ data: updatedOrder });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.post(
+  "/complete",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const orderId = request.body.orderId;
+      const userId = request["user"].id;
+
+      //TODO: Approve Kakao
+      // const pg_token = request.body.pg_token;
+      // const order = await orderService.getOrderById(orderId);
+      // await kakaopayApproveNew(order, pg_token);
+
+      //TODO: Complete Order
+      const updatedOrder = await orderService.updateOrder(orderId, {
+        paidStatus: "approved"
+      });
+
+      //TODO: create Metadata
+      const { filename, uri } = await KasWallet.createMetadata();
+
+      //TODO: mint NFT
+      const user = await userService.getUserById(userId);
+      const { transactionHash } = await KasWallet.mintNftNew(
+        uri,
+        user.wallet.address
+      );
+      console.log("nft.transactionHash", transactionHash);
+
+      //TODO: create Donation with NFT
 
       return response.status(200).json({ data: updatedOrder });
     } catch (error) {
