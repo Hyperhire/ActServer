@@ -7,7 +7,9 @@ const ModelNames = {
   Home: "home",
   Banner: "banner",
   News: "news",
-  Notice: "notice"
+  Notice: "notice",
+  Donation: "donation",
+  Order: "order"
 };
 
 export { ModelNames };

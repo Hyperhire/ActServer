@@ -12,6 +12,8 @@ import {
 
 const router = Router();
 
+// TODO: 통합 로그인 처리하기
+
 // user login
 /*
 {
@@ -37,7 +39,7 @@ router.post("/org/login", async (request: Request, response: Response) => {
     const loginDto = plainToInstance(LoginDto, request.body);
     await validateBody<LoginDto>(loginDto);
     const result = await authService.loginOrg(loginDto);
-    response.status(201).json(result);
+    response.status(201).json({ data: result });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
