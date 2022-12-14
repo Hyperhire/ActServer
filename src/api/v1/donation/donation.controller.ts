@@ -9,6 +9,7 @@ import { CreateDonationDTO } from "./dto/create-donation.dto";
 const router = Router();
 
 // 만드는건 어드민에서나 필요할듯해서 일단 swagger 작성 안함.
+// :TODO need to restrict can make only admin(verify the user type)
 router.post("/", 
     jwtMiddleware.verifyToken,
     async (request: Request, response: Response) => {
@@ -16,7 +17,6 @@ router.post("/",
     const donationDTO = plainToInstance(CreateDonationDTO, request.body);
     await validateBody<CreateDonationDTO>(donationDTO);
     const donationData = {
-        userId: request["user"].id,
         ...request.body
     }
     const donation = await donationService.createDonation(donationData);
