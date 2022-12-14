@@ -30,22 +30,22 @@ router.post("/",
 
 /**
    * @swagger
-   *  /api/v1/donation/all:
+   *  /api/v1/donation/my:
    *    get:
    *      tags:
    *      - donationV1
-   *      description: 모든 후원 종류 보기
+   *      description: 내 모든 후원 보기
    *      comsumes:
    *      - application/json
    *      responses:
    *       '200':
    *         description: 성공
    */
-router.get("/all", 
+router.get("/my", 
     jwtMiddleware.verifyToken,
     async (request: Request, response: Response) => {
   try {
-    const donations = await donationService.getAllDonations();
+    const donations = await donationService.getMy(request["user"].id);
     
     return response.status(200).json({ data: donations });
   } catch (error) {
