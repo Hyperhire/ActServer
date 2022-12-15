@@ -172,7 +172,7 @@ router.get("/org", async (request: Request, response: Response) => {
 });
 
 router.get(
-  "/my",
+  "/user/my",
   jwtMiddleware.verifyToken,
   async (request: Request, response: Response) => {
     try {
