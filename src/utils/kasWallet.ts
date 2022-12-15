@@ -49,7 +49,7 @@ const createMetadata = async () => {
       name: "ACT 기부영수증 #9982",
       description: "따뜻한 세상을 향한 움직임, 블록체인 기부플랫폼 ACT.",
       image:
-        "https://metadata-store.klaytnapi.com/fd2f81df-cfaa-32f4-bbfa-52ad7b378c6f/eb769b52-2d42-12f4-4a53-1fd7e81d3520.png",
+        "https://metadata-store.klaytnapi.com/fd2f81df-cfaa-32f4-bbfa-52ad7b378c6f/510703c4-127d-ecfa-d3a0-8065a44c103c.png",
       external_url: "https://cojamact.example",
       attributes: [
         {
@@ -94,7 +94,7 @@ const createMetadataNew = async order => {
       name: "ACT 기부영수증",
       description: "따뜻한 세상을 향한 움직임, 블록체인 기부플랫폼 ACT.",
       image:
-        "https://metadata-store.klaytnapi.com/fd2f81df-cfaa-32f4-bbfa-52ad7b378c6f/eb769b52-2d42-12f4-4a53-1fd7e81d3520.png",
+        "https://metadata-store.klaytnapi.com/fd2f81df-cfaa-32f4-bbfa-52ad7b378c6f/510703c4-127d-ecfa-d3a0-8065a44c103c.png",
       external_url: "https://cojamact.example",
       attributes: [
         {
