@@ -148,7 +148,7 @@ router.post("/org/register", async (request: Request, response: Response) => {
 });
 
 router.get(
-  "/user/check-duplicate-email",
+  "/check-duplicate-email",
   async (request: Request, response: Response) => {
     try {
       // const queryDto = plainToInstance(QueryDto, request.query);
@@ -163,7 +163,7 @@ router.get(
 );
 
 router.get(
-  "/user/check-duplicate-nickname",
+  "/check-duplicate-nickname",
   async (request: Request, response: Response) => {
     try {
       // const queryDto = plainToInstance(QueryDto, request.query);
