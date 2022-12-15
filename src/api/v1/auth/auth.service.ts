@@ -90,7 +90,7 @@ const loginOrg = async (loginDto: LoginDto) => {
 const checkUserNickName = async nickname => {
   try {
     const user = await userService.getUserByNickName(nickname);
-    return { exist: !!user };
+    return { duplicated: !!user };
   } catch (error) {
     throw error;
   }
@@ -99,7 +99,7 @@ const checkUserNickName = async nickname => {
 const checkUserEmail = async email => {
   try {
     const user = await userService.getUserByEmail(email);
-    return { exist: !!user };
+    return { duplicated: !!user };
   } catch (error) {
     throw error;
   }
