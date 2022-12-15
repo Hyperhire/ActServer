@@ -196,7 +196,7 @@ router.post(
   jwtMiddleware.verifyToken,
   async (request: Request, response: Response) => {
     try {
-      const orderId = request.body.orderId;
+      const orderId = request.body.id;
       const userId = request["user"].id;
       const order = await orderService.getOrderById(orderId);
 
