@@ -153,7 +153,7 @@ router.get(
     try {
       // const queryDto = plainToInstance(QueryDto, request.query);
       // await validateBody<QueryDto>(queryDto);
-      const result = await authService.checkUserEmail(request.query.email);
+      const result = await authService.checkEmail(request.query.email);
       response.status(200).json({ data: result });
     } catch (error) {
       logger.error(error);
@@ -168,7 +168,7 @@ router.get(
     try {
       // const queryDto = plainToInstance(QueryDto, request.query);
       // await validateBody<QueryDto>(queryDto);
-      const result = await authService.checkUserNickName(
+      const result = await authService.checkNickName(
         request.query.nickname
       );
       response.status(200).json({ data: result });

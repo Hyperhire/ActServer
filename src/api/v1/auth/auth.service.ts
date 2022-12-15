@@ -87,19 +87,21 @@ const loginOrg = async (loginDto: LoginDto) => {
  * @param queryDto 
  * @returns 
  */
-const checkUserNickName = async nickname => {
+const checkNickName = async nickname => {
   try {
     const user = await userService.getUserByNickName(nickname);
-    return { duplicated: !!user };
+    const org = await orgsService.getOrgUserByNickName(nickname);
+    return { duplicated: !!user || !!org };
   } catch (error) {
     throw error;
   }
 };
 
-const checkUserEmail = async email => {
+const checkEmail = async email => {
   try {
     const user = await userService.getUserByEmail(email);
-    return { duplicated: !!user };
+    const org = await orgsService.getOrgUserByEmail(email);
+    return { duplicated: !!user || !!org };
   } catch (error) {
     throw error;
   }
@@ -123,7 +125,7 @@ export default {
   registerOrg,
   loginOrg,
   loginUser,
-  checkUserNickName,
-  checkUserEmail,
+  checkNickName,
+  checkEmail,
   checkOrgNickName
 };

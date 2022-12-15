@@ -10,10 +10,7 @@ const getUserByNickName = async (nickname: string) => {
     const user: BaseUserDto = await UserModel.findOne({
       nickname: nickname
     });
-    if (user) {
-      throw "nickname already taken";
-    }
-    return true;
+    return user;
   } catch (error) {
     logger.error(error);
     throw error;

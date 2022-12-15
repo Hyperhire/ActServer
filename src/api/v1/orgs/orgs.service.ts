@@ -5,21 +5,6 @@ import { RegisterOrgDto, RegisterUserDto } from "../auth/dto/request.dto";
 import { BaseOrgDto, OrgDto } from "./dto/request.dto";
 import { OrgModel } from "./schema/org.schema";
 
-const getOrgUserByNickName = async (nickname: string) => {
-  try {
-    const user: BaseOrgDto = await OrgModel.findOne({
-      nickname: nickname
-    });
-    if (user) {
-      throw "nickname already taken";
-    }
-    return true;
-  } catch (error) {
-    logger.error(error);
-    throw error;
-  }
-};
-
 const createOrg = async (
   orgDto: RegisterOrgDto
 ): Promise<BaseOrgDto | Error> => {
@@ -47,6 +32,18 @@ const getOrgUserByEmail = async (email: string): Promise<OrgDto> => {
     });
     return org;
   } catch (error) {
+    throw error;
+  }
+};
+
+const getOrgUserByNickName = async (nickname: string) => {
+  try {
+    const org: BaseOrgDto = await OrgModel.findOne({
+      nickname: nickname
+    });
+    return org;
+  } catch (error) {
+    logger.error(error);
     throw error;
   }
 };
