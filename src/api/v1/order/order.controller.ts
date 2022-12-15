@@ -201,8 +201,8 @@ router.post(
       const order = await orderService.getOrderById(orderId);
 
       // Approve Kakao
-      const pg_token = request.body.pg_token;
-      await kakaopayApproveNew(order, pg_token);
+      // const pg_token = request.body.pg_token;
+      // await kakaopayApproveNew(order, pg_token);
 
       // create Metadata
       const { uri } = await KasWallet.createMetadataNew(order);
