@@ -4,7 +4,7 @@ import { ModelNames } from "../../../../common/constants/model.constants";
 interface Donation {
   userId: Types.ObjectId;
   targetType: string;
-  tagetId: Types.ObjectId;
+  targetId: Types.ObjectId;
   pg: string;
   isRecurring: boolean;
   recurringCount: number;
@@ -20,7 +20,7 @@ interface Donation {
 const schema = new Schema<Donation>({
   userId: { type: Schema.Types.ObjectId },
   targetType: { type: String, enums: ["ORG", "CAMPAIGN"], isRequired: true },
-  tagetId: { type: Schema.Types.ObjectId },
+  targetId: { type: Schema.Types.ObjectId },
   isRecurring: { type: Boolean },
   pg: { type: String, enums: ["KAKAO", "NAVER"] },
   recurringCount: { type: Number, default: 1 },

@@ -19,17 +19,6 @@ router.get("/", (request: Request, response: Response) => {
   });
 });
 
-router.get("/nft", (request: Request, response: Response) => {
-  KasWallet.hello();
-  response.json({
-    status: 200,
-    data: {
-      text: "hello, this is conan from hyperhire",
-      timestamp: new Date()
-    }
-  });
-});
-
 router.post(
   "/create-kas-wallet",
   async (request: Request, response: Response) => {
@@ -100,6 +89,21 @@ router.post("/mint-nft", async (request: Request, response: Response) => {
         text: "mint NFT",
         timestamp: new Date(),
         nft
+      }
+    });
+  } catch (error) {
+    return response.status(400).json({ error });
+  }
+});
+
+router.get("/nft/detail", async (request: Request, response: Response) => {
+  try {
+    const nftDetail = await KasWallet.getNftDataTest();
+    return response.status(201).json({
+      data: {
+        text: "mint NFT",
+        timestamp: new Date(),
+        nftDetail
       }
     });
   } catch (error) {

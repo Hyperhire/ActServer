@@ -20,8 +20,16 @@ const getMyDonation = async userId => {
         $lookup: {
           from: "orgs",
           foreignField: "_id",
-          localField: "orgId",
+          localField: "targetId",
           as: "org"
+        }
+      },
+      {
+        $lookup: {
+          from: "orders",
+          foreignField: "donationId",
+          localField: "_id",
+          as: "orders"
         }
       },
       { $unwind: "$org" },

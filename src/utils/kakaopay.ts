@@ -12,9 +12,9 @@ const kakaopayReadyNew = async order => {
       quantity: 1,
       total_amount: order.amount,
       tax_free_amount: 0,
-      approval_url: "https://www.doact.co.kr/approval",
-      cancel_url: "https://www.doact.co.kr/cancel",
-      fail_url: "https://www.doact.co.kr/fail"
+      approval_url: "https://www.doact.co.kr/payment/approve",
+      cancel_url: "https://www.doact.co.kr/payment/cancel",
+      fail_url: "https://www.doact.co.kr/payment/fail"
     },
     {
       headers: {
@@ -28,7 +28,6 @@ const kakaopayReadyNew = async order => {
 };
 
 const kakaopayApproveNew = async (order, pg_token) => {
-    console.log(order);
     const kakaopayApproveResult = await axios.post(
       "https://kapi.kakao.com/v1/payment/approve",
       {

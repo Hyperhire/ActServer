@@ -10,6 +10,7 @@ import faqs from "./api/v1/faq/faq.controller";
 import banner from "./api/v1/banner/banner.controller";
 import donation from "./api/v1/donation/donation.controller";
 import order from "./api/v1/order/order.controller";
+import nft from "./api/v1/nft/nft.controller";
 
 const router: Router = Router();
 
@@ -26,5 +27,6 @@ router.use("/api/v1/faq", faqs);
 router.use("/api/v1/banner", banner);
 router.use("/api/v1/order", order);
 router.use("/api/v1/donation", donation);
+router.use("/api/v1/nft", nft);
 
 export default router;

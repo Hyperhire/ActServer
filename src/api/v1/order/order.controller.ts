@@ -204,25 +204,18 @@ router.post(
       const pg_token = request.body.pg_token;
       await kakaopayApproveNew(order, pg_token);
 
-      // Complete Order
-      const approvedOrder = await orderService.updateOrder(orderId, {
-        paidStatus: "approved",
-        paidAt: new Date().toISOString()
-      });
-
       // create Metadata
-      const { filename, uri } = await KasWallet.createMetadataNew(order);
+      const { uri } = await KasWallet.createMetadataNew(order);
 
       // mint NFT
       const user = await userService.getUserById(userId);
-      const { transactionHash } = await KasWallet.mintNftNew(
-        uri,
-        user.wallet.address
-      );
+      const { token_id } = await KasWallet.mintNftNew(uri, user.wallet.address);
 
       // input NFT receipt to order
       const receiptAddedOrder = await orderService.updateOrder(orderId, {
-        nftHash: transactionHash
+        paidStatus: "approved",
+        paidAt: new Date().toISOString(),
+        nft: token_id
       });
 
       // create Donation
@@ -235,12 +228,18 @@ router.post(
         paidAt
       } = receiptAddedOrder;
       const donation = await donationService.createDonation({
+        userId,
         targetType,
         targetId,
         pg,
         amount,
         isRecurring,
         startedAt: paidAt
+      });
+
+      // input NFT receipt to order
+      const finalOrder = await orderService.updateOrder(orderId, {
+        donationId: donation._id
       });
 
       return response.status(200).json({ data: donation });

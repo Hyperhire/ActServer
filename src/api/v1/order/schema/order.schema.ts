@@ -5,12 +5,13 @@ interface Order {
   userId: Types.ObjectId;
   targetType: string;
   targetId: Types.ObjectId;
+  donationId: Types.ObjectId;
   pg: string;
   amount: number;
   isRecurring: boolean;
   paidStatus: string;
   kakaoTID: string;
-  nftHash: string;
+  nft: string;
   paidAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -20,6 +21,7 @@ const schema = new Schema<Order>({
   userId: { type: Schema.Types.ObjectId },
   targetType: { type: String, enums: ["ORG", "CAMPAIGN"] },
   targetId: { type: Schema.Types.ObjectId },
+  donationId: { type: Schema.Types.ObjectId },
   pg: { type: String, enums: ["KAKAO", "NAVER"] },
   amount: { type: Number },
   isRecurring: { type: Boolean, default: false },
@@ -29,7 +31,7 @@ const schema = new Schema<Order>({
     default: "notyet"
   }, // ["notyet", "cancel", "approved"]
   kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal
-  nftHash: { type: String },
+  nft: { type: String },
   paidAt: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

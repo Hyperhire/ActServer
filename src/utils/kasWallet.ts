@@ -107,7 +107,7 @@ const createMetadataNew = async order => {
         },
         {
           trait_type: "금액",
-          value: "" + amount
+          value: amount.toLocaleString()
         },
         {
           trait_type: "결제방법",
@@ -150,14 +150,42 @@ const mintNft = async () => {
 
 const mintNftNew = async (uri, userWallet) => {
   try {
-    const now = new Date().getTime();
+    const token_id = new Date().getTime();
     const receipt = await caver.kas.kip17.mint(
       process.env.KAS_NFT_CONTRACT_ADDRESS,
       userWallet,
-      now,
+      token_id,
       uri
     );
-    return receipt;
+    return { ...receipt, token_id };
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const getNftDataTest = async () => {
+  try {
+    const data = await caver.kas.kip17.getToken(
+      process.env.KAS_NFT_CONTRACT_ADDRESS,
+      1671076068962
+      // "0x18513e53e62"
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+const getNftDetail = async token_id => {
+  try {
+    const data = await caver.kas.kip17.getToken(
+      process.env.KAS_NFT_CONTRACT_ADDRESS,
+      token_id
+    );
+    return data;
   } catch (error) {
     console.log(error);
     return error;
@@ -171,7 +199,9 @@ const KasWallet = {
   createMetadata,
   createMetadataNew,
   mintNft,
-  mintNftNew
+  mintNftNew,
+  getNftDataTest,
+  getNftDetail
 };
 
 export default KasWallet;

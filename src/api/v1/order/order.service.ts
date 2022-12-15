@@ -17,7 +17,7 @@ const updateOrder = async (id, updateData) => {
   try {
     const updatedOrder = await OrderModel.findOneAndUpdate(
       { _id: id },
-      updateData,
+      { ...updateData, updatedAt: new Date().toISOString() },
       {
         new: true
       }
