@@ -92,7 +92,7 @@ const getOrgInfoByOrder = async order => {
     const org = await orgsService.getOrgById(targetId);
     return org;
   }
-  return { name: "error company" };
+  return { name: "error company", nftImageUrl: "" };
 };
 
 export default {

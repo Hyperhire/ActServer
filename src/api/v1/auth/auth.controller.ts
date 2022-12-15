@@ -147,17 +147,37 @@ router.post("/org/register", async (request: Request, response: Response) => {
   }
 });
 
-router.get("/user", async (request: Request, response: Response) => {
-  try {
-    const queryDto = plainToInstance(QueryDto, request.query);
-    await validateBody<QueryDto>(queryDto);
-    const result = await authService.checkUserNickName(queryDto);
-    response.status(200).json(result);
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
+router.get(
+  "/user/check-duplicate-email",
+  async (request: Request, response: Response) => {
+    try {
+      // const queryDto = plainToInstance(QueryDto, request.query);
+      // await validateBody<QueryDto>(queryDto);
+      const result = await authService.checkUserEmail(request.query.email);
+      response.status(200).json({ data: result });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
   }
-});
+);
+
+router.get(
+  "/user/check-duplicate-nickname",
+  async (request: Request, response: Response) => {
+    try {
+      // const queryDto = plainToInstance(QueryDto, request.query);
+      // await validateBody<QueryDto>(queryDto);
+      const result = await authService.checkUserNickName(
+        request.query.nickname
+      );
+      response.status(200).json({ data: result });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
 
 router.get("/org", async (request: Request, response: Response) => {
   try {

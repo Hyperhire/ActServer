@@ -87,14 +87,12 @@ const createMetadata = async () => {
 
 const createMetadataNew = async order => {
   try {
-    // TODO: image 현재 신규로 들어간 이미지로 고정
     const { pg, isRecurring, amount } = order;
     const org = await orderService.getOrgInfoByOrder(order);
     const metadata = {
       name: "ACT 기부영수증",
       description: "따뜻한 세상을 향한 움직임, 블록체인 기부플랫폼 ACT.",
-      image:
-        "https://metadata-store.klaytnapi.com/fd2f81df-cfaa-32f4-bbfa-52ad7b378c6f/510703c4-127d-ecfa-d3a0-8065a44c103c.png",
+      image: org.nftImageUrl,
       external_url: "https://cojamact.example",
       attributes: [
         {

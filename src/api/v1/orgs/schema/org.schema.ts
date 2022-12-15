@@ -26,6 +26,7 @@ interface Org {
   homepage: string;
   corporateId: string;
   image: string;
+  nftImageUrl: string;
   shortDescription: string;
   longDescription: string;
   icon: string;
@@ -62,6 +63,7 @@ const schema = new Schema<Org>({
     managerName: { type: String },
     managerMobile: { type: String },
     homepage: { type: String },
+    nftImageUrl: {type: String},
     corporateId: { type: String },
     shortDescription: { type: String },
     longDescription: { type: String },
