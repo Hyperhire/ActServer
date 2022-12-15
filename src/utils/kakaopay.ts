@@ -12,9 +12,9 @@ const kakaopayReadyNew = async order => {
       quantity: 1,
       total_amount: order.amount,
       tax_free_amount: 0,
-      approval_url: `http://dev.doact.co.kr/${order._id}/approval`,
-      cancel_url: `http://dev.doact.co.kr/${order._id}/cancel`,
-      fail_url: `http://dev.doact.co.kr/${order._id}/fail`
+      approval_url: `http://dev.doact.co.kr/payment/${order._id}/approval`,
+      cancel_url: `http://dev.doact.co.kr/payment/${order._id}/cancel`,
+      fail_url: `http://dev.doact.co.kr/payment/${order._id}/fail`
     },
     {
       headers: {
