@@ -3,10 +3,9 @@ import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Donation {
   userId: Types.ObjectId;
-  type: string;
-  orgId: Types.ObjectId;
-  campaignId: Types.ObjectId;
-  method: string;
+  targetType: string;
+  tagetId: Types.ObjectId;
+  pg: string;
   isRecurring: boolean;
   recurringCount: number;
   recurringOn: string;
@@ -20,16 +19,15 @@ interface Donation {
 
 const schema = new Schema<Donation>({
   userId: { type: Schema.Types.ObjectId },
-  type: { type: String, enums: ["ORG", "CAMPAIGN"], isRequired: true },
-  orgId: { type: Schema.Types.ObjectId },
-  campaignId: { type: Schema.Types.ObjectId },
+  targetType: { type: String, enums: ["ORG", "CAMPAIGN"], isRequired: true },
+  tagetId: { type: Schema.Types.ObjectId },
   isRecurring: { type: Boolean },
-  method: { type: String, enums: ["KAKAO", "NAVER"] },
+  pg: { type: String, enums: ["KAKAO", "NAVER"] },
   recurringCount: { type: Number, default: 1 },
   recurringOn: { type: String, enums: ["FIRST", "TENTH", "TWENTIETH"] },
   amount: { type: Number },
   isTerminated: { type: Boolean, default: false },
-  startedAt: { type: Date, default: Date.now },
+  startedAt: { type: Date },
   endedAt: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

@@ -1,3 +1,5 @@
+import orderService from "../api/v1/order/order.service";
+
 const CaverExtKAS = require("caver-js-ext-kas");
 
 const caver = new CaverExtKAS();
@@ -83,6 +85,52 @@ const createMetadata = async () => {
   }
 };
 
+const createMetadataNew = async order => {
+  try {
+    // TODO: image 현재 신규로 들어간 이미지로 고정
+    const { pg, isRecurring, amount } = order;
+    const org = await orderService.getOrgInfoByOrder(order);
+    const metadata = {
+      name: "ACT 기부영수증",
+      description: "따뜻한 세상을 향한 움직임, 블록체인 기부플랫폼 ACT.",
+      image:
+        "https://metadata-store.klaytnapi.com/fd2f81df-cfaa-32f4-bbfa-52ad7b378c6f/eb769b52-2d42-12f4-4a53-1fd7e81d3520.png",
+      external_url: "https://cojamact.example",
+      attributes: [
+        {
+          trait_type: "후원방식",
+          value: isRecurring ? "정기후원" : "일시후원"
+        },
+        {
+          trait_type: "단체명",
+          value: org.name
+        },
+        {
+          trait_type: "금액",
+          value: "" + amount
+        },
+        {
+          trait_type: "결제방법",
+          value: pg === "KAKAO" ? "카카오페이" : "네이버페이"
+        },
+        {
+          display_type: "date",
+          trait_type: "birthday",
+          value: 1546360800
+        }
+      ]
+    };
+    console.log("--- metadata", metadata);
+    const result = await caver.kas.metadata.uploadMetadata(
+      metadata,
+      process.env.KAS_STORAGE_KRN
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
 const mintNft = async () => {
   try {
     const now = new Date().getTime();
@@ -121,6 +169,7 @@ const KasWallet = {
   createWallet,
   registerNftImage,
   createMetadata,
+  createMetadataNew,
   mintNft,
   mintNftNew
 };

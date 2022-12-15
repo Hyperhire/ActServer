@@ -42,7 +42,7 @@ router.get("/:id", async (request: Request, response: Response) => {
   try {
     const idDto = plainToInstance(IdDto, request.params);
     await validateBody<IdDto>(idDto);
-    const org: BaseOrgDto = await orgsService.getOrgById(idDto);
+    const org: BaseOrgDto = await orgsService.getOrgById(idDto.id);
     return response.status(200).json({ data: org });
   } catch (error) {
     logger.error(error);

@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { DonationModel } from "../donation/schema/donation.schema";
+import orgsService from "../orgs/orgs.service";
 import { OrderModel } from "./schema/order.schema";
 
 const createOrder = async orderData => {
@@ -85,10 +86,20 @@ const getMyOrders = async userId => {
   }
 };
 
+const getOrgInfoByOrder = async order => {
+  const { targetType, targetId } = order;
+  if (targetType === "ORG") {
+    const org = await orgsService.getOrgById(targetId);
+    return org;
+  }
+  return { name: "error company" };
+};
+
 export default {
   createOrder,
   updateOrder,
   getOrderById,
   getOrderAndDonation,
-  getMyOrders
+  getMyOrders,
+  getOrgInfoByOrder
 };

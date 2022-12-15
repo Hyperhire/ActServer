@@ -7,8 +7,11 @@ interface Order {
   targetId: Types.ObjectId;
   pg: string;
   amount: number;
+  isRecurring: boolean;
   paidStatus: string;
   kakaoTID: string;
+  nftHash: string;
+  paidAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,12 +22,15 @@ const schema = new Schema<Order>({
   targetId: { type: Schema.Types.ObjectId },
   pg: { type: String, enums: ["KAKAO", "NAVER"] },
   amount: { type: Number },
+  isRecurring: { type: Boolean, default: false },
   paidStatus: {
     type: String,
     enums: ["notyet", "cancel", "approved"],
     default: "notyet"
   }, // ["notyet", "cancel", "approved"]
   kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal
+  nftHash: { type: String },
+  paidAt: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

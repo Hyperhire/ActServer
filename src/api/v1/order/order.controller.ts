@@ -9,6 +9,7 @@ import {
 import orderService from "./order.service";
 import KasWallet from "./../../../utils/kasWallet";
 import userService from "../user/user.service";
+import donationService from "../donation/donation.service";
 
 const router = Router();
 
@@ -197,31 +198,52 @@ router.post(
     try {
       const orderId = request.body.orderId;
       const userId = request["user"].id;
+      const order = await orderService.getOrderById(orderId);
 
-      //TODO: Approve Kakao
-      // const pg_token = request.body.pg_token;
-      // const order = await orderService.getOrderById(orderId);
-      // await kakaopayApproveNew(order, pg_token);
+      // Approve Kakao
+      const pg_token = request.body.pg_token;
+      await kakaopayApproveNew(order, pg_token);
 
-      //TODO: Complete Order
-      const updatedOrder = await orderService.updateOrder(orderId, {
-        paidStatus: "approved"
+      // Complete Order
+      const approvedOrder = await orderService.updateOrder(orderId, {
+        paidStatus: "approved",
+        paidAt: new Date().toISOString()
       });
 
-      //TODO: create Metadata
-      const { filename, uri } = await KasWallet.createMetadata();
+      // create Metadata
+      const { filename, uri } = await KasWallet.createMetadataNew(order);
 
-      //TODO: mint NFT
+      // mint NFT
       const user = await userService.getUserById(userId);
       const { transactionHash } = await KasWallet.mintNftNew(
         uri,
         user.wallet.address
       );
-      console.log("nft.transactionHash", transactionHash);
 
-      //TODO: create Donation with NFT
+      // input NFT receipt to order
+      const receiptAddedOrder = await orderService.updateOrder(orderId, {
+        nftHash: transactionHash
+      });
 
-      return response.status(200).json({ data: updatedOrder });
+      // create Donation
+      const {
+        targetType,
+        targetId,
+        pg,
+        amount,
+        isRecurring,
+        paidAt
+      } = receiptAddedOrder;
+      const donation = await donationService.createDonation({
+        targetType,
+        targetId,
+        pg,
+        amount,
+        isRecurring,
+        startedAt: paidAt
+      });
+
+      return response.status(200).json({ data: donation });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
