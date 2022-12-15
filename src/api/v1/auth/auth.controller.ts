@@ -2,6 +2,8 @@ import { plainToInstance } from "class-transformer";
 import { Request, Router, Response } from "express";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
+import jwtMiddleware from "../../../middleware/jwt.middleware";
+import userService from "../user/user.service";
 import authService from "./auth.service";
 import {
   LoginDto,
@@ -168,5 +170,20 @@ router.get("/org", async (request: Request, response: Response) => {
     return response.status(400).json({ error });
   }
 });
+
+router.get(
+  "/my",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const userId = request["user"].id;
+      const user = await userService.getUserById(userId);
+      response.status(200).json(user);
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
 
 export default router;
