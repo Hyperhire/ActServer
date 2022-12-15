@@ -41,7 +41,7 @@ const createUser = async userDto => {
 const getUserById = async (userId: string) => {
   try {
     const user = await UserModel.findOne({
-      id: userId
+      _id: userId
     });
     return user;
   } catch (error) {

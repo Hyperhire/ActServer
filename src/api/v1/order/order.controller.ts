@@ -209,13 +209,13 @@ router.post(
 
       // mint NFT
       const user = await userService.getUserById(userId);
-      const { token_id } = await KasWallet.mintNftNew(uri, user.wallet.address);
+      const res = await KasWallet.mintNftNew(uri, user.wallet.address);
 
       // input NFT receipt to order
       const receiptAddedOrder = await orderService.updateOrder(orderId, {
         paidStatus: "approved",
         paidAt: new Date().toISOString(),
-        nft: token_id
+        nft: res.token_id
       });
 
       // create Donation

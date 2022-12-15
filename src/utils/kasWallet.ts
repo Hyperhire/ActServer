@@ -171,7 +171,6 @@ const getNftDataTest = async () => {
       1671076068962
       // "0x18513e53e62"
     );
-    console.log(data);
     return data;
   } catch (error) {
     console.log(error);
