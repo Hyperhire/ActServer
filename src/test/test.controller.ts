@@ -1,7 +1,7 @@
 import { Request, Router, Response } from "express";
 import KasWallet from "../utils/kasWallet";
 import multer from "multer";
-// import { getBuckets, uploadFile } from "../utils/upload";
+import { getBuckets, uploadFile } from "../utils/upload";
 
 const router = Router();
 const upload = multer();
@@ -20,21 +20,20 @@ router.get("/", (request: Request, response: Response) => {
   });
 });
 
-// router.post("/upload-image", upload.single('file'), async (request: MulterRequest, response: Response) => {
-//   const file = request?.file
-//   console.log("file", file);
-//   if (!file) {
-//     throw 'no image';
-//   }
-//   await uploadFile(file)
-//   response.json({
-//     status: 201,
-//     data: {
-//       text: "upload image",
-//       timestamp: new Date()
-//     }
-//   });
-// });
+router.post("/upload-image", uploadFile.single('file'), async (request: MulterRequest, response: Response) => {
+  const file = request?.file
+  if (!file) {
+    throw 'no image';
+  }
+  response.json({
+    status: 201,
+    data: {
+      text: "upload image",
+      url: file.location,
+      timestamp: new Date()
+    }
+  });
+});
 
 // router.post('/get-s3-buckets', (request:Request, response: Response) => {
 //   try {

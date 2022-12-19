@@ -11,12 +11,11 @@ import banner from "./api/v1/banner/banner.controller";
 import donation from "./api/v1/donation/donation.controller";
 import order from "./api/v1/order/order.controller";
 import nft from "./api/v1/nft/nft.controller";
+import utils from "./api/v1/utils/utils.controller";
 
 const router: Router = Router();
 
 router.use("/test", test);
-
-router.use("/auth", auth);
 
 router.use("/api/v1/auth", auth);
 router.use("/api/v1/org", orgs);
@@ -28,5 +27,6 @@ router.use("/api/v1/banner", banner);
 router.use("/api/v1/order", order);
 router.use("/api/v1/donation", donation);
 router.use("/api/v1/nft", nft);
+router.use("/api/v1/utils", utils);
 
 export default router;
