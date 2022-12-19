@@ -66,7 +66,7 @@ const schema = new Schema({
   status: {
     type: String,
     enums: ["PENDING", "AUTHORIZED", "UNAVAILABLE", "DELETED"],
-    default: OrgStatus.PENDING
+    default: OrgStatus.AUTHORIZED
   },
   deletedAt: { type: Date },
   createdAt: { type: Date, default: Date.now },

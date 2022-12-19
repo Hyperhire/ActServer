@@ -162,9 +162,9 @@ router.post("/user/register", async (request: Request, response: Response) => {
 // org register
 router.post("/org/register", async (request: Request, response: Response) => {
   try {
-    const orgDto = plainToInstance(RegisterOrgDto, request.body);
-    await validateBody<LoginDto>(orgDto);
-    const result = await authService.registerOrg(orgDto);
+    // const orgDto = plainToInstance(RegisterOrgDto, request.body);
+    // await validateBody<LoginDto>(orgDto);
+    const result = await authService.registerOrg(request.body);
     response.status(201).json(result);
   } catch (error) {
     logger.error(error);

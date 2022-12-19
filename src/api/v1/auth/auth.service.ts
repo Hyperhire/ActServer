@@ -14,7 +14,7 @@ import {
 } from "./dto/request.dto";
 import { LoginResponse } from "./dto/response.dto";
 
-const registerUser = async (body: RegisterUserDto) => {
+const registerUser = async body => {
   try {
     return await userService.createUser(body);
   } catch (error) {
@@ -28,9 +28,9 @@ const registerUser = async (body: RegisterUserDto) => {
  * @param orgDto 
  * @returns 
  */
-const registerOrg = async orgDto => {
+const registerOrg = async body => {
   try {
-    return await orgsService.createOrg(orgDto);
+    return await orgsService.createOrg(body);
   } catch (error) {
     throw error;
   }
