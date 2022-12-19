@@ -16,8 +16,8 @@ export const OrderPaidStatus = {
 };
 
 export const OrderPaymentType = {
-  SINGLE_PAYMENT: 1,
-  SUBSCRIPTION_PAYMENT: 2
+  SINGLE_PAYMENT: "SINGLE",
+  SUBSCRIPTION_PAYMENT: "SUBSCRIPTION"
 };
 
 export const PaymentGateway = {

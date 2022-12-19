@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { OrderType } from "../../../common/constants";
 import { DonationModel } from "./schema/donation.schema";
 
 const createDonation = async donationData => {
@@ -12,9 +13,12 @@ const createDonation = async donationData => {
 
 const getMyDonation = async userId => {
   try {
-    const donations = await DonationModel.aggregate([
+    const orgDonations = await DonationModel.aggregate([
       {
-        $match: { userId: new mongoose.Types.ObjectId(userId) }
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+          targetType: OrderType.ORGANIZATION
+        }
       },
       {
         $lookup: {
@@ -35,7 +39,45 @@ const getMyDonation = async userId => {
       { $unwind: "$org" },
       { $sort: { createdAt: -1 } }
     ]);
-    return donations;
+    const campaignDonations = await DonationModel.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+          targetType: OrderType.CAMPAIGN
+        }
+      },
+      {
+        $lookup: {
+          from: "campaigns",
+          foreignField: "_id",
+          localField: "targetId",
+          as: "campaign"
+        }
+      },
+      { $unwind: "$campaign" },
+      {
+        $lookup: {
+          from: "orgs",
+          foreignField: "_id",
+          localField: "campaign.orgId",
+          as: "org"
+        }
+      },
+      {
+        $lookup: {
+          from: "orders",
+          foreignField: "donationId",
+          localField: "_id",
+          as: "orders"
+        }
+      },
+      { $unwind: "$org" },
+      { $sort: { createdAt: -1 } }
+    ]);
+    return {
+      orgs: orgDonations,
+      campaigns: campaignDonations
+    };
   } catch (error) {
     throw error;
   }

@@ -33,7 +33,7 @@ const schema = new Schema<Order>({
     enums: ["notyet", "cancel", "approved"],
     default: OrderPaidStatus.NOT_YET
   }, // ["notyet", "cancel", "approved"]
-  paymentType: { type: String, enums: [1, 2] }, // 1: single, 2: subscription
+  paymentType: { type: String, enums: ["SINGLE", "SUBSCRIPTION"] }, // 1: single, 2: subscription
   kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal
   kakaoSID: { type: String }, // kakao pay subscription tansaction id
   nft: { type: String },

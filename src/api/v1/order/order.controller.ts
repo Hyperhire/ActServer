@@ -131,8 +131,8 @@ router.post(
       const order = await orderService.getOrderById(orderId);
 
       // Approve Kakao PG
-      const pg_token = request.body.pg_token;
-      await kakaopayApprove(order, pg_token);
+      // const pg_token = request.body.pg_token;
+      // await kakaopayApprove(order, pg_token);
 
       const res = await KasWallet.mintNft(order, user.wallet.address);
 
