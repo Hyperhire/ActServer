@@ -2,6 +2,8 @@ import { Types } from "mongoose";
 import { DonationModel } from "../donation/schema/donation.schema";
 import orgsService from "../orgs/orgs.service";
 import { OrderModel } from "./schema/order.schema";
+import { OrderPaidStatus, OrderType } from "./../../../common/constants";
+import campaignsService from "../campaigns/campaigns.service";
 
 const createOrder = async orderData => {
   try {
@@ -39,25 +41,13 @@ const getOrderById = async orderId => {
   }
 };
 
-const getOrderAndDonation = async orderId => {
-  try {
-    const order = await OrderModel.findOne({ _id: orderId });
-
-    const donation = await DonationModel.findOne({ _id: "112kljfa" });
-
-    return { order, donation };
-  } catch (error) {
-    throw error;
-  }
-};
-
 const getMyOrders = async userId => {
   try {
     const orders = await OrderModel.aggregate([
       {
         $match: {
           userId: new Types.ObjectId(userId),
-          paidStatus: "approved"
+          paidStatus: OrderPaidStatus.APPROVED
         }
       },
       {
@@ -87,19 +77,28 @@ const getMyOrders = async userId => {
 };
 
 const getOrgInfoByOrder = async order => {
-  const { targetType, targetId } = order;
-  if (targetType === "ORG") {
-    const org = await orgsService.getOrgById(targetId);
-    return org;
+  try {
+    const { targetType, targetId } = order;
+
+    if (targetType === OrderType.ORGANIZATION) {
+      const org = await orgsService.getOrgById(targetId);
+      return org;
+    } else if (targetType === OrderType.CAMPAIGN) {
+      const { orgId } = await campaignsService.getCampaignById(targetId);
+      const org = await orgsService.getOrgById(orgId);
+      return org;
+    }
+
+    throw "Invalid order targetType";
+  } catch (error) {
+    throw error;
   }
-  return { name: "error company", nftImageUrl: "" };
 };
 
 export default {
   createOrder,
   updateOrder,
   getOrderById,
-  getOrderAndDonation,
   getMyOrders,
   getOrgInfoByOrder
 };

@@ -1,8 +1,10 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Router, Response } from "express";
+import { UserType } from "../../../common/constants";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import orgsService from "../orgs/orgs.service";
 import userService from "../user/user.service";
 import authService from "./auth.service";
 import {
@@ -14,8 +16,6 @@ import {
 
 const router = Router();
 
-// TODO: 통합 로그인 처리하기
-
 // user login
 /*
 {
@@ -23,6 +23,31 @@ const router = Router();
   "password":"hello",
 }
 */
+router.post("/login", async (request: Request, response: Response) => {
+  try {
+    const { loginType } = request.body;
+    const loginDto = plainToInstance(LoginDto, request.body);
+    await validateBody<LoginDto>(loginDto);
+
+    const userType = await authService.checkUserTypeOnLoginByEmail(
+      request.body.email
+    );
+
+    let result;
+
+    if (userType === UserType.INDIVIDUAL) {
+      result = await authService.loginUser(loginDto);
+    } else {
+      result = await authService.loginOrg(loginDto);
+    }
+
+    return response.status(201).json({ data: result });
+  } catch (error) {
+    logger.error(error);
+    return response.status(400).json({ error });
+  }
+});
+
 router.post("/user/login", async (request: Request, response: Response) => {
   try {
     const loginDto = plainToInstance(LoginDto, request.body);
@@ -168,9 +193,7 @@ router.get(
     try {
       // const queryDto = plainToInstance(QueryDto, request.query);
       // await validateBody<QueryDto>(queryDto);
-      const result = await authService.checkNickName(
-        request.query.nickname
-      );
+      const result = await authService.checkNickName(request.query.nickname);
       response.status(200).json({ data: result });
     } catch (error) {
       logger.error(error);
@@ -179,17 +202,25 @@ router.get(
   }
 );
 
-router.get("/org", async (request: Request, response: Response) => {
-  try {
-    const queryDto = plainToInstance(QueryDto, request.query);
-    await validateBody<QueryDto>(queryDto);
-    const result = await authService.checkOrgNickName(queryDto);
-    response.status(200).json(result);
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
+router.get(
+  "/my",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const { id: userId, userType } = request["user"].id;
+      let info;
+      if (userType === UserType.INDIVIDUAL) {
+        info = await userService.getUserById(userId);
+      } else {
+        info = await orgsService.getOrgById(userId);
+      }
+      response.status(200).json({ data: info });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
   }
-});
+);
 
 router.get(
   "/user/my",
@@ -198,7 +229,7 @@ router.get(
     try {
       const userId = request["user"].id;
       const user = await userService.getUserById(userId);
-      response.status(200).json(user);
+      response.status(200).json({ data: user });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });

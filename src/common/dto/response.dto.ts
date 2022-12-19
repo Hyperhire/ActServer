@@ -16,5 +16,6 @@ export const validationError: BaseResponse = {
 
 
 export interface UserToken {
-    id: string
+    id: string,
+    userType: string,
 }

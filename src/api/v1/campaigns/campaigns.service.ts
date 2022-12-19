@@ -68,7 +68,7 @@ const getCampaignById = async campaignId => {
         $unwind: "$org"
       }
     ]);
-    return campaign;
+    return campaign[0];
   } catch (error) {
     throw error;
   }

@@ -105,48 +105,28 @@ const router = Router();
    *                    }
    *                }
    */
-router.post("/", 
-    jwtMiddleware.verifyToken,
-    async (request: Request, response: Response) => {
-  try {
-    const donationDTO = plainToInstance(CreateDonationDTO, request.body);
-    await validateBody<CreateDonationDTO>(donationDTO);
-    const donationData = {
+router.post(
+  "/",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      // const donationDTO = plainToInstance(CreateDonationDTO, request.body);
+      // await validateBody<CreateDonationDTO>(donationDTO);
+      const donationData = {
         userId: request["user"].id,
         ...request.body
+      };
+      const donation = await donationService.createDonation(donationData);
+
+      return response.status(201).json({
+        data: donation
+      });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
     }
-    const newDonation = await donationService.createDonation(donationData);
-
-    const orderData = {
-        userId: request["user"].id,
-        donationId: newDonation._id,
-        paidStatus: "notyet" 
-    }
-
-    const newOrder = await orderService.createOrder(orderData);
-    const kakaopayReadyResult = await kakaopayReady(newOrder, newDonation);
-    await orderService.updateOrder(newOrder._id, { kakaoTID: kakaopayReadyResult.data.tid})
-
-        return response.status(201).json({ 
-        data: {
-            donation: newDonation,
-            order: newOrder
-        },
-        redirectURLS: {
-            web: kakaopayReadyResult.data.next_redirect_pc_url,
-            mobile: kakaopayReadyResult.data.next_redirect_mobile_url
-        }
-    });
-    // return response.status(201).json({ data: {
-    //     donation: newDonation
-    //     } 
-    // });
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
   }
-});
-
+);
 
 /**
    * @swagger
@@ -161,17 +141,19 @@ router.post("/",
    *       '200':
    *         description: 성공
    */
-router.get("/my", 
-    jwtMiddleware.verifyToken,
-    async (request: Request, response: Response) => {
-  try {
-    const donations = await donationService.getMyDonation(request["user"].id);
-    
-    return response.status(200).json({ data: donations });
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
+router.get(
+  "/my",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const donations = await donationService.getMyDonation(request["user"].id);
+
+      return response.status(200).json({ data: donations });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
   }
-});
+);
 
 export default router;

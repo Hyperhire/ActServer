@@ -4,14 +4,13 @@ import { logger } from "../../../logger/winston.logger";
 import { RegisterOrgDto, RegisterUserDto } from "../auth/dto/request.dto";
 import { BaseOrgDto, OrgDto } from "./dto/request.dto";
 import { OrgModel } from "./schema/org.schema";
+import { OrgStatus } from "./../../../common/constants";
 
-const createOrg = async (
-  orgDto: RegisterOrgDto
-): Promise<BaseOrgDto | Error> => {
+const createOrg = async orgDto => {
   try {
     const passwordHash = await makeHash(orgDto.password);
     orgDto.password = passwordHash;
-    let org: OrgDto = await getOrgUserByEmail(orgDto.email);
+    let org = await getOrgByEmail(orgDto.email);
 
     if (org) {
       throw "Email already exists";
@@ -20,45 +19,6 @@ const createOrg = async (
     org = await OrgModel.create(orgDto);
 
     return org;
-  } catch (error) {
-    throw error;
-  }
-};
-
-const getOrgUserByEmail = async (email: string): Promise<OrgDto> => {
-  try {
-    const org: OrgDto = await OrgModel.findOne({
-      email: email
-    });
-    return org;
-  } catch (error) {
-    throw error;
-  }
-};
-
-const getOrgUserByNickName = async (nickname: string) => {
-  try {
-    const org: BaseOrgDto = await OrgModel.findOne({
-      nickname: nickname
-    });
-    return org;
-  } catch (error) {
-    logger.error(error);
-    throw error;
-  }
-};
-
-const partialUpdate = async (id: string, body: any) => {
-  try {
-  } catch (error) {}
-};
-
-const getList = async (): Promise<Array<any>> => {
-  try {
-    const orgs: Array<any> = await OrgModel.find({})
-      .sort({ createdAt: -1 })
-      .select("-password");
-    return orgs;
   } catch (error) {
     throw error;
   }
@@ -75,11 +35,46 @@ const getOrgById = async id => {
   }
 };
 
+const getOrgByEmail = async email => {
+  try {
+    const org = await OrgModel.findOne({
+      email: email
+    });
+    return org;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getOrgByNickName = async nickname => {
+  try {
+    const org = await OrgModel.findOne({
+      nickname: nickname
+    });
+    return org;
+  } catch (error) {
+    logger.error(error);
+    throw error;
+  }
+};
+
+const getList = async () => {
+  try {
+    const orgs = await OrgModel.find({
+      status: OrgStatus.AUTHORIZED
+    })
+      .sort({ createdAt: -1 })
+      .select("-password");
+    return orgs;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
-  getOrgUserByEmail,
-  partialUpdate,
-  getOrgUserByNickName,
   createOrg,
-  getList,
-  getOrgById
+  getOrgById,
+  getOrgByEmail,
+  getOrgByNickName,
+  getList
 };

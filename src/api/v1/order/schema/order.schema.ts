@@ -1,4 +1,5 @@
 import { Schema, model, Types } from "mongoose";
+import { OrderPaidStatus } from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Order {
@@ -8,9 +9,11 @@ interface Order {
   donationId: Types.ObjectId;
   pg: string;
   amount: number;
+  paymentType: string;
   isRecurring: boolean;
   paidStatus: string;
   kakaoTID: string;
+  kakaoSID: string;
   nft: string;
   paidAt: Date;
   createdAt: Date;
@@ -28,9 +31,11 @@ const schema = new Schema<Order>({
   paidStatus: {
     type: String,
     enums: ["notyet", "cancel", "approved"],
-    default: "notyet"
+    default: OrderPaidStatus.NOT_YET
   }, // ["notyet", "cancel", "approved"]
+  paymentType: { type: String, enums: [1, 2] }, // 1: single, 2: subscription
   kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal
+  kakaoSID: { type: String }, // kakao pay subscription tansaction id
   nft: { type: String },
   paidAt: { type: Date },
   createdAt: { type: Date, default: Date.now },

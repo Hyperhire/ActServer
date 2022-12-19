@@ -5,18 +5,6 @@ import { RegisterUserDto } from "../auth/dto/request.dto";
 import { BaseUserDto, UserDto } from "./dto/request.dto";
 import { UserModel } from "./schema/user.schema";
 
-const getUserByNickName = async (nickname: string) => {
-  try {
-    const user: BaseUserDto = await UserModel.findOne({
-      nickname: nickname
-    });
-    return user;
-  } catch (error) {
-    logger.error(error);
-    throw error;
-  }
-};
-
 const createUser = async userDto => {
   try {
     const userExist = await getUserByEmail(userDto.email);
@@ -34,7 +22,6 @@ const createUser = async userDto => {
     throw error;
   }
 };
-
 const getUserById = async (userId: string) => {
   try {
     const user = await UserModel.findOne({
@@ -57,15 +44,21 @@ const getUserByEmail = async (email: string): Promise<UserDto> => {
   }
 };
 
-const partialUpdate = async (id: string, body: any) => {
+const getUserByNickName = async (nickname: string) => {
   try {
-  } catch (error) {}
+    const user: BaseUserDto = await UserModel.findOne({
+      nickname: nickname
+    });
+    return user;
+  } catch (error) {
+    logger.error(error);
+    throw error;
+  }
 };
 
 export default {
-  getUserByNickName,
-  partialUpdate,
+  createUser,
   getUserById,
   getUserByEmail,
-  createUser
+  getUserByNickName
 };

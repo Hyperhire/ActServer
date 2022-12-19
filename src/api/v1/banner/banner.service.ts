@@ -4,7 +4,9 @@ import { BannerModel } from "./schema/banner.schema";
 
 const createBanner = async bannerData => {
   try {
-    const newBanners = await BannerModel.create(bannerData);
+    const sequence = (await getMaxSeq()) + 1;
+    
+    const newBanners = await BannerModel.create({ ...bannerData, sequence });
 
     return newBanners;
   } catch (error) {
@@ -42,4 +44,13 @@ const updateBanner = async (bannerId, updateData) => {
   }
 };
 
-export default { createBanner, getBanners, updateBanner };
+const getMaxSeq = async () => {
+  try {
+    const { sequence } = await BannerModel.findOne({}).sort({ sequence: -1 });
+    return sequence;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default { createBanner, getBanners, updateBanner, getMaxSeq };

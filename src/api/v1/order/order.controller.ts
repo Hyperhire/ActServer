@@ -1,15 +1,12 @@
 import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import {
-  kakaopayApprove,
-  kakaopayApproveNew,
-  kakaopayReadyNew
-} from "../../../utils/kakaopay";
+import { kakaopayApprove, kakaopayReady } from "../../../utils/kakaopay";
 import orderService from "./order.service";
 import KasWallet from "./../../../utils/kasWallet";
 import userService from "../user/user.service";
 import donationService from "../donation/donation.service";
+import { OrderPaidStatus } from "./../../../common/constants";
 
 const router = Router();
 
@@ -19,11 +16,10 @@ router.post(
   async (request: Request, response: Response) => {
     try {
       const userId = request["user"].id;
-      // TODO: Create basic order with status 'notyet'
       const order = await orderService.createOrder({ userId, ...request.body });
 
-      // TODO: Create Kakao PG
-      const kakaopayReadyResult = await kakaopayReadyNew(order);
+      // TODO: NAVER PG 분기 태우기
+      const kakaopayReadyResult = await kakaopayReady(order);
       await orderService.updateOrder(order._id, {
         kakaoTID: kakaopayReadyResult.data.tid
       });
@@ -124,73 +120,6 @@ router.get(
   }
 );
 
-/**
-   * @swagger
-   *  /api/v1/order/approve/kakao:
-   *    post:
-   *      tags:
-   *      - orderV1
-   *      description: 결제 승인하기
-   *      comsumes:
-   *      - application/json
-   *      parameters:
-   *        - name: orderId
-   *          in: body
-   *          required: true
-   *          schema:
-   *              type: string
-   *              example: "63983aa27edf70db0fa4fc21"
-   *          description: 주문 ID
-   *        - name: pg_token
-   *          in: body
-   *          required: true
-   *          schema:
-   *              type: string
-   *              example: "54a319690f80b476ee2b"
-   *          description: redirection queryparams로 온 데이터
-   *      responses:
-   *       '201':
-   *         description: 성공
-   *         examples:
-   *            application/json:
-   *                {
-   *                    "data": {
-   *                            "userId": "6397e53dbea9b5b5dbdb7472",
-   *                            "donationId": "63983aa27edf70db0fa4fc21",
-   *                            "paidStatus": "approved",
-   *                            "_id": "63985618b9c748e2979a880c",
-   *                            "createdAt": "2022-12-13T10:38:16.351Z",
-   *                            "updatedAt": "2022-12-13T10:38:16.351Z",
-   *                            "__v": 0
-   *                    }
-   *                }
-   */
-router.post(
-  "/approve/kakao",
-  jwtMiddleware.verifyToken,
-  async (request: Request, response: Response) => {
-    try {
-      const orderId = request.body.orderId;
-      const pg_token = request.body.pg_token;
-
-      const { order, donation } = await orderService.getOrderAndDonation(
-        orderId
-      );
-
-      await kakaopayApprove(order, donation, pg_token);
-
-      const updatedOrder = await orderService.updateOrder(orderId, {
-        paidStatus: "approved"
-      });
-
-      return response.status(200).json({ data: updatedOrder });
-    } catch (error) {
-      logger.error(error);
-      return response.status(400).json({ error });
-    }
-  }
-);
-
 router.post(
   "/complete",
   jwtMiddleware.verifyToken,
@@ -198,22 +127,18 @@ router.post(
     try {
       const orderId = request.body.id;
       const userId = request["user"].id;
+      const user = await userService.getUserById(userId);
       const order = await orderService.getOrderById(orderId);
 
-      // Approve Kakao
+      // Approve Kakao PG
       const pg_token = request.body.pg_token;
-      await kakaopayApproveNew(order, pg_token);
+      await kakaopayApprove(order, pg_token);
 
-      // create Metadata
-      const { uri } = await KasWallet.createMetadataNew(order);
-
-      // mint NFT
-      const user = await userService.getUserById(userId);
-      const res = await KasWallet.mintNftNew(uri, user.wallet.address);
+      const res = await KasWallet.mintNft(order, user.wallet.address);
 
       // input NFT receipt to order
       const receiptAddedOrder = await orderService.updateOrder(orderId, {
-        paidStatus: "approved",
+        paidStatus: OrderPaidStatus.APPROVED,
         paidAt: new Date().toISOString(),
         nft: res.token_id
       });
@@ -238,11 +163,59 @@ router.post(
       });
 
       // input NFT receipt to order
-      const finalOrder = await orderService.updateOrder(orderId, {
+      await orderService.updateOrder(orderId, {
         donationId: donation._id
       });
 
       return response.status(200).json({ data: donation });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.post(
+  "/canceled",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const orderId = request.body.id;
+      const userId = request["user"].id;
+
+      // // Approve Kakao PG
+      // const pg_token = request.body.pg_token;
+      // await kakaopayApprove(order, pg_token);
+
+      const updatedOrder = await orderService.updateOrder(orderId, {
+        status: OrderPaidStatus.CANCEL
+      });
+
+      return response.status(200).json({ data: updatedOrder });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.post(
+  "/failed",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const orderId = request.body.id;
+      const userId = request["user"].id;
+
+      // // Approve Kakao PG
+      // const pg_token = request.body.pg_token;
+      // await kakaopayApprove(order, pg_token);
+
+      const updatedOrder = await orderService.updateOrder(orderId, {
+        status: OrderPaidStatus.FAIL
+      });
+
+      return response.status(200).json({ data: updatedOrder });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });

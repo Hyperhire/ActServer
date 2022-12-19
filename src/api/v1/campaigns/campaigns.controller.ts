@@ -43,7 +43,7 @@ router.get("/", async (request: Request, response: Response) => {
 router.get("/:id", async (request: Request, response: Response) => {
   try {
     const campaign = await campaignsService.getCampaignById(request.params.id);
-    return response.status(200).json({ data: campaign[0] });
+    return response.status(200).json({ data: campaign });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });

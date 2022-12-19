@@ -1,15 +1,16 @@
 import { Schema, model } from "mongoose";
+import { UserStatus } from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 const schema = new Schema({
-  email: { type: String, required: true, unique: true },
-  nickname: { type: String, required: true, unique: true },
-  name: { type: String },
-  password: { type: String },
   loginType: {
     type: String,
     enums: ["EMAIL", "NAVER", "KAKAO", "APPLE", "GOOGLE"]
   },
+  email: { type: String, required: true, unique: true },
+  nickname: { type: String, required: true, unique: true },
+  name: { type: String },
+  password: { type: String },
   constant: {
     getGovernmentReceiptService: {
       type: Boolean,
@@ -24,7 +25,11 @@ const schema = new Schema({
     mobile: { type: String },
     dateOfBirth: { type: Date }
   },
-  status: { type: String, enums: ["NORMAL", "DELETED"], default: "NORMAL" },
+  status: {
+    type: String,
+    enums: ["NORMAL", "DELETED"],
+    default: UserStatus.NORMAL
+  },
   wallet: { type: Object },
   deletedAt: { type: Date },
   createdAt: { type: Date, default: Date.now },

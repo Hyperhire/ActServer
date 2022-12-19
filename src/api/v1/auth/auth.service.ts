@@ -1,3 +1,4 @@
+import { UserType } from "../../../common/constants";
 import { compareHash } from "../../../common/helper/crypto.helper";
 import { encode } from "../../../common/helper/jwt.helper";
 import { logger } from "../../../logger/winston.logger";
@@ -27,9 +28,7 @@ const registerUser = async (body: RegisterUserDto) => {
  * @param orgDto 
  * @returns 
  */
-const registerOrg = async (
-  orgDto: RegisterOrgDto
-): Promise<BaseOrgDto | Error> => {
+const registerOrg = async orgDto => {
   try {
     return await orgsService.createOrg(orgDto);
   } catch (error) {
@@ -52,7 +51,10 @@ const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
     if (!isEqualHash) {
       throw "password missmatch";
     }
-    const token = encode({ id: user._id.toString() });
+    const token = encode({
+      id: user._id.toString(),
+      userType: UserType.INDIVIDUAL
+    });
     return {
       token
     };
@@ -68,12 +70,15 @@ const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
  */
 const loginOrg = async (loginDto: LoginDto) => {
   try {
-    const org: OrgDto = await orgsService.getOrgUserByEmail(loginDto.email);
+    const org = await orgsService.getOrgByEmail(loginDto.email);
     const isEqualHash = await compareHash(loginDto.password, org.password);
     if (!isEqualHash) {
       throw "password missmatch";
     }
-    const token = encode({ id: org._id.toString() });
+    const token = encode({
+      id: org._id.toString(),
+      userType: UserType.ORGANIZATION
+    });
     return {
       token
     };
@@ -90,7 +95,7 @@ const loginOrg = async (loginDto: LoginDto) => {
 const checkNickName = async nickname => {
   try {
     const user = await userService.getUserByNickName(nickname);
-    const org = await orgsService.getOrgUserByNickName(nickname);
+    const org = await orgsService.getOrgByNickName(nickname);
     return { duplicated: !!user || !!org };
   } catch (error) {
     throw error;
@@ -100,7 +105,7 @@ const checkNickName = async nickname => {
 const checkEmail = async email => {
   try {
     const user = await userService.getUserByEmail(email);
-    const org = await orgsService.getOrgUserByEmail(email);
+    const org = await orgsService.getOrgByEmail(email);
     return { duplicated: !!user || !!org };
   } catch (error) {
     throw error;
@@ -114,7 +119,23 @@ const checkEmail = async email => {
  */
 const checkOrgNickName = async (queryDto: QueryDto) => {
   try {
-    return await orgsService.getOrgUserByNickName(queryDto.nickname);
+    return await orgsService.getOrgByNickName(queryDto.nickname);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const checkUserTypeOnLoginByEmail = async email => {
+  try {
+    const user = await userService.getUserByEmail(email);
+    if (!!user) {
+      return UserType.INDIVIDUAL;
+    }
+    const org = await orgsService.getOrgByEmail(email);
+    if (!!org) {
+      return UserType.ORGANIZATION;
+    }
+    throw "user not found";
   } catch (error) {
     throw error;
   }
@@ -127,5 +148,6 @@ export default {
   loginUser,
   checkNickName,
   checkEmail,
-  checkOrgNickName
+  checkOrgNickName,
+  checkUserTypeOnLoginByEmail
 };

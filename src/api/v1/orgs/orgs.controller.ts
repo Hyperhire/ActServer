@@ -29,7 +29,7 @@ router.post("/", async (request: Request, response: Response) => {
 // get orgs list
 router.get("/", async (request: Request, response: Response) => {
   try {
-    const orgs: Array<BaseOrgDto> = await orgsService.getList();
+    const orgs = await orgsService.getList();
     return response.status(200).json({ data: orgs });
   } catch (error) {
     logger.error(error);
@@ -42,7 +42,7 @@ router.get("/:id", async (request: Request, response: Response) => {
   try {
     const idDto = plainToInstance(IdDto, request.params);
     await validateBody<IdDto>(idDto);
-    const org: BaseOrgDto = await orgsService.getOrgById(idDto.id);
+    const org = await orgsService.getOrgById(idDto.id);
     return response.status(200).json({ data: org });
   } catch (error) {
     logger.error(error);

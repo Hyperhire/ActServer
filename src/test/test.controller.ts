@@ -1,6 +1,7 @@
 import { Request, Router, Response } from "express";
 import KasWallet from "../utils/kasWallet";
 import multer from "multer";
+// import { getBuckets, uploadFile } from "../utils/upload";
 
 const router = Router();
 const upload = multer();
@@ -19,24 +20,35 @@ router.get("/", (request: Request, response: Response) => {
   });
 });
 
-router.post(
-  "/create-kas-wallet",
-  async (request: Request, response: Response) => {
-    try {
-      console.log("create kas wallet");
-      const wallet = await KasWallet.createWallet();
-      return response.status(200).json({
-        data: {
-          text: "hello, this is conan from hyperhire",
-          timestamp: new Date(),
-          wallet
-        }
-      });
-    } catch (error) {
-      return response.status(400).json({ error });
-    }
-  }
-);
+// router.post("/upload-image", upload.single('file'), async (request: MulterRequest, response: Response) => {
+//   const file = request?.file
+//   console.log("file", file);
+//   if (!file) {
+//     throw 'no image';
+//   }
+//   await uploadFile(file)
+//   response.json({
+//     status: 201,
+//     data: {
+//       text: "upload image",
+//       timestamp: new Date()
+//     }
+//   });
+// });
+
+// router.post('/get-s3-buckets', (request:Request, response: Response) => {
+//   try {
+
+//     const buckets = getBuckets();
+//     return response.status(201).json({
+//       data: buckets
+//     })
+//   } catch (error) {
+//     return response.status(400).json({
+//       error
+//     })
+//   }
+// })
 
 //TODO: form data 처리하는게 이슈네
 router.post(
@@ -62,53 +74,5 @@ router.post(
     }
   }
 );
-
-router.post(
-  "/create-metadata",
-  async (request: Request, response: Response) => {
-    try {
-      const metadata = await KasWallet.createMetadata();
-      return response.status(201).json({
-        data: {
-          text: "create metadata",
-          timestamp: new Date(),
-          metadata
-        }
-      });
-    } catch (error) {
-      return response.status(400).json({ error });
-    }
-  }
-);
-
-router.post("/mint-nft", async (request: Request, response: Response) => {
-  try {
-    const nft = await KasWallet.mintNft();
-    return response.status(201).json({
-      data: {
-        text: "mint NFT",
-        timestamp: new Date(),
-        nft
-      }
-    });
-  } catch (error) {
-    return response.status(400).json({ error });
-  }
-});
-
-router.get("/nft/detail", async (request: Request, response: Response) => {
-  try {
-    const nftDetail = await KasWallet.getNftDataTest();
-    return response.status(201).json({
-      data: {
-        text: "mint NFT",
-        timestamp: new Date(),
-        nftDetail
-      }
-    });
-  } catch (error) {
-    return response.status(400).json({ error });
-  }
-});
 
 export default router;

@@ -4,28 +4,37 @@ import bannerService from "./banner.service";
 const router = Router();
 
 router.post("/", async (request: Request, response: Response) => {
-//   console.log("request from get banner", request.params, request.query);
-  const newBanner = await bannerService.createBanner(request.body);
+  try {
+    //   console.log("request from get banner", request.params, request.query);
+    const newBanner = await bannerService.createBanner(request.body);
 
-  response.status(201);
-  response.send({ data: newBanner });
+    response.status(201).send({ data: newBanner });
+  } catch (error) {
+    response.status(400).send({ error });
+  }
 });
 
 router.get("/", async (request: Request, response: Response) => {
-  //   console.log("request from get banner", request.params, request.query);
-  const banners = await bannerService.getBanners();
+  try {
+    //   console.log("request from get banner", request.params, request.query);
+    const banners = await bannerService.getBanners();
 
-  response.status(200);
-  response.send({ data: banners });
+    response.status(200).send({ data: banners });
+  } catch (error) {
+    response.status(400).send({ error });
+  }
 });
 
 router.patch("/:id", async (request: Request, response: Response) => {
-  const bannerId = request.params.id;
-  const updateData = request.body;
-  const banner = await bannerService.updateBanner(bannerId, updateData);
+  try {
+    const bannerId = request.params.id;
+    const updateData = request.body;
+    const banner = await bannerService.updateBanner(bannerId, updateData);
 
-  response.status(200);
-  response.send({ data: banner });
+    response.status(200).send({ data: banner });
+  } catch (error) {
+    response.status(400).send({ error });
+  }
 });
 
 export default router;
