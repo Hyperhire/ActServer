@@ -15,6 +15,7 @@ router.post(
   uploadFile('images').single("test"),
   async (request: MulterRequest, response: Response) => {
     try {
+      console.log('upload-image', request.body)
       const file = request?.file
       if (!file) {
         throw 'no image';

@@ -19,6 +19,7 @@ const router = Router();
 
 interface MulterRequest extends Request {
   file: any;
+  image: any;
 }
 
 // user login
@@ -164,7 +165,7 @@ router.post(
   uploadFile("images").single("image"),
   async (request: MulterRequest, response: Response) => {
     try {
-      console.log('data input', request?.file, request.body, request.body?.data)
+      console.log('data input', request?.file, request.body.image, request.body?.data)
       const file = request?.file
       if (!file) {
         throw 'no Business Registration Image';
