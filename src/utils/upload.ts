@@ -10,20 +10,22 @@ const s3 = new S3Client({
   }
 });
 
-const uploadFile = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: "doact-dev",
-    acl: "public-read",
-    contentType: multerS3.AUTO_CONTENT_TYPE,
-    key: (req, file, cb) => {
-      return cb(null, `images/${Date.now()}_${file.originalname}`);
+const uploadFile = folder =>
+  multer({
+    storage: multerS3({
+      s3: s3,
+      bucket: "doact-dev",
+      acl: "public-read",
+      contentType: multerS3.AUTO_CONTENT_TYPE,
+      key: (req, file, cb) => {
+        console.log('file inside multer is', file)
+        return cb(null, `${folder}/${Date.now()}_${file.originalname}`);
+      }
+    }),
+    limits: {
+      fileSize: 1024 * 1024 * 5
     }
-  }),
-  limits: {
-    fileSize: 1024 * 1024 * 5
-  }
-});
+  });
 
 const getBuckets = async () => {
   await s3.listBuckets((err, data) => {

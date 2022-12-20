@@ -4,31 +4,21 @@ import { OrgStatus } from "./../../../../common/constants";
 
 // {
 //   "loginType": "EMAIL",
-//   "email": "juhyun@gmail.com",
-//   "nickname": "JUHYUNHAHAHA",
-//   "name": "NGO",
+//   "email": "juhyun123@gmail.com",
+//   "nickname": "JUHYUNHAHAHA123",
+//   "name": "NGO 22",
 //   "password": "1q1q1q1q!",
+//   "constant": {
+//       "agreeTnc": true,
+//       "agreePrivacyPolicy": true
+//   },
 //   "manager": {
 //       "name": "Juhyun Kim",
 //       "mobile": "01029222406"
 //   },
-//   "businessRegistrationUrl": "https://www.google.com/imgres?imgurl=https%3A%2F%2Fitem.kakaocdn.net%2Fdo%2F717fa436c9fe7a058b5729539e3bb9a4f604e7b0e6900f9ac53a43965300eb9a&imgrefurl=https%3A%2F%2Fe.kakao.com%2Ft%2Fdetective-conan-ver5&tbnid=H3xIV3mMLHID1M&vet=12ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg..i&docid=5xlC9oGzWlF_DM&w=210&h=210&q=%EC%BD%94%EB%82%9C%20%EC%9D%B4%EB%AF%B8%EC%A7%80&ved=2ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg",
+//   "businessRegistrationUrl": "https://doact-dev.s3.ap-northeast-2.amazonaws.com/business-registration/1671445836789_img.png",
 //   "businessRegistrationNumber": "427-86-01187",
-//   "homepageUrl": "https://zigup.in",
-//   "logoUrl": "https://www.google.com/imgres?imgurl=https%3A%2F%2Fitem.kakaocdn.net%2Fdo%2F717fa436c9fe7a058b5729539e3bb9a4f604e7b0e6900f9ac53a43965300eb9a&imgrefurl=https%3A%2F%2Fe.kakao.com%2Ft%2Fdetective-conan-ver5&tbnid=H3xIV3mMLHID1M&vet=12ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg..i&docid=5xlC9oGzWlF_DM&w=210&h=210&q=%EC%BD%94%EB%82%9C%20%EC%9D%B4%EB%AF%B8%EC%A7%80&ved=2ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg",
-//   "imageUrls": [
-//       "https://www.google.com/imgres?imgurl=https%3A%2F%2Fitem.kakaocdn.net%2Fdo%2F717fa436c9fe7a058b5729539e3bb9a4f604e7b0e6900f9ac53a43965300eb9a&imgrefurl=https%3A%2F%2Fe.kakao.com%2Ft%2Fdetective-conan-ver5&tbnid=H3xIV3mMLHID1M&vet=12ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg..i&docid=5xlC9oGzWlF_DM&w=210&h=210&q=%EC%BD%94%EB%82%9C%20%EC%9D%B4%EB%AF%B8%EC%A7%80&ved=2ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg",
-//       "https://www.google.com/imgres?imgurl=https%3A%2F%2Fitem.kakaocdn.net%2Fdo%2F717fa436c9fe7a058b5729539e3bb9a4f604e7b0e6900f9ac53a43965300eb9a&imgrefurl=https%3A%2F%2Fe.kakao.com%2Ft%2Fdetective-conan-ver5&tbnid=H3xIV3mMLHID1M&vet=12ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg..i&docid=5xlC9oGzWlF_DM&w=210&h=210&q=%EC%BD%94%EB%82%9C%20%EC%9D%B4%EB%AF%B8%EC%A7%80&ved=2ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg"
-//   ],
-//   "shortDescription": "Short Description",
-//   "longDescription": "Loooooooooooong",
-//   "bankDetail": {
-//       "bankName": "",
-//       "accountHolder": "",
-//       "acountNumber": "",
-//       "accountCopyUrl": ""
-//   },
-//   "bannerUrl": "https://www.google.com/imgres?imgurl=https%3A%2F%2Fitem.kakaocdn.net%2Fdo%2F717fa436c9fe7a058b5729539e3bb9a4f604e7b0e6900f9ac53a43965300eb9a&imgrefurl=https%3A%2F%2Fe.kakao.com%2Ft%2Fdetective-conan-ver5&tbnid=H3xIV3mMLHID1M&vet=12ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg..i&docid=5xlC9oGzWlF_DM&w=210&h=210&q=%EC%BD%94%EB%82%9C%20%EC%9D%B4%EB%AF%B8%EC%A7%80&ved=2ahUKEwi-jt_mkIH8AhXV6mEKHTqpAKMQMygTegUIARCLAg"
+//   "homepageUrl": "https://zigup.in"
 // }
 
 const schema = new Schema({
@@ -44,11 +34,16 @@ const schema = new Schema({
     name: { type: String },
     mobile: { type: String }
   },
+  constant: {
+    isEmailVerified: { type: Boolean, default: false },
+    agreeTnc: { type: Boolean, isRequired: true },
+    agreePrivacyPolicy: { type: Boolean, isRequired: true }
+  },
   businessRegistrationUrl: { type: String },
   businessRegistrationNumber: { type: String },
   homepageUrl: { type: String },
   logoUrl: { type: String },
-  imageUrls: { type: [String] },
+  imageUrls: { type: [String], default: [] },
   shortDescription: { type: String },
   longDescription: { type: String },
   bankDetail: {
@@ -66,7 +61,7 @@ const schema = new Schema({
   status: {
     type: String,
     enums: ["PENDING", "AUTHORIZED", "UNAVAILABLE", "DELETED"],
-    default: OrgStatus.AUTHORIZED
+    default: OrgStatus.PENDING
   },
   deletedAt: { type: Date },
   createdAt: { type: Date, default: Date.now },

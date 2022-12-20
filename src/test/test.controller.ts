@@ -20,7 +20,18 @@ router.get("/", (request: Request, response: Response) => {
   });
 });
 
-router.post("/upload-image", uploadFile.single('file'), async (request: MulterRequest, response: Response) => {
+router.post("/", uploadFile('images').single('file'), (request: MulterRequest, response: Response) => {
+  console.log('--', JSON.parse(JSON.stringify(request.body)),request.body, JSON.parse(request.body.manager));
+  response.json({
+    status: 200,
+    data: {
+      text: "hello, this is conan from hyperhire",
+      timestamp: new Date()
+    }
+  });
+});
+
+router.post("/upload-image", uploadFile('images').single('file'), async (request: MulterRequest, response: Response) => {
   const file = request?.file
   if (!file) {
     throw 'no image';

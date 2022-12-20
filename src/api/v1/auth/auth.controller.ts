@@ -4,6 +4,7 @@ import { UserType } from "../../../common/constants";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import { uploadFile } from "../../../utils/upload";
 import orgsService from "../orgs/orgs.service";
 import userService from "../user/user.service";
 import authService from "./auth.service";
@@ -16,11 +17,16 @@ import {
 
 const router = Router();
 
+interface MulterRequest extends Request {
+  file: any;
+}
+
 // user login
 /*
 {
   "email":"conan.kim22@hyperhire.in",
   "password":"hello",
+  "loginType":"EMAIL"
 }
 */
 router.post("/login", async (request: Request, response: Response) => {
@@ -42,31 +48,6 @@ router.post("/login", async (request: Request, response: Response) => {
     }
 
     return response.status(201).json({ data: result });
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
-  }
-});
-
-router.post("/user/login", async (request: Request, response: Response) => {
-  try {
-    const loginDto = plainToInstance(LoginDto, request.body);
-    await validateBody<LoginDto>(loginDto);
-    const result = await authService.loginUser(loginDto);
-    return response.status(201).json({ data: result });
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
-  }
-});
-
-// org login
-router.post("/org/login", async (request: Request, response: Response) => {
-  try {
-    const loginDto = plainToInstance(LoginDto, request.body);
-    await validateBody<LoginDto>(loginDto);
-    const result = await authService.loginOrg(loginDto);
-    response.status(201).json({ data: result });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
@@ -159,18 +140,52 @@ router.post("/user/register", async (request: Request, response: Response) => {
   }
 });
 
+// {
+//   "loginType": "EMAIL",
+//   "email": "juhyun123@gmail.com",
+//   "nickname": "JUHYUNHAHAHA123",
+//   "name": "NGO 22",
+//   "password": "1q1q1q1q!",
+//   "constant": {
+//       "agreeTnc": true,
+//       "agreePrivacyPolicy": true
+//   },
+//   "manager": {
+//       "name": "Juhyun Kim",
+//       "mobile": "01029222406"
+//   },
+//   "businessRegistrationUrl": "https://doact-dev.s3.ap-northeast-2.amazonaws.com/business-registration/1671445836789_img.png",
+//   "businessRegistrationNumber": "427-86-01187",
+//   "homepageUrl": "https://zigup.in"
+// }
 // org register
-router.post("/org/register", async (request: Request, response: Response) => {
-  try {
-    // const orgDto = plainToInstance(RegisterOrgDto, request.body);
-    // await validateBody<LoginDto>(orgDto);
-    const result = await authService.registerOrg(request.body);
-    response.status(201).json(result);
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
+router.post(
+  "/org/register",
+  uploadFile("images").single("image"),
+  async (request: MulterRequest, response: Response) => {
+    try {
+      console.log('data input', request.body?.data)
+      const file = request?.file
+      if (!file) {
+        throw 'no Business Registration Image';
+      }
+      const registerData = request.body?.data;
+      if (!registerData) {
+        throw "no Register Data"
+      }
+      const _registerData = JSON.parse(registerData);
+      _registerData.businessRegistrationUrl = file.location
+      // const orgDto = plainToInstance(RegisterOrgDto, request.body);
+      // await validateBody<LoginDto>(orgDto);
+      console.log('registerData', _registerData)
+      const result = await authService.registerOrg(_registerData);
+      response.status(201).json(result);
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
   }
-});
+);
 
 router.get(
   "/check-duplicate-email",
@@ -215,21 +230,6 @@ router.get(
         info = await orgsService.getOrgById(userId);
       }
       response.status(200).json({ data: info });
-    } catch (error) {
-      logger.error(error);
-      return response.status(400).json({ error });
-    }
-  }
-);
-
-router.get(
-  "/user/my",
-  jwtMiddleware.verifyToken,
-  async (request: Request, response: Response) => {
-    try {
-      const userId = request["user"].id;
-      const user = await userService.getUserById(userId);
-      response.status(200).json({ data: user });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
