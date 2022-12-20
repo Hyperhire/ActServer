@@ -129,26 +129,26 @@ router.post("/login", async (request: Request, response: Response) => {
  *              example: false
  *          description: 개인정보수집 동의 여부
  */
-router.post("/user/register",
-uploadFile("images").single("image"),
-async (request: Request, response: Response) => {
-  try {
-    // const user = plainToInstance(RegisterUserDto, request.body);
-    // await validateBody<RegisterUserDto>(user);
-    console.log('body is', request.body)
-    const registerData = request.body?.data;
-    if (!registerData) {
-      throw "no Register Data"
+router.post(
+  "/user/register",
+  uploadFile("images").single("image"),
+  async (request: Request, response: Response) => {
+    try {
+      // const user = plainToInstance(RegisterUserDto, request.body);
+      // await validateBody<RegisterUserDto>(user);
+      const registerData = request.body?.data;
+      if (!registerData) {
+        throw "no Register Data"
+      }
+      const _registerData = JSON.parse(registerData);
+      const result = await authService.registerUser(_registerData);
+      response.status(201).json(result);
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
     }
-    const _registerData = JSON.parse(registerData);
-    console.log('user data', _registerData)
-    const result = await authService.registerUser(_registerData);
-    response.status(201).json(result);
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
   }
-});
+);
 
 // {
 //   "loginType": "EMAIL",
