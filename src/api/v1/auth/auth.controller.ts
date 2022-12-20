@@ -133,7 +133,12 @@ router.post("/user/register", async (request: Request, response: Response) => {
   try {
     // const user = plainToInstance(RegisterUserDto, request.body);
     // await validateBody<RegisterUserDto>(user);
-    const result = await authService.registerUser(request.body);
+    const registerData = request.body?.data;
+    if (!registerData) {
+      throw "no Register Data"
+    }
+      const _registerData = JSON.parse(registerData);
+    const result = await authService.registerUser(_registerData);
     response.status(201).json(result);
   } catch (error) {
     logger.error(error);
@@ -165,7 +170,6 @@ router.post(
   uploadFile("images").single("image"),
   async (request: MulterRequest, response: Response) => {
     try {
-      console.log('data input', request?.file, request.body)
       const file = request?.file
       if (!file) {
         throw 'no Business Registration Image';
@@ -178,7 +182,6 @@ router.post(
       _registerData.businessRegistrationUrl = file.location
       // const orgDto = plainToInstance(RegisterOrgDto, request.body);
       // await validateBody<LoginDto>(orgDto);
-      console.log('registerData', _registerData)
       const result = await authService.registerOrg(_registerData);
       response.status(201).json(result);
     } catch (error) {
