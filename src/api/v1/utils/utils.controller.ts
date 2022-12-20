@@ -12,7 +12,7 @@ interface MulterRequest extends Request {
 
 router.post(
   "/upload-image",
-  uploadFile('images').single("test"),
+  uploadFile('images').single("image"),
   async (request: MulterRequest, response: Response) => {
     try {
       console.log('upload-image', request.body)
