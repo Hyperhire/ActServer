@@ -129,7 +129,9 @@ router.post("/login", async (request: Request, response: Response) => {
  *              example: false
  *          description: 개인정보수집 동의 여부
  */
-router.post("/user/register", async (request: Request, response: Response) => {
+router.post("/user/register",
+uploadFile("images").single("image"),
+async (request: Request, response: Response) => {
   try {
     // const user = plainToInstance(RegisterUserDto, request.body);
     // await validateBody<RegisterUserDto>(user);
