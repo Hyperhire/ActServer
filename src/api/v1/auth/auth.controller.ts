@@ -133,6 +133,7 @@ router.post("/user/register", async (request: Request, response: Response) => {
   try {
     // const user = plainToInstance(RegisterUserDto, request.body);
     // await validateBody<RegisterUserDto>(user);
+    console.log('body is', request.body)
     const registerData = request.body?.data;
     if (!registerData) {
       throw "no Register Data"
