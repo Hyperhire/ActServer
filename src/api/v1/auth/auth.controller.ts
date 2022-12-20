@@ -174,14 +174,17 @@ router.post(
       if (!file) {
         throw 'no Business Registration Image';
       }
+
       const registerData = request.body?.data;
       if (!registerData) {
         throw "no Register Data"
       }
+      
       const _registerData = JSON.parse(registerData);
       _registerData.businessRegistrationUrl = file.location
       // const orgDto = plainToInstance(RegisterOrgDto, request.body);
       // await validateBody<LoginDto>(orgDto);
+      
       const result = await authService.registerOrg(_registerData);
       response.status(201).json(result);
     } catch (error) {
