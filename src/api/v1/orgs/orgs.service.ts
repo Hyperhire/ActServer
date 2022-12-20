@@ -8,13 +8,14 @@ import { OrgStatus } from "./../../../common/constants";
 
 const createOrg = async orgDto => {
   try {
-    const passwordHash = await makeHash(orgDto.password);
-    orgDto.password = passwordHash;
     let org = await getOrgByEmail(orgDto.email);
-
+    
     if (org) {
       throw "Email already exists";
     }
+    
+    const passwordHash = await makeHash(orgDto.password);
+    orgDto.password = passwordHash;
 
     org = await OrgModel.create(orgDto);
 
