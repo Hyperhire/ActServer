@@ -164,7 +164,7 @@ router.post(
   uploadFile("images").single("image"),
   async (request: MulterRequest, response: Response) => {
     try {
-      console.log('data input', request?.file, request.body?.data)
+      console.log('data input', request?.file, request.body, request.body?.data)
       const file = request?.file
       if (!file) {
         throw 'no Business Registration Image';
