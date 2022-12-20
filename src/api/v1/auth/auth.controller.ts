@@ -137,7 +137,8 @@ router.post("/user/register", async (request: Request, response: Response) => {
     if (!registerData) {
       throw "no Register Data"
     }
-      const _registerData = JSON.parse(registerData);
+    const _registerData = JSON.parse(registerData);
+    console.log('user data', _registerData)
     const result = await authService.registerUser(_registerData);
     response.status(201).json(result);
   } catch (error) {
