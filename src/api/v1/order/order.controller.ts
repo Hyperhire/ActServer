@@ -7,7 +7,7 @@ import KasWallet from "./../../../utils/kasWallet";
 import userService from "../user/user.service";
 import donationService from "../donation/donation.service";
 import { OrderPaidStatus, OrderPaymentType } from "./../../../common/constants";
-import subscription_orderService from "../order_subscription/subscription_order.service";
+import subscription_orderService from "../subscription_order/subscription_order.service";
 
 const router = Router();
 
@@ -168,6 +168,7 @@ router.post(
       const updateParentsInfo: any = { donationId: donation._id };
 
       if (order.paymentType === OrderPaymentType.SUBSCRIPTION_PAYMENT) {
+        console.log('hello..? payment type subscription?')
         // if order is subscription payment, create subscription order for next time
         const sOrder = await subscription_orderService.createSubscriptionOrder({
           userId,

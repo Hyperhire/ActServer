@@ -10,6 +10,7 @@ import faqs from "./api/v1/faq/faq.controller";
 import banner from "./api/v1/banner/banner.controller";
 import donation from "./api/v1/donation/donation.controller";
 import order from "./api/v1/order/order.controller";
+import subscriptionOrder from "./api/v1/subscription_order/subscription_order.controller";
 import nft from "./api/v1/nft/nft.controller";
 import utils from "./api/v1/utils/utils.controller";
 
@@ -25,6 +26,7 @@ router.use("/api/v1/notice", notices);
 router.use("/api/v1/faq", faqs);
 router.use("/api/v1/banner", banner);
 router.use("/api/v1/order", order);
+router.use("/api/v1/subscription-order", subscriptionOrder);
 router.use("/api/v1/donation", donation);
 router.use("/api/v1/nft", nft);
 router.use("/api/v1/utils", utils);

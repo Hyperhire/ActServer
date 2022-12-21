@@ -1,5 +1,4 @@
 import { Schema, model, Types } from "mongoose";
-import { OrderPaidStatus } from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface SubscriptionOrder {

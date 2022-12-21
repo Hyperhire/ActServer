@@ -1,6 +1,7 @@
 import { SubscriptionOrderModel } from "./schema/subscription_order.schema";
 
 const createSubscriptionOrder = async data => {
+  console.log("create subscription order,", data);
   try {
     const sOrder = await SubscriptionOrderModel.create(data);
 
