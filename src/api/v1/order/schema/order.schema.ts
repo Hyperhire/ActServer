@@ -10,6 +10,7 @@ interface Order {
   pg: string;
   amount: number;
   paymentType: string;
+  subscriptionOn: number;
   paidStatus: string;
   kakaoTID: string;
   kakaoSID: string;
@@ -32,6 +33,7 @@ const schema = new Schema<Order>({
     default: OrderPaidStatus.NOT_YET
   }, // ["notyet", "cancel", "approved"]
   paymentType: { type: String, enums: ["SINGLE", "SUBSCRIPTION"] },
+  subscriptionOn: { type: Number, enums: [1, 10, 20] },
   kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal
   kakaoSID: { type: String }, // kakao pay subscription tansaction id
   nft: { type: String },

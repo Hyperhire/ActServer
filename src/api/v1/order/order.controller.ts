@@ -168,20 +168,19 @@ router.post(
       const updateParentsInfo: any = { donationId: donation._id };
 
       if (order.paymentType === OrderPaymentType.SUBSCRIPTION_PAYMENT) {
-        console.log("hello..? payment type subscription?");
         // if order is subscription payment, create subscription order for next time
         const sOrder = await subscription_orderService.createSubscriptionOrder({
           userId,
           targetType,
           targetId,
           donationId: donation._id,
+          subscriptionOn: receiptAddedOrder.subscriptionOn,
           pg,
           amount,
           kakaoSID: receiptAddedOrder.kakaoSID,
           lastPaidAt: paidAt
         });
 
-        console.log("sOrder", sOrder);
         // if order is subscription, update on order also
         updateParentsInfo.subscriptionOrderId = sOrder._id;
       }

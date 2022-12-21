@@ -44,3 +44,9 @@ export const OrgStatus = {
   UNAVAILABLE: "UNAVAILABLE",
   DELETED: "DELETED"
 };
+
+export const SubscriptionDate = {
+  FIRST:1,
+  TENTH: 10,
+  TWENTIETH: 20,
+}
