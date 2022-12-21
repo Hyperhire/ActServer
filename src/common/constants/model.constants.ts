@@ -9,7 +9,8 @@ const ModelNames = {
   News: "news",
   Notice: "notice",
   Donation: "donation",
-  Order: "order"
+  Order: "order",
+  SubscriptionOrder: "subscriptionOrder"
 };
 
 export { ModelNames };

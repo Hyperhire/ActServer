@@ -146,6 +146,7 @@ router.get(
   jwtMiddleware.verifyToken,
   async (request: Request, response: Response) => {
     try {
+      console.log("--", request["user"]);
       const donations = await donationService.getMyDonation(request["user"].id);
 
       return response.status(200).json({ data: donations });

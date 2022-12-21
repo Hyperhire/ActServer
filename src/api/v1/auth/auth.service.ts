@@ -1,6 +1,6 @@
 import { UserType } from "../../../common/constants";
 import { compareHash } from "../../../common/helper/crypto.helper";
-import { encode } from "../../../common/helper/jwt.helper";
+import { createJWT, encode } from "../../../common/helper/jwt.helper";
 import { logger } from "../../../logger/winston.logger";
 import { BaseOrgDto, OrgDto } from "../orgs/dto/request.dto";
 import orgsService from "../orgs/orgs.service";
@@ -51,7 +51,7 @@ const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
     if (!isEqualHash) {
       throw "password missmatch";
     }
-    const token = encode({
+    const token = createJWT({
       id: user._id.toString(),
       userType: UserType.INDIVIDUAL
     });
@@ -75,7 +75,7 @@ const loginOrg = async (loginDto: LoginDto) => {
     if (!isEqualHash) {
       throw "password missmatch";
     }
-    const token = encode({
+    const token = createJWT({
       id: org._id.toString(),
       userType: UserType.ORGANIZATION
     });

@@ -7,6 +7,7 @@ import KasWallet from "./../../../utils/kasWallet";
 import userService from "../user/user.service";
 import donationService from "../donation/donation.service";
 import { OrderPaidStatus, OrderPaymentType } from "./../../../common/constants";
+import subscription_orderService from "../order_subscription/subscription_order.service";
 
 const router = Router();
 
@@ -136,6 +137,7 @@ router.post(
 
       const res = await KasWallet.mintNft(order, user.wallet.address);
 
+      // Update NFT to order
       const updateInfo: any = {
         paidStatus: OrderPaidStatus.APPROVED,
         paidAt: new Date().toISOString(),
@@ -152,28 +154,36 @@ router.post(
       );
 
       // create Donation
-      const {
-        targetType,
-        targetId,
-        pg,
-        amount,
-        isRecurring,
-        paidAt
-      } = receiptAddedOrder;
+      const { targetType, targetId, pg, amount, paidAt } = receiptAddedOrder;
       const donation = await donationService.createDonation({
         userId,
         targetType,
         targetId,
         pg,
         amount,
-        isRecurring,
         startedAt: paidAt
       });
 
       // input NFT receipt to order
-      await orderService.updateOrder(orderId, {
-        donationId: donation._id
-      });
+      const updateParentsInfo: any = { donationId: donation._id };
+
+      if (order.paymentType === OrderPaymentType.SUBSCRIPTION_PAYMENT) {
+        // if order is subscription payment, create subscription order for next time
+        const sOrder = await subscription_orderService.createSubscriptionOrder({
+          userId,
+          targetType,
+          targetId,
+          donationId: donation._id,
+          pg,
+          amount,
+          kakaoSID: receiptAddedOrder.kakaoSID,
+          lastPaidAt: paidAt
+        });
+        // if order is subscription, update on order also
+        updateParentsInfo.subscriptionOrderId = sOrder._id;
+      }
+
+      await orderService.updateOrder(orderId, updateParentsInfo);
 
       return response.status(200).json({ data: donation });
     } catch (error) {
