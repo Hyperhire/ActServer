@@ -266,14 +266,17 @@ router.get(
   async (request: Request, response: Response) => {
     try {
       const { id: userId, userType } = request["user"];
+
       let info;
+      let pgSummary;
 
       if (userType === UserType.INDIVIDUAL) {
         info = await userService.getUserById(userId);
+        pgSummary = await userService.getUserPgSummary(userId);
       } else {
         info = await orgsService.getOrgById(userId);
       }
-      return response.status(200).json({ data: info });
+      return response.status(200).json({ data: { info, pgSummary } });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -288,14 +291,14 @@ router.get(
     try {
       const { id: userId, userType } = request["user"];
       let info;
-      console.log("----", userType, typeof userType, userType === UserType.INDIVIDUAL);
+      let pgSummary;
       if (userType === UserType.INDIVIDUAL) {
         info = await userService.getUserPgSummary(userId);
+        pgSummary = await userService.getUserPgSummary(userId);
       } else {
-        console.log("hello???");
         info = await orgsService.getOrgById(userId);
       }
-      return response.status(200).json({ data: info });
+      return response.status(200).json({ data: pgSummary });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });

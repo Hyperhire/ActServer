@@ -58,7 +58,7 @@ const getNoticeById = async newsId => {
       }
     ]);
 
-    return _notice;
+    return _notice[0];
   } catch (error) {
     logger.error(error);
     throw error;

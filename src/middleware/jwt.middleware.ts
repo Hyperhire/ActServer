@@ -7,7 +7,6 @@ const verifyToken = (req: Request, res: Response, next: Function) => {
   try {
     const token = req.headers["authorization"].split(" ").slice(-1)[0];
     const decoded = decode(token);
-    console.log("token", token, decoded);
     logger.info(decoded);
     req["user"] = decoded;
     next();

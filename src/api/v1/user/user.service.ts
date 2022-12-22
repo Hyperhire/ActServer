@@ -2,8 +2,12 @@ import { makeHash } from "../../../common/helper/crypto.helper";
 import { logger } from "../../../logger/winston.logger";
 import KasWallet from "../../../utils/kasWallet";
 import { RegisterUserDto } from "../auth/dto/request.dto";
+import { OrderModel } from "../order/schema/order.schema";
 import { BaseUserDto, UserDto } from "./dto/request.dto";
 import { UserModel } from "./schema/user.schema";
+import { Types } from "mongoose";
+import { OrderPaidStatus } from "./../../../common/constants";
+import { SubscriptionModel } from "../subscription/schema/subscription.schema";
 
 const selectInfo = {};
 
@@ -60,8 +64,56 @@ const getUserByNickName = async (nickname: string) => {
 
 const getUserPgSummary = async userId => {
   try {
-    const totalAmount = 1000;
-    console.log("totalAmount", totalAmount);
+    const total = await OrderModel.aggregate([
+      {
+        $match: {
+          userId: new Types.ObjectId(userId),
+          paidStatus: OrderPaidStatus.APPROVED,
+          paymentType: { $exists: true }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$amount" },
+          totalCount: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const subscription = await SubscriptionModel.aggregate([
+      {
+        $match: { userId: new Types.ObjectId(userId) }
+      },
+      {
+        $group: {
+          _id: "$active",
+          totalAmount: { $sum: "$amount" },
+          totalCount: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const result = {
+      totalAmount: 0,
+      totalCount: 0,
+      currentSubscriptionAmount: 0,
+      totalSubscriptionCount: 0
+    };
+    if (total.length) {
+      result.totalAmount = total[0].totalAmount;
+      result.totalCount = total[0].totalCount;
+    }
+    if (subscription.length) {
+      result.currentSubscriptionAmount = subscription.filter(
+        item => item._id
+      )[0].totalAmount;
+      result.totalSubscriptionCount = subscription.reduce(
+        (a, b) => a + b.totalCount,
+        0
+      );
+    }
+    return result;
   } catch (error) {
     throw error;
   }
