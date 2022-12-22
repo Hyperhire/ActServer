@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
-interface SubscriptionOrder {
+interface Subscription {
   userId: Types.ObjectId;
   targetType: string;
   targetId: Types.ObjectId;
@@ -17,7 +17,7 @@ interface SubscriptionOrder {
   updatedAt: Date;
 }
 
-const schema = new Schema<SubscriptionOrder>({
+const schema = new Schema<Subscription>({
   userId: { type: Schema.Types.ObjectId },
   targetType: { type: String, enums: ["ORG", "CAMPAIGN"] },
   targetId: { type: Schema.Types.ObjectId },
@@ -32,9 +32,6 @@ const schema = new Schema<SubscriptionOrder>({
   updatedAt: { type: Date, default: Date.now }
 });
 
-const SubscriptionOrderModel = model<SubscriptionOrder>(
-  ModelNames.SubscriptionOrder,
-  schema
-);
+const SubscriptionModel = model<Subscription>(ModelNames.Subscription, schema);
 
-export { SubscriptionOrderModel };
+export { SubscriptionModel };

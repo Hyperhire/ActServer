@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import subscription_orderService from "./subscription_order.service";
+import subscriptionService from "./subscription.service";
 
 const router = Router();
 
@@ -11,7 +11,11 @@ router.post(
     try {
       const { id } = request.body;
       if (!id) throw "Id is empty";
-      const updatedOrder = await subscription_orderService.updateSubscriptionOrder(
+      const userId = request["user"].id;
+      const subscription = await subscriptionService.getSubscriptionOrderById(id);
+      if (subscription.userId !== userId) throw "Unauthorized"
+      
+      const updatedOrder = await subscriptionService.updateSubscriptionOrder(
         id,
         {
           active: false
@@ -29,7 +33,7 @@ router.post(
   jwtMiddleware.verifyToken,
   async (request: Request, response: Response) => {
     try {
-      const payments = await subscription_orderService.doPaymentAll();
+      const payments = await subscriptionService.doPaymentAll();
       return response.status(201).send({});
     } catch (error) {
       return response.status(400).send({ error });

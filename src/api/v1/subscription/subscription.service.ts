@@ -1,14 +1,14 @@
-import { SubscriptionOrderModel } from "./schema/subscription_order.schema";
+import { SubscriptionModel } from "./schema/subscription.schema";
 import { kakaopayRequestSubcriptionPayment } from "../../../utils/kakaopay";
 import orderService from "../order/order.service";
-import { OrderPaidStatus } from "./../../../common/constants";
+import { OrderPaidStatus } from "../../../common/constants";
 import KasWallet from "../../../utils/kasWallet";
 import authService from "../auth/auth.service";
 import userService from "../user/user.service";
 
 const createSubscriptionOrder = async data => {
   try {
-    const sOrder = await SubscriptionOrderModel.create(data);
+    const sOrder = await SubscriptionModel.create(data);
 
     return sOrder;
   } catch (error) {
@@ -18,7 +18,7 @@ const createSubscriptionOrder = async data => {
 
 const updateSubscriptionOrder = async (id, updateData) => {
   try {
-    const order = await SubscriptionOrderModel.findOneAndUpdate(
+    const order = await SubscriptionModel.findOneAndUpdate(
       { _id: id },
       { ...updateData, updatedAt: new Date().toISOString() },
       {
@@ -34,7 +34,7 @@ const updateSubscriptionOrder = async (id, updateData) => {
 
 const getSubscriptionOrderById = async id => {
   try {
-    const order = await SubscriptionOrderModel.findOne({ _id: id });
+    const order = await SubscriptionModel.findOne({ _id: id });
 
     return order;
   } catch (error) {
@@ -44,7 +44,7 @@ const getSubscriptionOrderById = async id => {
 
 const getActiveSubscriptionOrders = async () => {
   try {
-    const order = await SubscriptionOrderModel.find({ active: true });
+    const order = await SubscriptionModel.find({ active: true });
 
     return order;
   } catch (error) {
@@ -93,12 +93,11 @@ const doPaymentAll = async () => {
         // create nft
         const user = await userService.getUserById(userId.toString());
         const res = await KasWallet.mintNft(order, user.wallet.address);
-        
+
         // update nft
         await orderService.updateOrder(order._id, {
           nft: res.token_id
         });
-
       }
     });
   } catch (error) {
