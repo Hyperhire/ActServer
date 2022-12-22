@@ -12,16 +12,19 @@ router.post(
       const { id } = request.body;
       if (!id) throw "Id is empty";
       const userId = request["user"].id;
-      const subscription = await subscriptionService.getSubscriptionOrderById(id);
-      if (subscription.userId !== userId) throw "Unauthorized"
-      
-      const updatedOrder = await subscriptionService.updateSubscriptionOrder(
+      const subscription = await subscriptionService.getSubscriptionOrderById(
+        id
+      );
+      if (subscription.userId !== userId) throw "Unauthorized";
+
+      const updatedSubscription = await subscriptionService.updateSubscriptionOrder(
         id,
         {
-          active: false
+          active: false,
+          inactiveAt: new Date().toISOString(),
         }
       );
-      return response.status(201).send({ data: updatedOrder });
+      return response.status(201).send({ data: updatedSubscription });
     } catch (error) {
       return response.status(400).send({ error });
     }

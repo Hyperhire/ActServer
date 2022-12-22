@@ -1,20 +1,33 @@
 import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
+import jwtMiddleware from "../../../middleware/jwt.middleware";
 import noticeService from "./notice.service";
+import { UserType } from "./../../../common/constants";
 
 const router = Router();
 
 // create notice
-router.post("/", async (request: Request, response: Response) => {
-  try {
-    const _notice = await noticeService.createNotice(request.body);
+router.post(
+  "/",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const { id, userType } = request["user"];
+      if (userType !== UserType.ORGANIZATION) {
+        throw "Unauthorized access";
+      }
+      const _notice = await noticeService.createNotice({
+        ...request.body,
+        orgId: id
+      });
 
-    return response.status(201).json({ data: _notice });
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
+      return response.status(201).json({ data: _notice });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
   }
-});
+);
 
 // notice list
 router.get("/", async (request: Request, response: Response) => {

@@ -1,20 +1,33 @@
 import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
+import jwtMiddleware from "../../../middleware/jwt.middleware";
 import newsService from "./news.service";
+import { UserType } from "./../../../common/constants";
 
 const router = Router();
 
 // create news
-router.post("/", async (request: Request, response: Response) => {
-  try {
-    const news = await newsService.createNews(request.body);
+router.post(
+  "/",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const { id, userType } = request["user"];
+      if (userType !== UserType.ORGANIZATION) {
+        throw "Unauthorized access";
+      }
+      const news = await newsService.createNews({
+        ...request.body,
+        orgId: id
+      });
 
-    return response.status(201).json({ data: news });
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
+      return response.status(201).json({ data: news });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
   }
-});
+);
 
 // news list
 router.get("/", async (request: Request, response: Response) => {

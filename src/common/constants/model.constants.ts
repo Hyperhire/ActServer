@@ -11,7 +11,8 @@ const ModelNames = {
   Notice: "notice",
   Donation: "donation",
   Order: "order",
-  Subscription: "subscription"
+  Subscription: "subscription",
+  Withdraw: "withdraw",
 };
 
 export { ModelNames };

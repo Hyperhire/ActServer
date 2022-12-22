@@ -8,6 +8,7 @@ import { OrderPaidStatus, OrgStatus } from "./../../../common/constants";
 import { OrderModel } from "../order/schema/order.schema";
 import { SubscriptionModel } from "../subscription/schema/subscription.schema";
 import { Types } from "mongoose";
+import { CampaignModel } from "../campaigns/schema/campaign.schema";
 
 const selectInfo = { bankDetail: 0, password: 0 };
 
@@ -85,7 +86,8 @@ const getOrgPgSummary = async orgId => {
       currentSubscriptionAmount: 0,
       withdrawAvailableAmount: 0
     };
-    const order = await OrderModel.aggregate([
+
+    const orgOrder = await OrderModel.aggregate([
       {
         $match: {
           targetId: new Types.ObjectId(orgId),
@@ -95,11 +97,30 @@ const getOrgPgSummary = async orgId => {
       {
         $group: {
           _id: null,
-          totalAmount: { $sum: "$amount" },
-          totalCount: { $sum: 1 }
+          totalAmount: { $sum: "$amount" }
         }
       }
     ]);
+
+    const campaigns = await CampaignModel.find({
+      orgId
+    }).select("_id");
+
+    const campaignOrder = await OrderModel.aggregate([
+      {
+        $match: {
+          targetId: { $in: campaigns.map(campaign => campaign._id) },
+          paidStatus: OrderPaidStatus.APPROVED
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$amount" }
+        }
+      }
+    ]);
+
     const subscription = await SubscriptionModel.aggregate([
       {
         $match: { targetId: new Types.ObjectId(orgId), active: true }
@@ -107,12 +128,25 @@ const getOrgPgSummary = async orgId => {
       {
         $group: {
           _id: null,
-          totalAmount: { $sum: "$amount" },
-          totalCount: { $sum: 1 }
+          totalAmount: { $sum: "$amount" }
         }
       }
     ]);
-    console.log("--", orgId, order, subscription);
+
+    const alreadyWithdrawedAmount = 0;
+
+    if (orgOrder.length) {
+      result.totalAmount = result.totalAmount + orgOrder[0].totalAmount;
+    }
+    if (campaignOrder.length) {
+      result.totalAmount = result.totalAmount + campaignOrder[0].totalAmount;
+    }
+    if (subscription.length) {
+      result.currentSubscriptionAmount = subscription[0].totalAmount;
+    }
+    result.withdrawAvailableAmount =
+      result.totalAmount - alreadyWithdrawedAmount;
+
     return result;
   } catch (error) {
     throw error;

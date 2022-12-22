@@ -6,6 +6,7 @@ import jwtMiddleware from "../../../middleware/jwt.middleware";
 import campaignsService from "./campaigns.service";
 import { CreateCampaignDto } from "./dto/request.dto";
 import { CampaignDto, CampaignOrgDto } from "./dto/response.dto";
+import { UserType } from "./../../../common/constants";
 
 const router = Router();
 
@@ -14,11 +15,14 @@ router.post(
   jwtMiddleware.verifyToken,
   async (request: Request, response: Response) => {
     try {
-      request.body.orgId = request["user"].id;
-      const createCampaignDto = plainToInstance(
-        CreateCampaignDto,
-        request.body
-      );
+      const { id, userType } = request["user"];
+      if (userType !== UserType.ORGANIZATION) {
+        throw "Unauthorized access";
+      }
+      const createCampaignDto = plainToInstance(CreateCampaignDto, {
+        ...request.body,
+        orgId: id
+      });
       await validateBody<CreateCampaignDto>(createCampaignDto);
       const campaign: CampaignDto = await campaignsService.create(
         createCampaignDto
