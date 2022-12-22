@@ -58,12 +58,19 @@ const getUserByNickName = async (nickname: string) => {
   }
 };
 
-const getUserPaymentSummary = () => {};
+const getUserPgSummary = async userId => {
+  try {
+    const totalAmount = 1000;
+    console.log("totalAmount", totalAmount);
+  } catch (error) {
+    throw error;
+  }
+};
 
 export default {
   createUser,
   getUserById,
   getUserByEmail,
   getUserByNickName,
-  getUserPaymentSummary
+  getUserPgSummary
 };

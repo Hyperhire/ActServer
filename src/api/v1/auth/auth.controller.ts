@@ -265,11 +265,34 @@ router.get(
   jwtMiddleware.verifyToken,
   async (request: Request, response: Response) => {
     try {
-      const { id: userId, userType } = request["user"].id;
+      const { id: userId, userType } = request["user"];
       let info;
+
       if (userType === UserType.INDIVIDUAL) {
         info = await userService.getUserById(userId);
       } else {
+        info = await orgsService.getOrgById(userId);
+      }
+      return response.status(200).json({ data: info });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.get(
+  "/my-summary",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const { id: userId, userType } = request["user"];
+      let info;
+      console.log("----", userType, typeof userType, userType === UserType.INDIVIDUAL);
+      if (userType === UserType.INDIVIDUAL) {
+        info = await userService.getUserPgSummary(userId);
+      } else {
+        console.log("hello???");
         info = await orgsService.getOrgById(userId);
       }
       return response.status(200).json({ data: info });
