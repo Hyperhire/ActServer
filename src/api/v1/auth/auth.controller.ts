@@ -1,12 +1,14 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Router, Response } from "express";
 import { UserType } from "../../../common/constants";
+import { createJWT, encode, decode } from "../../../common/helper/jwt.helper";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import { uploadFile } from "../../../utils/upload";
 import orgsService from "../orgs/orgs.service";
 import userService from "../user/user.service";
+import userTokenService from "../userToken/userToken.service";
 import authService from "./auth.service";
 import {
   LoginDto,
@@ -48,9 +50,39 @@ router.post("/login", async (request: Request, response: Response) => {
       result = await authService.loginOrg(loginDto);
     }
 
+    await userTokenService.createOrUpdate({
+      userId: result.user._id,
+      userType,
+      refreshToken: result.token.refreshToken
+    });
+
     return response.status(201).json({ data: result });
   } catch (error) {
     logger.error(error);
+    return response.status(400).json({ error });
+  }
+});
+
+router.post("/reissue-token", async (request: Request, response: Response) => {
+  try {
+    const refreshToken = request.body.refreshToken;
+    const userToken = await userTokenService.getUserTokenByRefreshToken(
+      refreshToken
+    );
+    if (!userToken) {
+      throw "Expired or Invalid Token. Need to sign in";
+    }
+    const { id, userType } = await decode(refreshToken);
+    const token = createJWT({ id, userType });
+
+    await userTokenService.createOrUpdate({
+      userId: id,
+      userType,
+      refreshToken: token.refreshToken
+    });
+
+    return response.status(201).json({ data: token });
+  } catch (error) {
     return response.status(400).json({ error });
   }
 });
@@ -136,13 +168,13 @@ router.post(
     try {
       // const user = plainToInstance(RegisterUserDto, request.body);
       // await validateBody<RegisterUserDto>(user);
-      const registerData = request.body?.data;
+      const registerData = request.body.data;
       if (!registerData) {
-        throw "no Register Data"
+        throw "no Register Data";
       }
       const _registerData = JSON.parse(registerData);
       const result = await authService.registerUser(_registerData);
-      response.status(201).json(result);
+      return response.status(201).json({ data: result });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -174,23 +206,23 @@ router.post(
   uploadFile("images").single("image"),
   async (request: MulterRequest, response: Response) => {
     try {
-      const file = request?.file
+      const file = request.file;
       if (!file) {
-        throw 'no Business Registration Image';
+        throw "no Business Registration Image";
       }
 
-      const registerData = request.body?.data;
+      const registerData = request.body.data;
       if (!registerData) {
-        throw "no Register Data"
+        throw "no Register Data";
       }
-      
+
       const _registerData = JSON.parse(registerData);
-      _registerData.businessRegistrationUrl = file.location
+      _registerData.businessRegistrationUrl = file.location;
       // const orgDto = plainToInstance(RegisterOrgDto, request.body);
       // await validateBody<LoginDto>(orgDto);
-      
+
       const result = await authService.registerOrg(_registerData);
-      response.status(201).json(result);
+      return response.status(201).json({ data: result });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -205,7 +237,7 @@ router.get(
       // const queryDto = plainToInstance(QueryDto, request.query);
       // await validateBody<QueryDto>(queryDto);
       const result = await authService.checkEmail(request.query.email);
-      response.status(200).json({ data: result });
+      return response.status(200).json({ data: result });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -220,7 +252,7 @@ router.get(
       // const queryDto = plainToInstance(QueryDto, request.query);
       // await validateBody<QueryDto>(queryDto);
       const result = await authService.checkNickName(request.query.nickname);
-      response.status(200).json({ data: result });
+      return response.status(200).json({ data: result });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -240,7 +272,7 @@ router.get(
       } else {
         info = await orgsService.getOrgById(userId);
       }
-      response.status(200).json({ data: info });
+      return response.status(200).json({ data: info });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });

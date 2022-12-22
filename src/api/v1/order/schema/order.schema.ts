@@ -41,6 +41,7 @@ const schema = new Schema<Order>({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
+
 const OrderModel = model<Order>(ModelNames.Order, schema);
 
 export { OrderModel };

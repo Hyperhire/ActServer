@@ -4,9 +4,9 @@ import { NoticeModel } from "./schema/notice.schema";
 
 const createNotice = async newsData => {
   try {
-    const _news = await NoticeModel.create(newsData);
+    const _notice = await NoticeModel.create(newsData);
 
-    return _news;
+    return _notice;
   } catch (error) {
     logger.error(error);
     throw error;
@@ -15,7 +15,7 @@ const createNotice = async newsData => {
 
 const getNotice = async () => {
   try {
-    const _news = await NoticeModel.aggregate([
+    const _notice = await NoticeModel.aggregate([
       {
         $match: { status: "APPROVED" }
       },
@@ -32,7 +32,7 @@ const getNotice = async () => {
       }
     ]);
 
-    return _news;
+    return _notice;
   } catch (error) {
     logger.error(error);
     throw error;
@@ -41,7 +41,7 @@ const getNotice = async () => {
 
 const getNoticeById = async newsId => {
   try {
-    const _news = await NoticeModel.aggregate([
+    const _notice = await NoticeModel.aggregate([
       {
         $match: { _id: new mongoose.Types.ObjectId(newsId), status: "APPROVED" }
       },
@@ -58,7 +58,7 @@ const getNoticeById = async newsId => {
       }
     ]);
 
-    return _news;
+    return _notice;
   } catch (error) {
     logger.error(error);
     throw error;
@@ -67,7 +67,7 @@ const getNoticeById = async newsId => {
 
 const getNoticeByOrgId = async orgId => {
   try {
-    const _news = await NoticeModel.aggregate([
+    const _notice = await NoticeModel.aggregate([
       {
         $match: {
           orgId: new mongoose.Types.ObjectId(orgId),
@@ -87,7 +87,7 @@ const getNoticeByOrgId = async orgId => {
       }
     ]);
 
-    return _news;
+    return _notice[0];
   } catch (error) {
     logger.error(error);
     throw error;

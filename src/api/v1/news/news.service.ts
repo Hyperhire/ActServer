@@ -87,7 +87,7 @@ const getNewsByOrgId = async orgId => {
       }
     ]);
 
-    return _news;
+    return _news[0];
   } catch (error) {
     logger.error(error);
     throw error;

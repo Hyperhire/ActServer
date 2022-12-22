@@ -34,7 +34,7 @@ router.get("/:id", async (request: Request, response: Response) => {
     const newsId = request.params.id;
     const news = await newsService.getNewsById(newsId);
 
-    return response.status(200).json({ data: news[0] });
+    return response.status(200).json({ data: news });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });

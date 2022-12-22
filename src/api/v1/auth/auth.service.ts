@@ -41,9 +41,9 @@ const registerOrg = async body => {
  * @param loginDto 
  * @returns 
  */
-const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
+const loginUser = async (loginDto: LoginDto) => {
   try {
-    const user: UserDto = await userService.getUserByEmail(loginDto.email);
+    const user = await userService.getUserByEmail(loginDto.email);
     if (!user) {
       throw "User not found";
     }
@@ -55,9 +55,7 @@ const loginUser = async (loginDto: LoginDto): Promise<LoginResponse> => {
       id: user._id.toString(),
       userType: UserType.INDIVIDUAL
     });
-    return {
-      token
-    };
+    return { token, user };
   } catch (error) {
     throw error;
   }
@@ -80,7 +78,8 @@ const loginOrg = async (loginDto: LoginDto) => {
       userType: UserType.ORGANIZATION
     });
     return {
-      token
+      token,
+      org
     };
   } catch (error) {
     throw error;

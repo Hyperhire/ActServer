@@ -1,5 +1,6 @@
 const ModelNames = {
   User: "User",
+  UserToken: "UserToken",
   UserSettings: "UserSetting",
   Org: "Org",
   Campaign: "Campaign",

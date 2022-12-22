@@ -25,24 +25,19 @@ const getList = async () => {
       {
         $unwind: "$org"
       }
-      //   {
-      //     $project: {
-      //       _id: 1,
+      // {
+      //   $project: {
+      //     org: {
       //       name: 1,
-      //       startedAt: 1,
-      //       endedAt: 1,
-      //       orgId: 1,
-      //       images: 1,
-      //       org: {
-      //         name: 1,
-      //         manager: 1,
-      //         homepage: 1,
-      //         corporateId: 1,
-      //         createdAt: 1,
-      //         updatedAt: 1
-      //       }
+      //       manager: 1,
+      //       homepage: 1,
+      //       corporateId: 1,
+      //       createdAt: 1,
+      //       updatedAt: 1,
+      //       bankDetail: 0
       //     }
       //   }
+      // }
     ]);
     return camapigns;
   } catch (error) {

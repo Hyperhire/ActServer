@@ -6,14 +6,16 @@ import { BaseOrgDto, OrgDto } from "./dto/request.dto";
 import { OrgModel } from "./schema/org.schema";
 import { OrgStatus } from "./../../../common/constants";
 
+const selectInfo = { bankDetail: 0, password: 0 };
+
 const createOrg = async orgDto => {
   try {
     let org = await getOrgByEmail(orgDto.email);
-    
+
     if (org) {
       throw "Email already exists";
     }
-    
+
     const passwordHash = await makeHash(orgDto.password);
     orgDto.password = passwordHash;
 
@@ -29,7 +31,7 @@ const getOrgById = async id => {
   try {
     const org = await OrgModel.findOne({
       _id: id
-    });
+    }).select(selectInfo);
     return org;
   } catch (error) {
     throw error;
@@ -37,6 +39,7 @@ const getOrgById = async id => {
 };
 
 const getOrgByEmail = async email => {
+  // This is used for login
   try {
     const org = await OrgModel.findOne({
       email: email
@@ -51,7 +54,7 @@ const getOrgByNickName = async nickname => {
   try {
     const org = await OrgModel.findOne({
       nickname: nickname
-    });
+    }).select(selectInfo);
     return org;
   } catch (error) {
     logger.error(error);
@@ -65,7 +68,7 @@ const getList = async () => {
       status: OrgStatus.AUTHORIZED
     })
       .sort({ createdAt: -1 })
-      .select("-password");
+      .select(selectInfo);
     return orgs;
   } catch (error) {
     throw error;

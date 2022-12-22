@@ -26,7 +26,7 @@ router.use("/api/v1/notice", notices);
 router.use("/api/v1/faq", faqs);
 router.use("/api/v1/banner", banner);
 router.use("/api/v1/order", order);
-router.use("/api/v1/subscription-order", subscriptionOrder);
+router.use("/api/v1/subscription", subscriptionOrder);
 router.use("/api/v1/donation", donation);
 router.use("/api/v1/nft", nft);
 router.use("/api/v1/utils", utils);

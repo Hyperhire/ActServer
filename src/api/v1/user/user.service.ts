@@ -5,6 +5,8 @@ import { RegisterUserDto } from "../auth/dto/request.dto";
 import { BaseUserDto, UserDto } from "./dto/request.dto";
 import { UserModel } from "./schema/user.schema";
 
+const selectInfo = {};
+
 const createUser = async userDto => {
   try {
     const userExist = await getUserByEmail(userDto.email);
@@ -48,7 +50,7 @@ const getUserByNickName = async (nickname: string) => {
   try {
     const user: BaseUserDto = await UserModel.findOne({
       nickname: nickname
-    });
+    }).select(selectInfo);
     return user;
   } catch (error) {
     logger.error(error);
@@ -56,9 +58,12 @@ const getUserByNickName = async (nickname: string) => {
   }
 };
 
+const getUserPaymentSummary = () => {};
+
 export default {
   createUser,
   getUserById,
   getUserByEmail,
-  getUserByNickName
+  getUserByNickName,
+  getUserPaymentSummary
 };

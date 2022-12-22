@@ -187,7 +187,7 @@ router.post(
 
       await orderService.updateOrder(orderId, updateParentsInfo);
 
-      return response.status(200).json({ data: donation });
+      return response.status(201).json({ data: donation });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -211,7 +211,7 @@ router.post(
         status: OrderPaidStatus.CANCEL
       });
 
-      return response.status(200).json({ data: updatedOrder });
+      return response.status(201).json({ data: updatedOrder });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -235,7 +235,7 @@ router.post(
         status: OrderPaidStatus.FAIL
       });
 
-      return response.status(200).json({ data: updatedOrder });
+      return response.status(201).json({ data: updatedOrder });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });

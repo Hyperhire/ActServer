@@ -13,7 +13,7 @@ interface MulterRequest extends Request {
 
 router.get("/", (request: Request, response: Response) => {
   try {
-    response.json({
+    return response.json({
       status: 200,
       data: {
         text: "hello, this is conan from hyperhire",
@@ -21,7 +21,21 @@ router.get("/", (request: Request, response: Response) => {
       }
     });
   } catch (error) {
-    response.json({ status: 400, error });
+    return response.json({ status: 400, error });
+  }
+});
+
+router.get("/test", (request: Request, response: Response) => {
+  try {
+    return response.json({
+      status: 200,
+      data: {
+        text: "test2",
+        timestamp: new Date()
+      }
+    });
+  } catch (error) {
+    return response.json({ status: 400, error });
   }
 });
 
@@ -38,7 +52,7 @@ router.post(
         }
       });
     } catch (error) {
-      response.json({ status: 400, error });
+      return response.json({ status: 400, error });
     }
   }
 );
@@ -48,10 +62,10 @@ router.post(
   (request: Request, response: Response) => {
     try {
       const { id } = request.body;
-      console.log('id', id)
+      console.log("id", id);
       // await kakaopayRequestSubcriptionPayment();
 
-      response.json({
+      return response.json({
         status: 200,
         data: {
           text: "kakao subscription payment test",
@@ -59,7 +73,7 @@ router.post(
         }
       });
     } catch (error) {
-      response.status(400).send({ error });
+      return response.status(400).send({ error });
     }
   }
 );
@@ -73,7 +87,7 @@ router.post(
       if (!file) {
         throw "no image";
       }
-      response.json({
+      return response.json({
         status: 201,
         data: {
           text: "upload image",
@@ -82,7 +96,7 @@ router.post(
         }
       });
     } catch (error) {
-      response.status(400).send({ error });
+      return response.status(400).send({ error });
     }
   }
 );

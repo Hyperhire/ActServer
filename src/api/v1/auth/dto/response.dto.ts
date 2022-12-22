@@ -1,3 +1,3 @@
 export interface LoginResponse {
-    token: object
+    token: any;
 }
