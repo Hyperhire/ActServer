@@ -2,12 +2,12 @@
   "name": "act-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/app.js",
+  "main": "dist/app.ts",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "nodemon dist/app.ts",
+    "start": "nodemon ./src/app.ts",
     "dev": "NODE_ENV=development nodemon ./src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

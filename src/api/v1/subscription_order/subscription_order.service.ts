@@ -1,4 +1,10 @@
 import { SubscriptionOrderModel } from "./schema/subscription_order.schema";
+import { kakaopayRequestSubcriptionPayment } from "../../../utils/kakaopay";
+import orderService from "../order/order.service";
+import { OrderPaidStatus } from "./../../../common/constants";
+import KasWallet from "../../../utils/kasWallet";
+import authService from "../auth/auth.service";
+import userService from "../user/user.service";
 
 const createSubscriptionOrder = async data => {
   try {
@@ -46,9 +52,64 @@ const getActiveSubscriptionOrders = async () => {
   }
 };
 
+const doPaymentAll = async () => {
+  try {
+    const subscriptionList = await getActiveSubscriptionOrders();
+    subscriptionList.map(async subscription => {
+      // console.log("order 121", order);
+      const {
+        _id,
+        userId,
+        targetType,
+        targetId,
+        donationId,
+        pg,
+        amount,
+        kakaoSID
+      } = subscription;
+      const { status, data } = await kakaopayRequestSubcriptionPayment(
+        subscription
+      );
+      if (status === 200) {
+        // create order
+        const order = await orderService.createOrder({
+          userId,
+          targetType,
+          targetId,
+          pg,
+          amount,
+          donationId,
+          kakaoSID,
+          paidStatus: OrderPaidStatus.APPROVED,
+          paidAt: data.approved_at
+        });
+
+        // update subscription
+        await updateSubscriptionOrder(_id, {
+          paidCount: subscription.paidCount + 1,
+          lastPaidAt: data.approved_at
+        });
+
+        // create nft
+        const user = await userService.getUserById(userId.toString());
+        const res = await KasWallet.mintNft(order, user.wallet.address);
+        
+        // update nft
+        await orderService.updateOrder(order._id, {
+          nft: res.token_id
+        });
+
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   createSubscriptionOrder,
   updateSubscriptionOrder,
   getSubscriptionOrderById,
-  getActiveSubscriptionOrders
+  getActiveSubscriptionOrders,
+  doPaymentAll
 };

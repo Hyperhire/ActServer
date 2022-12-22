@@ -11,9 +11,25 @@ router.post(
     try {
       const { id } = request.body;
       if (!id) throw "Id is empty";
-      await subscription_orderService.updateSubscriptionOrder(id, {
-        active: false
-      });
+      const updatedOrder = await subscription_orderService.updateSubscriptionOrder(
+        id,
+        {
+          active: false
+        }
+      );
+      return response.status(201).send({ data: updatedOrder });
+    } catch (error) {
+      return response.status(400).send({ error });
+    }
+  }
+);
+
+router.post(
+  "/do-payment-all",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const payments = await subscription_orderService.doPaymentAll();
       return response.status(201).send({});
     } catch (error) {
       return response.status(400).send({ error });
