@@ -64,7 +64,14 @@ const getUserByNickName = async (nickname: string) => {
 
 const getUserPgSummary = async userId => {
   try {
-    const total = await OrderModel.aggregate([
+    const result = {
+      totalAmount: 0,
+      totalCount: 0,
+      currentSubscriptionAmount: 0,
+      totalSubscriptionCount: 0
+    };
+
+    const order = await OrderModel.aggregate([
       {
         $match: {
           userId: new Types.ObjectId(userId),
@@ -94,15 +101,9 @@ const getUserPgSummary = async userId => {
       }
     ]);
 
-    const result = {
-      totalAmount: 0,
-      totalCount: 0,
-      currentSubscriptionAmount: 0,
-      totalSubscriptionCount: 0
-    };
-    if (total.length) {
-      result.totalAmount = total[0].totalAmount;
-      result.totalCount = total[0].totalCount;
+    if (order.length) {
+      result.totalAmount = order[0].totalAmount;
+      result.totalCount = order[0].totalCount;
     }
     if (subscription.length) {
       result.currentSubscriptionAmount = subscription.filter(

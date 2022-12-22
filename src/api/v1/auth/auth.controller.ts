@@ -51,7 +51,8 @@ router.post("/login", async (request: Request, response: Response) => {
     }
 
     await userTokenService.createOrUpdate({
-      userId: result.user._id,
+      userId:
+        userType === UserType.INDIVIDUAL ? result.user._id : result.org._id,
       userType,
       refreshToken: result.token.refreshToken
     });
@@ -275,6 +276,7 @@ router.get(
         pgSummary = await userService.getUserPgSummary(userId);
       } else {
         info = await orgsService.getOrgById(userId);
+        pgSummary = await orgsService.getOrgPgSummary(userId);
       }
       return response.status(200).json({ data: { info, pgSummary } });
     } catch (error) {
