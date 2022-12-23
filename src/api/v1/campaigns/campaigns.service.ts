@@ -38,7 +38,6 @@ const getList = async query => {
           as: "org"
         }
       },
-
       {
         $unwind: "$org"
       }
