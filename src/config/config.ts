@@ -14,6 +14,6 @@ export const config: ConfigKeys = {
   logDir: process.env.APP_DIR,
   jwtKey: process.env.JWT_KEY,
   hashKey: "somethingsecret", //Todo
-  JWT_EXPIRE_TIME_ACCESS: 60 * 60 * 24,
-  JWT_EXPIRE_TIME_REFRESH: 60 * 60 * 24 * 2
+  JWT_EXPIRE_TIME_ACCESS: 60 * 30,
+  JWT_EXPIRE_TIME_REFRESH: 60 * 60 * 24
 };
