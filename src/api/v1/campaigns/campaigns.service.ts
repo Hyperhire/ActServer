@@ -45,7 +45,7 @@ const getList = async query => {
     ]);
 
     const totalCount = await CampaignModel.countDocuments(searchQuery);
-    const currentLastIndex = 1 * lastIndex + _result.length;
+    const currentLastIndex = _lastIndex + _result.length;
 
     pagination.totalCount = totalCount;
     pagination.lastIndex = currentLastIndex;
