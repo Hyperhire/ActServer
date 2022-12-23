@@ -14,8 +14,8 @@ export const config: ConfigKeys = {
   port: Number(process.env.PORT) || 4001,
   logDir: process.env.APP_DIR,
   jwtKey: process.env.JWT_KEY,
-  hashKey: "somethingsecret", //Todo
-  JWT_EXPIRE_TIME_ACCESS: 60 * 1,
+  hashKey: process.env.HASH_KEY,
+  JWT_EXPIRE_TIME_ACCESS: 60 * 30,
   JWT_EXPIRE_TIME_REFRESH: 60 * 60 * 24,
   MIN_WITHDRAW_AVAILABLE_AMOUNT: 500000
 };
