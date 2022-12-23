@@ -15,26 +15,24 @@ const router = Router();
  *   description: 기부 단체 조회
  */
 
-// create orgs list
-router.post(
-  "/",
-  async (request: Request, response: Response) => {
-    try {
-      // const orgs: Array<BaseOrgDto> = await orgsService.getList(paginationDto)
-      const newOrg = await orgsService.createOrg(request.body);
-      return response.status(201).json({ data: newOrg });
-    } catch (error) {
-      logger.error(error);
-      return response.status(400).json({ error });
-    }
+// create org
+router.post("/", async (request: Request, response: Response) => {
+  try {
+    // const orgs: Array<BaseOrgDto> = await orgsService.getList(paginationDto)
+    const newOrg = await orgsService.createOrg(request.body);
+    return response.status(201).json({ data: newOrg });
+  } catch (error) {
+    logger.error(error);
+    return response.status(400).json({ error });
   }
-);
+});
 
 // get orgs list
 router.get("/", async (request: Request, response: Response) => {
   try {
-    const orgs = await orgsService.getList();
-    return response.status(200).json({ data: orgs });
+    const query = request.query;
+    const list = await orgsService.getList(query);
+    return response.status(200).json({ data: list });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });

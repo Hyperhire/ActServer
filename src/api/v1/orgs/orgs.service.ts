@@ -67,14 +67,31 @@ const getOrgByNickName = async nickname => {
   }
 };
 
-const getList = async () => {
+const getList = async query => {
   try {
-    const orgs = await OrgModel.find({
+    const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
+    const { limit, lastIndex } = query;
+    const searchQuery = {
       status: OrgStatus.AUTHORIZED
-    })
+    };
+
+    const orgs = await OrgModel.find(searchQuery)
       .sort({ createdAt: -1 })
-      .select(selectInfo);
-    return orgs;
+      .select(selectInfo)
+      .skip(1 * lastIndex || 0)
+      .limit(1 * limit || 20);
+
+    const totalCount = await OrgModel.countDocuments(searchQuery);
+    const currentLastIndex = 1 * lastIndex + orgs.length;
+
+    pagination.totalCount = totalCount;
+    pagination.lastIndex = currentLastIndex;
+    pagination.hasNext = totalCount === currentLastIndex ? false : true;
+
+    return {
+      pagination,
+      list: orgs
+    };
   } catch (error) {
     throw error;
   }
