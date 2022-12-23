@@ -1,5 +1,6 @@
 import { Schema, model, Types } from "mongoose";
 import { ModelNames } from "../../../../common/constants/model.constants";
+import { PostStatus } from "./../../../../common/constants";
 
 const schema = new Schema({
   title: { type: String },
@@ -7,8 +8,8 @@ const schema = new Schema({
   orgId: { type: Schema.Types.ObjectId, ref: ModelNames.Org },
   status: {
     type: String,
-    enum: ["PENDING_APPROVAL", "DECLINED", "APPROVED"],
-    default: "PENDING_APPROVAL"
+    enum: Object.values(PostStatus),
+    default: PostStatus.PENDING_APPROVAL
   },
   targetAmount: { type: Number, default: 0 },
   currentAmount: { type: Number, default: 0 },

@@ -1,7 +1,7 @@
 import { FAQDto } from "./dto/request.dto";
 import { FAQModel } from "./schema/faq.schema";
 
-const createFaq = async (faqDto) => {
+const createFaq = async faqDto => {
   try {
     const faqs = await FAQModel.create(faqDto);
 
@@ -11,9 +11,17 @@ const createFaq = async (faqDto) => {
   }
 };
 
-const getFaqs = async () => {
+const getFaqs = async query => {
   try {
-    const faqs = await FAQModel.find({ show: true });
+    const { keyword } = query;
+    const searchQuery = { show: true };
+    if (keyword) {
+      searchQuery["$or"] = [
+        { question: { $regex: keyword, $options: "i" } },
+        { answer: { $regex: keyword, $options: "i" } }
+      ];
+    }
+    const faqs = await FAQModel.find(searchQuery);
 
     return faqs;
   } catch (error) {

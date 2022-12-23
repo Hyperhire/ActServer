@@ -31,8 +31,8 @@ router.post("/", async (request: Request, response: Response) => {
 router.get("/", async (request: Request, response: Response) => {
   try {
     const query = request.query;
-    const list = await orgsService.getList(query);
-    return response.status(200).json({ data: list });
+    const data = await orgsService.getList(query);
+    return response.status(200).json({ data: data });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });

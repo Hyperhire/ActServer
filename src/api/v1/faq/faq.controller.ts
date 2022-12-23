@@ -8,7 +8,8 @@ const router = Router();
 
 router.get("/", async (request: Request, response: Response) => {
   try {
-    const faqs: Array<FAQDto> = await faqService.getFaqs();
+    const query = request.query;
+    const faqs: Array<FAQDto> = await faqService.getFaqs(query);
     return response.status(200).json({ data: faqs });
   } catch (error) {
     logger.error(error);

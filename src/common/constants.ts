@@ -45,13 +45,19 @@ export const OrgStatus = {
   DELETED: "DELETED"
 };
 
+export const PostStatus = {
+  PENDING_APPROVAL: "PENDING_APPROVAL",
+  DECLINED: "DECLINED",
+  APPROVED: "APPROVED"
+};
+
 export const SubscriptionDate = {
-  FIRST:1,
+  FIRST: 1,
   TENTH: 10,
-  TWENTIETH: 20,
-}
+  TWENTIETH: 20
+};
 
 export const WithdrawStatus = {
   PENDING: "PENDING",
-  COMPELETE: "COMPLETE",
-}
+  COMPELETE: "COMPLETE"
+};

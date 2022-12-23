@@ -38,7 +38,8 @@ router.post(
 );
 router.get("/", async (request: Request, response: Response) => {
   try {
-    const campaigns = await campaignsService.getList();
+    const query = request.query;
+    const campaigns = await campaignsService.getList(query);
     return response.status(200).json({ data: campaigns });
   } catch (error) {
     logger.error(error);

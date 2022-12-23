@@ -1,6 +1,7 @@
 import mongoose, { Types } from "mongoose";
 import { logger } from "../../../logger/winston.logger";
 import { NewsModel } from "./schema/news.schema";
+import { PostStatus } from "./../../../common/constants";
 
 const createNews = async newsData => {
   try {
@@ -13,12 +14,24 @@ const createNews = async newsData => {
   }
 };
 
-const getNews = async () => {
+const getNews = async query => {
   try {
-    const _news = await NewsModel.aggregate([
-      {
-        $match: { status: "APPROVED" }
-      },
+    const { limit, lastIndex, keyword } = query;
+    const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
+    const _limit = 1 * limit || 20;
+    const _lastIndex = 1 * lastIndex || 0;
+    const searchQuery = { status: PostStatus.APPROVED };
+
+    if (keyword) {
+      searchQuery["$or"] = [
+        { title: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } }
+      ];
+    }
+    const _result = await NewsModel.aggregate([
+      { $match: searchQuery },
+      { $skip: _lastIndex },
+      { $limit: _limit },
       {
         $lookup: {
           from: "orgs",
@@ -32,7 +45,17 @@ const getNews = async () => {
       }
     ]);
 
-    return _news;
+    const totalCount = await NewsModel.countDocuments(searchQuery);
+    const currentLastIndex = _lastIndex + _result.length;
+
+    pagination.totalCount = totalCount;
+    pagination.lastIndex = currentLastIndex;
+    pagination.hasNext = totalCount === currentLastIndex ? false : true;
+
+    return {
+      pagination,
+      list: _result
+    };
   } catch (error) {
     logger.error(error);
     throw error;

@@ -34,7 +34,8 @@ router.post(
 // notice list
 router.get("/", async (request: Request, response: Response) => {
   try {
-    const _notice = await noticeService.getNotice();
+    const query = request.query;
+    const _notice = await noticeService.getNotice(query);
 
     return response.status(200).json({ data: _notice });
   } catch (error) {

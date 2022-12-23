@@ -34,7 +34,8 @@ router.post(
 // news list
 router.get("/", async (request: Request, response: Response) => {
   try {
-    const news = await newsService.getNews();
+    const query = request.query;
+    const news = await newsService.getNews(query);
 
     return response.status(200).json({ data: news });
   } catch (error) {
