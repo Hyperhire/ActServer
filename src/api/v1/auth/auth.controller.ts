@@ -57,7 +57,7 @@ router.post("/login", async (request: Request, response: Response) => {
       refreshToken: result.token.refreshToken
     });
 
-    return response.status(201).json({ data: result });
+    return response.status(200).json({ data: result });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
@@ -82,7 +82,7 @@ router.post("/reissue-token", async (request: Request, response: Response) => {
       refreshToken: token.refreshToken
     });
 
-    return response.status(201).json({ data: token });
+    return response.status(200).json({ data: token });
   } catch (error) {
     return response.status(400).json({ error });
   }

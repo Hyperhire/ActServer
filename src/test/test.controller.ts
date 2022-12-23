@@ -65,8 +65,7 @@ router.post(
       console.log("id", id);
       // await kakaopayRequestSubcriptionPayment();
 
-      return response.json({
-        status: 200,
+      return response.status(200).json({
         data: {
           text: "kakao subscription payment test",
           timestamp: new Date()
@@ -87,8 +86,7 @@ router.post(
       if (!file) {
         throw "no image";
       }
-      return response.json({
-        status: 201,
+      return response.status(200).json({
         data: {
           text: "upload image",
           url: file.location,

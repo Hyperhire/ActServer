@@ -20,7 +20,7 @@ router.post(
       if (!file) {
         throw "no image";
       }
-      return response.status(201).json({
+      return response.status(200).json({
         data: {
           url: file.location
         }

@@ -24,7 +24,7 @@ router.post(
           inactiveAt: new Date().toISOString(),
         }
       );
-      return response.status(201).send({ data: updatedSubscription });
+      return response.status(200).send({ data: updatedSubscription });
     } catch (error) {
       return response.status(400).send({ error });
     }
@@ -37,7 +37,7 @@ router.post(
   async (request: Request, response: Response) => {
     try {
       const payments = await subscriptionService.doPaymentAll();
-      return response.status(201).send({});
+      return response.status(200).send({});
     } catch (error) {
       return response.status(400).send({ error });
     }
