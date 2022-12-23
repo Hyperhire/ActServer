@@ -3,6 +3,8 @@ import KasWallet from "../utils/kasWallet";
 import multer from "multer";
 import { getBuckets, uploadFile } from "../utils/upload";
 import { kakaopayRequestSubcriptionPayment } from "../utils/kakaopay";
+import authMiddleware from "../middleware/auth.middleware";
+import jwtMiddleware from "../middleware/jwt.middleware";
 
 const router = Router();
 const upload = multer();
@@ -25,19 +27,24 @@ router.get("/", (request: Request, response: Response) => {
   }
 });
 
-router.get("/test", (request: Request, response: Response) => {
-  try {
-    return response.json({
-      status: 200,
-      data: {
-        text: "test2",
-        timestamp: new Date()
-      }
-    });
-  } catch (error) {
-    return response.json({ status: 400, error });
+router.get(
+  "/test",
+  jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyUser,
+  (request: Request, response: Response) => {
+    try {
+      return response.json({
+        status: 200,
+        data: {
+          text: "test2",
+          timestamp: new Date()
+        }
+      });
+    } catch (error) {
+      return response.json({ status: 400, error });
+    }
   }
-});
+);
 
 router.post(
   "/",

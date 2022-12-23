@@ -6,14 +6,20 @@ import orderService from "./order.service";
 import KasWallet from "./../../../utils/kasWallet";
 import userService from "../user/user.service";
 import donationService from "../donation/donation.service";
-import { OrderPaidStatus, OrderPaymentType } from "./../../../common/constants";
+import {
+  OrderPaidStatus,
+  OrderPaymentType,
+  UserType
+} from "./../../../common/constants";
 import subscriptionService from "../subscription/subscription.service";
+import authMiddleware from "../../../middleware/auth.middleware";
 
 const router = Router();
 
 router.post(
   "/",
   jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyUser,
   async (request: Request, response: Response) => {
     try {
       const userId = request["user"].id;
@@ -124,10 +130,12 @@ router.get(
 router.post(
   "/complete",
   jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyUser,
   async (request: Request, response: Response) => {
     try {
       const orderId = request.body.id;
       const userId = request["user"].id;
+
       const user = await userService.getUserById(userId);
       const order = await orderService.getOrderById(orderId);
 
@@ -198,6 +206,7 @@ router.post(
 router.post(
   "/canceled",
   jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyUser,
   async (request: Request, response: Response) => {
     try {
       const orderId = request.body.id;
@@ -222,6 +231,7 @@ router.post(
 router.post(
   "/failed",
   jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyUser,
   async (request: Request, response: Response) => {
     try {
       const orderId = request.body.id;

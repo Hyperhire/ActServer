@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import subscriptionService from "./subscription.service";
 
@@ -7,6 +8,7 @@ const router = Router();
 router.post(
   "/inactive",
   jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyUser,
   async (request: Request, response: Response) => {
     try {
       const { id } = request.body;

@@ -3,6 +3,7 @@ import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import noticeService from "./notice.service";
 import { UserType } from "./../../../common/constants";
+import authMiddleware from "../../../middleware/auth.middleware";
 
 const router = Router();
 
@@ -10,6 +11,7 @@ const router = Router();
 router.post(
   "/",
   jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyOrg,
   async (request: Request, response: Response) => {
     try {
       const { id, userType } = request["user"];

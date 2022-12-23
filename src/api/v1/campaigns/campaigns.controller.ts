@@ -7,12 +7,14 @@ import campaignsService from "./campaigns.service";
 import { CreateCampaignDto } from "./dto/request.dto";
 import { CampaignDto, CampaignOrgDto } from "./dto/response.dto";
 import { UserType } from "./../../../common/constants";
+import authMiddleware from "../../../middleware/auth.middleware";
 
 const router = Router();
 
 router.post(
   "/",
   jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyOrg,
   async (request: Request, response: Response) => {
     try {
       const { id, userType } = request["user"];
