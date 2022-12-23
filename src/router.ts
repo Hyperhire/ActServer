@@ -9,6 +9,7 @@ import news from "./api/v1/news/news.controller";
 import faqs from "./api/v1/faq/faq.controller";
 import banner from "./api/v1/banner/banner.controller";
 import donation from "./api/v1/donation/donation.controller";
+import withdraw from "./api/v1/withdraw/withdraw.controller";
 import order from "./api/v1/order/order.controller";
 import subscriptionOrder from "./api/v1/subscription/subscription.controller";
 import nft from "./api/v1/nft/nft.controller";
@@ -28,6 +29,7 @@ router.use("/api/v1/banner", banner);
 router.use("/api/v1/order", order);
 router.use("/api/v1/subscription", subscriptionOrder);
 router.use("/api/v1/donation", donation);
+router.use("/api/v1/withdraw", withdraw);
 router.use("/api/v1/nft", nft);
 router.use("/api/v1/utils", utils);
 

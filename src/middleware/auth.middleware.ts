@@ -7,10 +7,10 @@ import { logger } from "../logger/winston.logger";
 const validOnlyUser = (req: Request, res: Response, next: Function) => {
   try {
     const { userType } = req["user"];
-    if (userType === UserType.INDIVIDUAL) {
-      next();
+    if (userType !== UserType.INDIVIDUAL) {
+      throw unAuthorizedResponse;
     }
-    throw unAuthorizedResponse;
+    next();
   } catch (error) {
     logger.error(error);
     res.status(401).json(unAuthorizedResponse);
@@ -20,10 +20,10 @@ const validOnlyUser = (req: Request, res: Response, next: Function) => {
 const validOnlyOrg = (req: Request, res: Response, next: Function) => {
   try {
     const { userType } = req["user"];
-    if (userType === UserType.ORGANIZATION) {
-      next();
+    if (userType !== UserType.ORGANIZATION) {
+      throw unAuthorizedResponse;
     }
-    throw unAuthorizedResponse;
+    next();
   } catch (error) {
     logger.error(error);
     res.status(401).json(unAuthorizedResponse);

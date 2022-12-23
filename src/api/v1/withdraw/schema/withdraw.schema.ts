@@ -1,8 +1,18 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
+import { WithdrawStatus } from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 const schema = new Schema({
-  status: { type: String },
+  orgId: { type: Types.ObjectId, required: true },
+  amount: {
+    type: Number,
+    required: true
+  },
+  status: {
+    type: String,
+    enums: Object.values(WithdrawStatus),
+    default: WithdrawStatus.PENDING
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

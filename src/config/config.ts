@@ -6,6 +6,7 @@ interface ConfigKeys {
   hashKey: string;
   JWT_EXPIRE_TIME_ACCESS: number;
   JWT_EXPIRE_TIME_REFRESH: number;
+  MIN_WITHDRAW_AVAILABLE_AMOUNT: number;
 }
 
 export const config: ConfigKeys = {
@@ -15,5 +16,6 @@ export const config: ConfigKeys = {
   jwtKey: process.env.JWT_KEY,
   hashKey: "somethingsecret", //Todo
   JWT_EXPIRE_TIME_ACCESS: 60 * 30,
-  JWT_EXPIRE_TIME_REFRESH: 60 * 60 * 24
+  JWT_EXPIRE_TIME_REFRESH: 60 * 60 * 24,
+  MIN_WITHDRAW_AVAILABLE_AMOUNT: 500000
 };

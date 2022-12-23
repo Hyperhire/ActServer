@@ -9,6 +9,7 @@ import { OrderModel } from "../order/schema/order.schema";
 import { SubscriptionModel } from "../subscription/schema/subscription.schema";
 import { Types } from "mongoose";
 import { CampaignModel } from "../campaigns/schema/campaign.schema";
+import { WithdrawModel } from "../withdraw/schema/withdraw.schema";
 
 const selectInfo = { bankDetail: 0, password: 0 };
 
@@ -133,7 +134,18 @@ const getOrgPgSummary = async orgId => {
       }
     ]);
 
-    const alreadyWithdrawedAmount = 0;
+    let alreadyWithdrawedAmount = 0;
+    const withdraw = await WithdrawModel.aggregate([
+      {
+        $match: { orgId: new Types.ObjectId(orgId) }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$amount" }
+        }
+      }
+    ]);
 
     if (orgOrder.length) {
       result.totalAmount = result.totalAmount + orgOrder[0].totalAmount;
@@ -143,6 +155,9 @@ const getOrgPgSummary = async orgId => {
     }
     if (subscription.length) {
       result.currentSubscriptionAmount = subscription[0].totalAmount;
+    }
+    if (withdraw.length) {
+      alreadyWithdrawedAmount = withdraw[0].totalAmount;
     }
     result.withdrawAvailableAmount =
       result.totalAmount - alreadyWithdrawedAmount;

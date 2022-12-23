@@ -50,3 +50,8 @@ export const SubscriptionDate = {
   TENTH: 10,
   TWENTIETH: 20,
 }
+
+export const WithdrawStatus = {
+  PENDING: "PENDING",
+  COMPELETE: "COMPLETE",
+}
