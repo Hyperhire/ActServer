@@ -111,7 +111,7 @@ const getNoticeByOrgId = async orgId => {
       }
     ]);
 
-    return _notice[0];
+    return _notice;
   } catch (error) {
     logger.error(error);
     throw error;

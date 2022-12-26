@@ -39,9 +39,9 @@ export const sendVerificationMail = async (email, verificationCode) => {
   const info = await transporter.sendMail({
     from: "DOACT",
     to: email,
-    subject: "비밀번호 변경 메일입니다", // Subject line
-    text: `Verification Code임니다 ${verificationCode}`, // plain text body
-    html: `Verification Code임니다 ${verificationCode}` // html body
+    subject: "Verification Code입니다", // Subject line
+    text: `Verification Code임니다 /${verificationCode}/ 30분 리밋 걸려있으니까 빨리 하셈`, // plain text body
+    html: `Verification Code임니다 /${verificationCode}/ 30분 리밋 걸려있으니까 빨리 하셈` // html body
   });
   return info;
 };
