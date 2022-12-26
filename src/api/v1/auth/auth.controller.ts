@@ -199,7 +199,7 @@ router.post(
         60 * 30
       );
       // TODO: send Email with Verification code
-      sendVerificationMail(registerData.email, verificationCode);
+      sendVerificationMail(_registerData.email, verificationCode);
 
       return response.status(201).json({ data: result });
     } catch (error) {
@@ -259,7 +259,7 @@ router.post(
         60 * 30
       );
       // TODO: send Email with Verification code
-      sendVerificationMail(registerData.email, verificationCode);
+      sendVerificationMail(_registerData.email, verificationCode);
 
       return response.status(201).json({ data: result });
     } catch (error) {
@@ -345,7 +345,7 @@ router.post(
 
       const codeFromRedis = await getRedisValueByKey(`verification_${id}`);
       if (!codeFromRedis) throw "Timeout";
-      
+
       const valid = code === codeFromRedis;
       if (!valid) throw "Invalid verification code";
 
