@@ -5,8 +5,12 @@ import { getBuckets, uploadFile } from "../utils/upload";
 import { kakaopayRequestSubcriptionPayment } from "../utils/kakaopay";
 import authMiddleware from "../middleware/auth.middleware";
 import jwtMiddleware from "../middleware/jwt.middleware";
-import { sendTestMail } from "../utils/mailer";
-import { getKey, setKey } from "../utils/redis";
+import { sendTestMail, sendVerificationMail } from "../utils/mailer";
+import {
+  getRedisValueByKey,
+  setRedisValueByKey
+} from "../utils/redis";
+import { verificationCodeGenerator } from "../utils/random";
 
 const router = Router();
 const upload = multer();
@@ -44,8 +48,29 @@ router.post("/mail", async (request: Request, response: Response) => {
   }
 });
 
+router.post("/verify", async (request: Request, response: Response) => {
+  // TODO: generate Verification code
+  const verificationCode = verificationCodeGenerator();
+  // TODO: save code into redis with key
+  // await setKey(`verification${result._id}`, verificationCode);
+  // TODO: send Email with Verification code
+  sendVerificationMail("juhyun.kim0204@gmail.com", verificationCode);
+  try {
+    return response.json({
+      status: 200,
+      data: {
+        verificationCode,
+        timestamp: new Date()
+      }
+    });
+  } catch (error) {
+    return response.json({ status: 400, error });
+  }
+});
+
 router.post("/redis", async (request: Request, response: Response) => {
-  const result = await setKey("test", "hello");
+  const { key, value } = request.body;
+  const result = await setRedisValueByKey(key, value);
   try {
     return response.json({
       status: 200,
@@ -60,7 +85,8 @@ router.post("/redis", async (request: Request, response: Response) => {
 });
 
 router.get("/redis", async (request: Request, response: Response) => {
-  const result = await getKey("test");
+  const { key } = request.query;
+  const result = await getRedisValueByKey(key);
   try {
     return response.json({
       status: 200,

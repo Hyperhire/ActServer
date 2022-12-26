@@ -10,6 +10,8 @@ interface ConfigKeys {
   MIN_WITHDRAW_AVAILABLE_AMOUNT: number;
   MAILER_EMAIL: string;
   MAILER_PASSWORD: string;
+  REDIS_HOST: string;
+  REDIS_PORT: number;
 }
 
 export const config: ConfigKeys = {
@@ -23,5 +25,7 @@ export const config: ConfigKeys = {
   JWT_EXPIRE_TIME_REFRESH: 60 * 60 * 24,
   MIN_WITHDRAW_AVAILABLE_AMOUNT: 500000,
   MAILER_EMAIL: process.env.MAILER_EMAIL,
-  MAILER_PASSWORD: process.env.MAILER_PASSWORD
+  MAILER_PASSWORD: process.env.MAILER_PASSWORD,
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: Number(process.env.REDIS_PORT)
 };

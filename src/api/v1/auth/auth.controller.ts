@@ -6,8 +6,19 @@ import { createJWT, encode, decode } from "../../../common/helper/jwt.helper";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import { sendResetPasswordMail } from "../../../utils/mailer";
-import { passwordGenerator } from "../../../utils/random";
+import {
+  sendResetPasswordMail,
+  sendVerificationMail
+} from "../../../utils/mailer";
+import {
+  passwordGenerator,
+  verificationCodeGenerator
+} from "../../../utils/random";
+import {
+  getRedisValueByKey,
+  setRedisValueByKey,
+  setRedisValueByKeyWithExpireSec
+} from "../../../utils/redis";
 import { uploadFile } from "../../../utils/upload";
 import orgsService from "../orgs/orgs.service";
 import userService from "../user/user.service";
@@ -178,6 +189,18 @@ router.post(
       }
       const _registerData = JSON.parse(registerData);
       const result = await authService.registerUser(_registerData);
+
+      // TODO: generate Verification code
+      const verificationCode = verificationCodeGenerator();
+      // TODO: save code into redis with key
+      await setRedisValueByKeyWithExpireSec(
+        `verification_${result._id}`,
+        verificationCode,
+        60 * 30
+      );
+      // TODO: send Email with Verification code
+      sendVerificationMail(registerData.email, verificationCode);
+
       return response.status(201).json({ data: result });
     } catch (error) {
       logger.error(error);
@@ -226,6 +249,18 @@ router.post(
       // await validateBody<LoginDto>(orgDto);
 
       const result = await authService.registerOrg(_registerData);
+
+      // TODO: generate Verification code
+      const verificationCode = verificationCodeGenerator();
+      // TODO: save code into redis with key
+      await setRedisValueByKeyWithExpireSec(
+        `verification_${result._id}`,
+        verificationCode,
+        60 * 30
+      );
+      // TODO: send Email with Verification code
+      sendVerificationMail(registerData.email, verificationCode);
+
       return response.status(201).json({ data: result });
     } catch (error) {
       logger.error(error);
@@ -298,44 +333,49 @@ router.post(
   }
 );
 
-router.post("/verify-email", async (request: Request, response: Response) => {
-  try {
-    // signup 시 이미 이메일 발송했음. 여기는 코드 verification 하는 곳
-    const { email, code } = request.body;
-    if (!code) throw "Verification code needed";
-    // TODO: verification check
+router.post(
+  "/verify-email",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      // signup 시 이미 이메일 발송했음. 여기는 코드 verification 하는 곳
+      const { id, userType } = request["user"];
+      const { code } = request.body;
+      if (!code) throw "Verification code needed";
+      // TODO: verification check
 
-    const userType = await authService.checkUserTypeOnLoginByEmail(email);
+      let user;
+      if (userType === UserType.INDIVIDUAL) {
+        user = await userService.getUserById(id);
+      } else {
+        user = await orgsService.getOrgById(id);
+      }
 
-    let user;
-    if (userType === UserType.INDIVIDUAL) {
-      user = await userService.getUserByEmail(email);
-    } else {
-      user = await orgsService.getOrgByEmail(email);
+      // TODO: valid하다면, user 정보 바꿔준다 (isEmailVerified)
+      const codeFromRedis = await getRedisValueByKey(`verification_${id}`);
+      if (!codeFromRedis) throw "Timeout";
+      const valid = code === codeFromRedis;
+      if (!valid) throw "Invalid verification code";
+
+      let updatedUser;
+      const { constant } = user;
+      if (userType === UserType.INDIVIDUAL) {
+        updatedUser = await userService.updateUser(id, {
+          constant: { ...constant, isEmailVerified: true }
+        });
+      } else {
+        updatedUser = await orgsService.updateOrg(id, {
+          constant: { ...constant, isEmailVerified: true }
+        });
+      }
+
+      return response.status(201).json({ data: updatedUser });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
     }
-
-    // TODO: valid하다면, user 정보 바꿔준다 (isEmailVerified)
-    const valid = true;
-    if (!valid) throw "Invalid verification code or Timeout";
-
-    let updatedUser;
-    const { _id, constant } = user;
-    if (userType === UserType.INDIVIDUAL) {
-      updatedUser = await userService.updateUser(_id, {
-        constant: { ...constant, isEmailVerified: true }
-      });
-    } else {
-      updatedUser = await orgsService.updateOrg(_id, {
-        constant: { ...constant, isEmailVerified: true }
-      });
-    }
-
-    return response.status(201).json({ data: updatedUser });
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
   }
-});
+);
 
 router.get(
   "/check-duplicate-email",

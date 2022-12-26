@@ -1,7 +1,7 @@
 export const verificationCodeGenerator = () => {
   // len = 6;
   const code = Math.floor(Math.random() * (1000000 - 100000)) + 100000;
-  return code;
+  return code.toString();
 };
 
 export const passwordGenerator = () => {

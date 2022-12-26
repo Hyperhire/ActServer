@@ -1,26 +1,31 @@
 import Redis from "ioredis";
-// import { createClient } from "redis";
+import { config } from "./../config/config";
 
-// const redisClient = createClient({
-//   url: "redis://conan-kim:conankim1234@3.36.119.86:6379",
-//   legacyMode: true
-// });
-// redisClient.on("error", error => console.log(`Error on Redis: ${error}`));
+const redis = new Redis({
+  host: config.REDIS_HOST,
+  port: config.REDIS_PORT,
+  username: "default"
+});
 
-const redis = new Redis();
-
-const setKey = async (key, value) => {
+const setRedisValueByKey = async (key, value) => {
   //   await redisClient.connect();
   const res = await redis.set(key, value);
-  console.log(res);
   return res;
 };
 
-const getKey = async key => {
+const setRedisValueByKeyWithExpireSec = async (key, value, sec) => {
   //   await redisClient.connect();
+  const res = await redis.set(key, value, "EX", sec);
+  return res;
+};
+
+const getRedisValueByKey = async key => {
   const value = await redis.get(key);
-  console.log(value);
   return value;
 };
 
-export { setKey, getKey };
+export {
+  setRedisValueByKey,
+  setRedisValueByKeyWithExpireSec,
+  getRedisValueByKey
+};
