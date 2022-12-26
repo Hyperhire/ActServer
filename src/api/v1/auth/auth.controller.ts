@@ -342,28 +342,21 @@ router.post(
       const { id, userType } = request["user"];
       const { code } = request.body;
       if (!code) throw "Verification code needed";
-      // TODO: verification check
 
-      let user;
-      if (userType === UserType.INDIVIDUAL) {
-        user = await userService.getUserById(id);
-      } else {
-        user = await orgsService.getOrgById(id);
-      }
-
-      // TODO: valid하다면, user 정보 바꿔준다 (isEmailVerified)
       const codeFromRedis = await getRedisValueByKey(`verification_${id}`);
       if (!codeFromRedis) throw "Timeout";
+      
       const valid = code === codeFromRedis;
       if (!valid) throw "Invalid verification code";
 
       let updatedUser;
-      const { constant } = user;
       if (userType === UserType.INDIVIDUAL) {
+        const { constant } = await userService.getUserById(id);
         updatedUser = await userService.updateUser(id, {
           constant: { ...constant, isEmailVerified: true }
         });
       } else {
+        const { constant } = await orgsService.getOrgById(id);
         updatedUser = await orgsService.updateOrg(id, {
           constant: { ...constant, isEmailVerified: true }
         });
