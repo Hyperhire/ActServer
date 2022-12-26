@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { ModelNames } from "../../../../common/constants/model.constants";
-import { OrgStatus } from "./../../../../common/constants";
+import { LoginType, OrgStatus } from "./../../../../common/constants";
 
 // {
 //   "loginType": "EMAIL",
@@ -24,7 +24,7 @@ import { OrgStatus } from "./../../../../common/constants";
 const schema = new Schema({
   loginType: {
     type: String,
-    enums: ["EMAIL", "NAVER", "KAKAO", "APPLE", "GOOGLE"]
+    enums: Object.values(LoginType)
   },
   email: { type: String, required: true, unique: true },
   nickname: { type: String, required: true, unique: true },
@@ -35,9 +35,9 @@ const schema = new Schema({
     mobile: { type: String }
   },
   constant: {
-    isEmailVerified: { type: Boolean, default: false },
     agreeTnc: { type: Boolean, isRequired: true },
-    agreePrivacyPolicy: { type: Boolean, isRequired: true }
+    agreePrivacyPolicy: { type: Boolean, isRequired: true },
+    isEmailVerified: { type: Boolean, default: false }
   },
   businessRegistrationUrl: { type: String },
   businessRegistrationNumber: { type: String },
@@ -60,7 +60,7 @@ const schema = new Schema({
   bannerUrl: { type: String },
   status: {
     type: String,
-    enums: ["PENDING", "AUTHORIZED", "UNAVAILABLE", "DELETED"],
+    enums: Object.values(OrgStatus),
     default: OrgStatus.PENDING
   },
   deletedAt: { type: Date },

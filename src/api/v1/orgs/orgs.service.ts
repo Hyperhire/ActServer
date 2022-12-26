@@ -32,6 +32,21 @@ const createOrg = async orgDto => {
   }
 };
 
+const updateOrg = async (orgId, updateData) => {
+  try {
+    const updatedOrg = await OrgModel.findOneAndUpdate(
+      { _id: orgId },
+      { ...updateData, updatedAt: new Date().toISOString() },
+      { new: true }
+    ).select(selectInfo);
+
+    return updatedOrg;
+  } catch (error) {
+    logger.error(error);
+    throw error;
+  }
+};
+
 const getOrgById = async orgId => {
   try {
     const org = await OrgModel.findOne({
@@ -189,6 +204,7 @@ const getOrgPgSummary = async orgId => {
 
 export default {
   createOrg,
+  updateOrg,
   getOrgById,
   getOrgByEmail,
   getOrgByNickName,

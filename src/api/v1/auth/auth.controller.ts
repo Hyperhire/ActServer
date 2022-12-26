@@ -1,10 +1,13 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Router, Response } from "express";
-import { UserType } from "../../../common/constants";
+import { UserType, UserStatus, OrgStatus } from "../../../common/constants";
+import { makeHash } from "../../../common/helper/crypto.helper";
 import { createJWT, encode, decode } from "../../../common/helper/jwt.helper";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import { sendResetPasswordMail } from "../../../utils/mailer";
+import { passwordGenerator } from "../../../utils/random";
 import { uploadFile } from "../../../utils/upload";
 import orgsService from "../orgs/orgs.service";
 import userService from "../user/user.service";
@@ -231,6 +234,109 @@ router.post(
   }
 );
 
+router.post(
+  "/forgot-password",
+  async (request: Request, response: Response) => {
+    try {
+      const { email } = request.body;
+      const _newPassword = passwordGenerator();
+      const _newPasswordHash = await makeHash(_newPassword);
+
+      const userType = await authService.checkUserTypeOnLoginByEmail(email);
+
+      let user;
+      let updatedUser;
+
+      if (userType === UserType.INDIVIDUAL) {
+        user = await userService.getUserByEmail(email);
+        updatedUser = await userService.updateUser(user._id, {
+          password: _newPasswordHash
+        });
+      } else {
+        user = await orgsService.getOrgByEmail(email);
+        updatedUser = await orgsService.updateOrg(user._id, {
+          password: _newPasswordHash
+        });
+      }
+
+      await sendResetPasswordMail(email, _newPassword);
+
+      return response.status(201).json({ data: updatedUser });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.post(
+  "/change-password",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const { id, userType } = request["user"];
+      const { password } = request.body;
+      //TODO: validate password
+      const _newPasswordHash = await makeHash(password);
+
+      let updatedUser;
+      if (userType === UserType.INDIVIDUAL) {
+        updatedUser = await userService.updateUser(id, {
+          password: _newPasswordHash
+        });
+      } else {
+        updatedUser = await orgsService.updateOrg(id, {
+          password: _newPasswordHash
+        });
+      }
+
+      return response.status(201).json({ data: updatedUser });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.post("/verify-email", async (request: Request, response: Response) => {
+  try {
+    // signup 시 이미 이메일 발송했음. 여기는 코드 verification 하는 곳
+    const { email, code } = request.body;
+    if (!code) throw "Verification code needed";
+    // TODO: verification check
+
+    const userType = await authService.checkUserTypeOnLoginByEmail(email);
+
+    let user;
+    if (userType === UserType.INDIVIDUAL) {
+      user = await userService.getUserByEmail(email);
+    } else {
+      user = await orgsService.getOrgByEmail(email);
+    }
+
+    // TODO: valid하다면, user 정보 바꿔준다 (isEmailVerified)
+    const valid = true;
+    if (!valid) throw "Invalid verification code or Timeout";
+
+    let updatedUser;
+    const { _id, constant } = user;
+    if (userType === UserType.INDIVIDUAL) {
+      updatedUser = await userService.updateUser(_id, {
+        constant: { ...constant, isEmailVerified: true }
+      });
+    } else {
+      updatedUser = await orgsService.updateOrg(_id, {
+        constant: { ...constant, isEmailVerified: true }
+      });
+    }
+
+    return response.status(201).json({ data: updatedUser });
+  } catch (error) {
+    logger.error(error);
+    return response.status(400).json({ error });
+  }
+});
+
 router.get(
   "/check-duplicate-email",
   async (request: Request, response: Response) => {
@@ -279,6 +385,35 @@ router.get(
         pgSummary = await orgsService.getOrgPgSummary(userId);
       }
       return response.status(200).json({ data: { info, pgSummary, userType } });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.post(
+  "/delete",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const { id, userType } = request["user"];
+      // TODO: 유저 정보 deleted 처리
+
+      let updatedUser;
+      if (userType === UserType.INDIVIDUAL) {
+        updatedUser = await userService.updateUser(id, {
+          status: UserStatus.DELETED,
+          deletedAt: new Date().toISOString()
+        });
+      } else {
+        updatedUser = await orgsService.updateOrg(id, {
+          status: OrgStatus.DELETED,
+          deletedAt: new Date().toISOString()
+        });
+      }
+
+      return response.status(201).json({ data: updatedUser });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });

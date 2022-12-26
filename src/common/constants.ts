@@ -1,6 +1,6 @@
 export const UserType = {
-  INDIVIDUAL: "ind",
-  ORGANIZATION: "org"
+  INDIVIDUAL: "individual",
+  ORGANIZATION: "organization"
 };
 
 export const OrderType = {

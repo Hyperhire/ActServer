@@ -1,4 +1,5 @@
 import { Schema, model, Types } from "mongoose";
+import { OrderType, PaymentGateway, SubscriptionDate } from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Donation {
@@ -19,12 +20,16 @@ interface Donation {
 
 const schema = new Schema<Donation>({
   userId: { type: Schema.Types.ObjectId },
-  targetType: { type: String, enums: ["ORG", "CAMPAIGN"], isRequired: true },
+  targetType: {
+    type: String,
+    enums: Object.values(OrderType),
+    isRequired: true
+  },
   targetId: { type: Schema.Types.ObjectId },
   isRecurring: { type: Boolean },
-  pg: { type: String, enums: ["KAKAO", "NAVER"] },
+  pg: { type: String, enums: Object.values(PaymentGateway) },
   recurringCount: { type: Number, default: 1 },
-  recurringOn: { type: String, enums: ["FIRST", "TENTH", "TWENTIETH"] },
+  recurringOn: { type: String, enums: Object.values(SubscriptionDate) },
   amount: { type: Number },
   isTerminated: { type: Boolean, default: false },
   startedAt: { type: Date },

@@ -5,6 +5,8 @@ import { getBuckets, uploadFile } from "../utils/upload";
 import { kakaopayRequestSubcriptionPayment } from "../utils/kakaopay";
 import authMiddleware from "../middleware/auth.middleware";
 import jwtMiddleware from "../middleware/jwt.middleware";
+import { sendTestMail } from "../utils/mailer";
+import { getKey, setKey } from "../utils/redis";
 
 const router = Router();
 const upload = multer();
@@ -27,84 +29,50 @@ router.get("/", (request: Request, response: Response) => {
   }
 });
 
-router.get(
-  "/test",
-  jwtMiddleware.verifyToken,
-  authMiddleware.validOnlyUser,
-  (request: Request, response: Response) => {
-    try {
-      return response.json({
-        status: 200,
-        data: {
-          text: "test2",
-          timestamp: new Date()
-        }
-      });
-    } catch (error) {
-      return response.json({ status: 400, error });
-    }
-  }
-);
-
-router.post(
-  "/",
-  uploadFile("images").single("file"),
-  (request: MulterRequest, response: Response) => {
-    try {
-      response.json({
-        status: 200,
-        data: {
-          text: "hello, this is conan from hyperhire",
-          timestamp: new Date()
-        }
-      });
-    } catch (error) {
-      return response.json({ status: 400, error });
-    }
-  }
-);
-
-router.post(
-  "/kakao-subscription-payment",
-  (request: Request, response: Response) => {
-    try {
-      const { id } = request.body;
-      console.log("id", id);
-      // await kakaopayRequestSubcriptionPayment();
-
-      return response.status(200).json({
-        data: {
-          text: "kakao subscription payment test",
-          timestamp: new Date()
-        }
-      });
-    } catch (error) {
-      return response.status(400).send({ error });
-    }
-  }
-);
-
-router.post(
-  "/upload-image",
-  uploadFile("images").single("file"),
-  async (request: MulterRequest, response: Response) => {
-    try {
-      const file = request.file;
-      if (!file) {
-        throw "no image";
+router.post("/mail", async (request: Request, response: Response) => {
+  const result = await sendTestMail();
+  try {
+    return response.json({
+      status: 200,
+      data: {
+        result,
+        timestamp: new Date()
       }
-      return response.status(200).json({
-        data: {
-          text: "upload image",
-          url: file.location,
-          timestamp: new Date()
-        }
-      });
-    } catch (error) {
-      return response.status(400).send({ error });
-    }
+    });
+  } catch (error) {
+    return response.json({ status: 400, error });
   }
-);
+});
+
+router.post("/redis", async (request: Request, response: Response) => {
+  const result = await setKey("test", "hello");
+  try {
+    return response.json({
+      status: 200,
+      data: {
+        result,
+        timestamp: new Date()
+      }
+    });
+  } catch (error) {
+    return response.json({ status: 400, error });
+  }
+});
+
+router.get("/redis", async (request: Request, response: Response) => {
+  const result = await getKey("test");
+  try {
+    return response.json({
+      status: 200,
+      data: {
+        result,
+        timestamp: new Date()
+      }
+    });
+  } catch (error) {
+    return response.json({ status: 400, error });
+  }
+});
 
 // //TODO: form data 처리하는게 이슈네
 // router.post(

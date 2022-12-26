@@ -28,6 +28,22 @@ const createUser = async userDto => {
     throw error;
   }
 };
+
+const updateUser = async (userId, updateData) => {
+  try {
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { _id: userId },
+      { ...updateData, updatedAt: new Date().toISOString() },
+      { new: true }
+    ).select(selectInfo);
+
+    return updatedUser;
+  } catch (error) {
+    logger.error(error);
+    throw error;
+  }
+};
+
 const getUserById = async (userId: string) => {
   try {
     const user = await UserModel.findOne({
@@ -122,6 +138,7 @@ const getUserPgSummary = async userId => {
 
 export default {
   createUser,
+  updateUser,
   getUserById,
   getUserByEmail,
   getUserByNickName,
