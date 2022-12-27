@@ -28,68 +28,6 @@ router.get("/", (request: Request, response: Response) => {
   }
 });
 
-router.post("/mail", async (request: Request, response: Response) => {
-  const result = await sendTestMail();
-  try {
-    return response.json({
-      status: 200,
-      data: {
-        result,
-        timestamp: new Date()
-      }
-    });
-  } catch (error) {
-    return response.json({ status: 400, error });
-  }
-});
-
-router.post("/verify", async (request: Request, response: Response) => {
-  sendVerificationMail("juhyun.kim0204@gmail.com", "hello");
-  try {
-    return response.json({
-      status: 200,
-      data: {
-        code: "hello",
-        timestamp: new Date()
-      }
-    });
-  } catch (error) {
-    return response.json({ status: 400, error });
-  }
-});
-
-router.post("/redis", async (request: Request, response: Response) => {
-  const { key, value } = request.body;
-  const result = await setRedisValueByKeyWithExpireSec(key, value, 10);
-  try {
-    return response.json({
-      status: 200,
-      data: {
-        result,
-        timestamp: new Date()
-      }
-    });
-  } catch (error) {
-    return response.json({ status: 400, error });
-  }
-});
-
-router.get("/redis", async (request: Request, response: Response) => {
-  const { key } = request.query;
-  const result = await getRedisValueByKey(key);
-  try {
-    return response.json({
-      status: 200,
-      data: {
-        result,
-        timestamp: new Date()
-      }
-    });
-  } catch (error) {
-    return response.json({ status: 400, error });
-  }
-});
-
 // //TODO: form data 처리하는게 이슈네
 // router.post(
 //   "/register-nft-image",

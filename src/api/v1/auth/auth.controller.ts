@@ -20,6 +20,7 @@ import {
   setRedisValueByKeyWithExpireSec
 } from "../../../utils/redis";
 import { uploadFile } from "../../../utils/upload";
+import { validatePassword } from "../../../utils/validator";
 import orgsService from "../orgs/orgs.service";
 import userService from "../user/user.service";
 import userTokenService from "../userToken/userToken.service";
@@ -306,6 +307,8 @@ router.post(
       }
       if (data.password) {
         //TODO: validate password
+        const valid = validatePassword(data.password);
+        if (!valid) throw "Password Invalid";
         data.password = await makeHash(data.password);
       }
 
