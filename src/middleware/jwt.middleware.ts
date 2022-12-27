@@ -16,4 +16,17 @@ const verifyToken = (req: Request, res: Response, next: Function) => {
   }
 };
 
-export default { verifyToken };
+const verifyTokenWhenExists = (req: Request, res: Response, next: Function) => {
+  try {
+    const token = req.headers["authorization"].split(" ").slice(-1)[0];
+    const decoded = decode(token);
+    logger.info(decoded);
+    req["user"] = decoded;
+    next();
+  } catch (error) {
+    req["user"] = { id: null, userType: null };
+    next();
+  }
+};
+
+export default { verifyToken, verifyTokenWhenExists };

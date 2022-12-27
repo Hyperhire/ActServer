@@ -190,15 +190,15 @@ router.post(
       const _registerData = JSON.parse(registerData);
       const result = await authService.registerUser(_registerData);
 
-      // TODO: generate Verification code
+      // generate Verification code
       const verificationCode = verificationCodeGenerator();
-      // TODO: save code into redis with key
+      // save code into redis with key
       await setRedisValueByKeyWithExpireSec(
         `verification_${result._id}`,
         verificationCode,
         60 * 30
       );
-      // TODO: send Email with Verification code
+      // send Email with Verification code
       sendVerificationMail(_registerData.email, verificationCode);
 
       return response.status(201).json({ data: result });
@@ -250,15 +250,15 @@ router.post(
 
       const result = await authService.registerOrg(_registerData);
 
-      // TODO: generate Verification code
+      // generate Verification code
       const verificationCode = verificationCodeGenerator();
-      // TODO: save code into redis with key
+      // save code into redis with key
       await setRedisValueByKeyWithExpireSec(
         `verification_${result._id}`,
         verificationCode,
         60 * 30
       );
-      // TODO: send Email with Verification code
+      // send Email with Verification code
       sendVerificationMail(_registerData.email, verificationCode);
 
       return response.status(201).json({ data: result });
@@ -363,6 +363,39 @@ router.post(
       }
 
       return response.status(201).json({ data: updatedUser });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.post(
+  "/resend-verification-email",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      // signup 시 이미 이메일 발송했음. 여기는 코드 verification 하는 곳
+      const { id, userType } = request["user"];
+
+      const codeFromRedis = await getRedisValueByKey(`verification_${id}`);
+
+      let user;
+      if (userType === UserType.INDIVIDUAL) {
+        user = await userService.getUserById(id);
+      } else {
+        user = await orgsService.getOrgById(id);
+      }
+
+      await setRedisValueByKeyWithExpireSec(
+        `verification_${id}`,
+        codeFromRedis,
+        60 * 30
+      );
+      // send Email with Verification code
+      sendVerificationMail(user.email, codeFromRedis);
+
+      return response.status(201).json({ data: { sent: true } });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });

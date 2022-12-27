@@ -96,7 +96,8 @@ const getList = async query => {
       .sort({ createdAt: -1 })
       .select(selectInfo)
       .skip(_lastIndex)
-      .limit(_limit);
+      .limit(_limit)
+      .lean();
 
     const totalCount = await OrgModel.countDocuments(searchQuery);
     const currentLastIndex = _lastIndex + _result.length;

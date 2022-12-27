@@ -83,4 +83,35 @@ const getMyDonation = async userId => {
   }
 };
 
-export default { createDonation, getMyDonation };
+const getOrgDonationsByUserId = async userId => {
+  try {
+    const list = await DonationModel.find({
+      userId: new mongoose.Types.ObjectId(userId),
+      targetType: OrderType.ORGANIZATION
+    }).select({ targetId: 1 });
+
+    return list;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getCampaignDonationsByUserId = async userId => {
+  try {
+    const list = await DonationModel.find({
+      userId: new mongoose.Types.ObjectId(userId),
+      targetType: OrderType.CAMPAIGN
+    }).select({ targetId: 1 });
+
+    return list;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default {
+  createDonation,
+  getMyDonation,
+  getOrgDonationsByUserId,
+  getCampaignDonationsByUserId
+};

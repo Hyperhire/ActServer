@@ -8,7 +8,8 @@ import jwtMiddleware from "../middleware/jwt.middleware";
 import { sendTestMail, sendVerificationMail } from "../utils/mailer";
 import {
   getRedisValueByKey,
-  setRedisValueByKey
+  setRedisValueByKey,
+  setRedisValueByKeyWithExpireSec
 } from "../utils/redis";
 import { verificationCodeGenerator } from "../utils/random";
 
@@ -70,7 +71,7 @@ router.post("/verify", async (request: Request, response: Response) => {
 
 router.post("/redis", async (request: Request, response: Response) => {
   const { key, value } = request.body;
-  const result = await setRedisValueByKey(key, value);
+  const result = await setRedisValueByKeyWithExpireSec(key, value, 10);
   try {
     return response.json({
       status: 200,
