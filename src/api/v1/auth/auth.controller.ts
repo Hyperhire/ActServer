@@ -399,7 +399,12 @@ router.post(
       // signup 시 이미 이메일 발송했음. 여기는 코드 verification 하는 곳
       const { id, userType } = request["user"];
 
-      const codeFromRedis = await getRedisValueByKey(`verification_${id}`);
+      const key = `verification_${id}`;
+      let code = await getRedisValueByKey(key);
+      if (!code) {
+        // generate Verification code
+        code = verificationCodeGenerator();
+      }
 
       let user;
       if (userType === UserType.INDIVIDUAL) {
@@ -408,13 +413,9 @@ router.post(
         user = await orgsService.getOrgById(id);
       }
 
-      await setRedisValueByKeyWithExpireSec(
-        `verification_${id}`,
-        codeFromRedis,
-        60 * 30
-      );
+      await setRedisValueByKeyWithExpireSec(key, code, 60 * 30);
       // send Email with Verification code
-      sendVerificationMail(user.email, codeFromRedis);
+      sendVerificationMail(user.email, code);
 
       return response.status(201).json({ data: { sent: true } });
     } catch (error) {
