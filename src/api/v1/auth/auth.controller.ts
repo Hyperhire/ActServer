@@ -71,6 +71,26 @@ router.post("/login", async (request: Request, response: Response) => {
       refreshToken: result.token.refreshToken
     });
 
+    // if user email is not verified, create verification code and send email
+    if (!result.user.constant.isEmailVerified) {
+      const key = `verification_${userType === UserType.INDIVIDUAL
+        ? result.user._id
+        : result.org._id}`;
+      let code = await getRedisValueByKey(key);
+      if (!code) {
+        // generate Verification code
+        code = verificationCodeGenerator();
+        // save code into redis with key
+        await setRedisValueByKeyWithExpireSec(key, code, 60 * 30);
+      }
+
+      // send Email with Verification code
+      sendVerificationMail(
+        userType === UserType.INDIVIDUAL ? result.user.email : result.org.email,
+        code
+      );
+    }
+
     return response.status(200).json({ data: result });
   } catch (error) {
     logger.error(error);
@@ -192,6 +212,7 @@ router.post(
 
       // generate Verification code
       const verificationCode = verificationCodeGenerator();
+
       // save code into redis with key
       await setRedisValueByKeyWithExpireSec(
         `verification_${result._id}`,
