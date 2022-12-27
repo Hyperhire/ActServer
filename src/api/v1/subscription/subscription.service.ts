@@ -52,6 +52,18 @@ const getActiveSubscriptionOrders = async () => {
   }
 };
 
+const getActiveSubscriptionOrdersByUserId = async userId => {
+  try {
+    const order = await SubscriptionModel.find({ userId, active: true })
+      .select({ targetId: 1 })
+      .lean();
+
+    return order;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const doPaymentAll = async () => {
   try {
     const subscriptionList = await getActiveSubscriptionOrders();
@@ -110,5 +122,6 @@ export default {
   updateSubscriptionOrder,
   getSubscriptionOrderById,
   getActiveSubscriptionOrders,
+  getActiveSubscriptionOrdersByUserId,
   doPaymentAll
 };

@@ -5,8 +5,7 @@ import { IdDto } from "../../../common/dto/request.dto";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import { uploadFile } from "../../../utils/upload";
-import donationService from "../donation/donation.service";
+import subscriptionService from "../subscription/subscription.service";
 import { BaseOrgDto } from "./dto/request.dto";
 import orgsService from "./orgs.service";
 
@@ -42,7 +41,9 @@ router.get(
 
       let orgDonations = [];
       if (id && userType === UserType.INDIVIDUAL) {
-        const _orgDonations = await donationService.getOrgDonationsByUserId(id);
+        const _orgDonations = await subscriptionService.getActiveSubscriptionOrdersByUserId(
+          id
+        );
         orgDonations = [
           ...new Set(_orgDonations.map(item => item.targetId.toString()))
         ];
@@ -65,16 +66,34 @@ router.get(
 );
 
 // get orgs detail
-router.get("/:id", async (request: Request, response: Response) => {
-  try {
-    const idDto = plainToInstance(IdDto, request.params);
-    await validateBody<IdDto>(idDto);
-    const org = await orgsService.getOrgById(idDto.id);
-    return response.status(200).json({ data: org });
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
+router.get(
+  "/:id",
+  jwtMiddleware.verifyTokenWhenExists,
+  async (request: Request, response: Response) => {
+    try {
+      const { id, userType } = request["user"];
+      const idDto = plainToInstance(IdDto, request.params);
+      await validateBody<IdDto>(idDto);
+      const org = await orgsService.getOrgById(idDto.id);
+
+      let orgDonations = [];
+      if (id && userType === UserType.INDIVIDUAL) {
+        const _orgDonations = await subscriptionService.getActiveSubscriptionOrdersByUserId(
+          id
+        );
+        orgDonations = [
+          ...new Set(_orgDonations.map(item => item.targetId.toString()))
+        ];
+      }
+      
+      return response.status(200).json({
+        data: { ...org, isDonating: orgDonations.indexOf(idDto.id) > -1 }
+      });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
   }
-});
+);
 
 export default router;

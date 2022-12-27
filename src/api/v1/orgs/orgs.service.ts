@@ -38,7 +38,7 @@ const updateOrg = async (orgId, updateData) => {
       { _id: orgId },
       { ...updateData, updatedAt: new Date().toISOString() },
       { new: true }
-    ).select(selectInfo);
+    ).select(selectInfo).lean();
 
     return updatedOrg;
   } catch (error) {
@@ -51,7 +51,9 @@ const getOrgById = async orgId => {
   try {
     const org = await OrgModel.findOne({
       _id: orgId
-    }).select(selectInfo);
+    })
+      .select(selectInfo)
+      .lean();
     return org;
   } catch (error) {
     throw error;
@@ -63,7 +65,7 @@ const getOrgByEmail = async email => {
   try {
     const org = await OrgModel.findOne({
       email: email
-    });
+    }).lean();
     return org;
   } catch (error) {
     throw error;
@@ -74,7 +76,9 @@ const getOrgByNickName = async nickname => {
   try {
     const org = await OrgModel.findOne({
       nickname: nickname
-    }).select(selectInfo);
+    })
+      .select(selectInfo)
+      .lean();
     return org;
   } catch (error) {
     logger.error(error);
