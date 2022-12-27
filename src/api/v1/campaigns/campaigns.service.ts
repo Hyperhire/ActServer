@@ -12,6 +12,19 @@ const create = async (campaignDto: CreateCampaignDto): Promise<any> => {
   }
 };
 
+const update = async (id, updateData) => {
+  try {
+    const camapign = await CampaignModel.findOneAndUpdate(
+      { _id: id },
+      { ...updateData, updatedAt: new Date().toISOString() },
+      { new: true }
+    ).lean();
+    return camapign;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getList = async query => {
   try {
     const now = new Date();
@@ -31,6 +44,7 @@ const getList = async query => {
         { description: { $regex: keyword, $options: "i" } }
       ];
     }
+
     const _result = await CampaignModel.aggregate([
       { $match: searchQuery },
       { $skip: _lastIndex },
@@ -119,6 +133,7 @@ const getCampaignByOrgId = async orgId => {
 
 export default {
   create,
+  update,
   getList,
   getCampaignById,
   getCampaignByOrgId

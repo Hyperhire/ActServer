@@ -9,10 +9,12 @@ import donationService from "../donation/donation.service";
 import {
   OrderPaidStatus,
   OrderPaymentType,
+  OrderType,
   UserType
 } from "./../../../common/constants";
 import subscriptionService from "../subscription/subscription.service";
 import authMiddleware from "../../../middleware/auth.middleware";
+import campaignsService from "../campaigns/campaigns.service";
 
 const router = Router();
 
@@ -138,7 +140,6 @@ router.post(
 
       const user = await userService.getUserById(userId);
       const order = await orderService.getOrderById(orderId);
-
       // Approve Kakao PG
       const pg_token = request.body.pg_token;
       const kakaopayApproveResult = await kakaopayApprove(order, pg_token);
@@ -160,7 +161,6 @@ router.post(
         orderId,
         updateInfo
       );
-
       // create Donation
       const { targetType, targetId, pg, amount, paidAt } = receiptAddedOrder;
       const donation = await donationService.createDonation({
@@ -193,6 +193,24 @@ router.post(
         updateParentsInfo.subscriptionOrderId = sOrder._id;
       }
 
+      // order의 target이 campaign인 경우, campaign의 amount를 increase해줌. 이 데이터는 민감하지 않아보여서 여기에다가만 해도 될 듯
+      if (order.targetType === OrderType.CAMPAIGN) {
+        const {
+          currentAmount,
+          donorList
+        } = await campaignsService.getCampaignById(targetId);
+
+        const newList = [
+          ...new Set([...donorList, userId].map(item => item.toString()))
+        ];
+
+        await campaignsService.update(order.targetId, {
+          currentAmount: currentAmount + order.amount,
+          donorList: newList,
+          numberOfDonor: newList.length
+        });
+      }
+
       await orderService.updateOrder(orderId, updateParentsInfo);
 
       return response.status(200).json({ data: donation });
@@ -210,11 +228,6 @@ router.post(
   async (request: Request, response: Response) => {
     try {
       const orderId = request.body.id;
-      const userId = request["user"].id;
-
-      // // Approve Kakao PG
-      // const pg_token = request.body.pg_token;
-      // await kakaopayApprove(order, pg_token);
 
       const updatedOrder = await orderService.updateOrder(orderId, {
         status: OrderPaidStatus.CANCEL
@@ -235,11 +248,6 @@ router.post(
   async (request: Request, response: Response) => {
     try {
       const orderId = request.body.id;
-      const userId = request["user"].id;
-
-      // // Approve Kakao PG
-      // const pg_token = request.body.pg_token;
-      // await kakaopayApprove(order, pg_token);
 
       const updatedOrder = await orderService.updateOrder(orderId, {
         status: OrderPaidStatus.FAIL
