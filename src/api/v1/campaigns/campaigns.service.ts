@@ -14,11 +14,16 @@ const create = async (campaignDto: CreateCampaignDto): Promise<any> => {
 
 const getList = async query => {
   try {
+    const now = new Date();
     const { limit, lastIndex, keyword } = query;
     const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
     const _limit = 1 * limit || 20;
     const _lastIndex = 1 * lastIndex || 0;
-    const searchQuery = { status: PostStatus.APPROVED };
+    const searchQuery = {
+      status: PostStatus.APPROVED,
+      startedAt: { $lte: now },
+      endedAt: { $gte: now }
+    };
 
     if (keyword) {
       searchQuery["$or"] = [
@@ -61,9 +66,14 @@ const getList = async query => {
 
 const getCampaignById = async campaignId => {
   try {
+    const now = new Date();
     const campaign = await CampaignModel.aggregate([
       {
-        $match: { _id: new mongoose.Types.ObjectId(campaignId) }
+        $match: {
+          _id: new mongoose.Types.ObjectId(campaignId),
+          startedAt: { $lte: now },
+          endedAt: { $gte: now }
+        }
       },
       {
         $lookup: {

@@ -28,6 +28,21 @@ router.get("/", (request: Request, response: Response) => {
   }
 });
 
+router.post("/email", (request: Request, response: Response) => {
+  try {
+    sendVerificationMail("juhyun.kim0204@gmail.com", "helloaha");
+    return response.json({
+      status: 200,
+      data: {
+        text: "hello, this is conan from hyperhire",
+        timestamp: new Date()
+      }
+    });
+  } catch (error) {
+    return response.json({ status: 400, error });
+  }
+});
+
 // //TODO: form data 처리하는게 이슈네
 // router.post(
 //   "/register-nft-image",
