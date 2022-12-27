@@ -109,9 +109,14 @@ const getCampaignById = async campaignId => {
 
 const getCampaignByOrgId = async orgId => {
   try {
+    const now = new Date();
     const campaign = await CampaignModel.aggregate([
       {
-        $match: { orgId: new mongoose.Types.ObjectId(orgId) }
+        $match: {
+          orgId: new mongoose.Types.ObjectId(orgId),
+          startedAt: { $lte: now },
+          endedAt: { $gte: now }
+        }
       },
       {
         $lookup: {

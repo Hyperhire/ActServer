@@ -140,17 +140,18 @@ router.post(
 
       const user = await userService.getUserById(userId);
       const order = await orderService.getOrderById(orderId);
+
       // Approve Kakao PG
       const pg_token = request.body.pg_token;
       const kakaopayApproveResult = await kakaopayApprove(order, pg_token);
 
-      const res = await KasWallet.mintNft(order, user.wallet.address);
+      const { token_id } = await KasWallet.mintNft(order, user.wallet.address);
 
       // Update NFT to order
       const updateInfo: any = {
         paidStatus: OrderPaidStatus.APPROVED,
         paidAt: new Date().toISOString(),
-        nft: res.token_id
+        nft: token_id
       };
       if (order.paymentType === OrderPaymentType.SUBSCRIPTION_PAYMENT) {
         updateInfo.kakaoSID = kakaopayApproveResult.data.sid;
@@ -161,6 +162,7 @@ router.post(
         orderId,
         updateInfo
       );
+
       // create Donation
       const { targetType, targetId, pg, amount, paidAt } = receiptAddedOrder;
       const donation = await donationService.createDonation({
