@@ -35,7 +35,9 @@ const updateUser = async (userId, updateData) => {
       { _id: userId },
       { ...updateData, updatedAt: new Date().toISOString() },
       { new: true }
-    ).select(selectInfo);
+    )
+      .select(selectInfo)
+      .lean();
 
     return updatedUser;
   } catch (error) {
@@ -48,7 +50,7 @@ const getUserById = async (userId: string) => {
   try {
     const user = await UserModel.findOne({
       _id: userId
-    });
+    }).lean();
     return user;
   } catch (error) {
     throw error;
@@ -59,7 +61,7 @@ const getUserByEmail = async (email: string): Promise<UserDto> => {
   try {
     const user: UserDto = await UserModel.findOne({
       email: email
-    });
+    }).lean();
     return user;
   } catch (error) {
     throw error;
@@ -70,7 +72,9 @@ const getUserByNickName = async (nickname: string) => {
   try {
     const user: BaseUserDto = await UserModel.findOne({
       nickname: nickname
-    }).select(selectInfo);
+    })
+      .select(selectInfo)
+      .lean();
     return user;
   } catch (error) {
     logger.error(error);

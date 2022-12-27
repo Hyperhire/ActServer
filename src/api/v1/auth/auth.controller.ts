@@ -291,6 +291,40 @@ router.post(
 );
 
 router.post(
+  "/edit-profile",
+  jwtMiddleware.verifyToken,
+  async (request: Request, response: Response) => {
+    try {
+      const { id, userType } = request["user"];
+      const data = { ...request.body };
+      if (data.email) {
+        throw "Email cannot be changed";
+      }
+      if (data.nickname) {
+        const { duplicated } = await authService.checkNickName(data.nickname);
+        if (duplicated) throw "Nickname Exists";
+      }
+      if (data.password) {
+        //TODO: validate password
+        data.password = await makeHash(data.password);
+      }
+
+      let updatedUser;
+      if (userType === UserType.INDIVIDUAL) {
+        updatedUser = await userService.updateUser(id, data);
+      } else {
+        updatedUser = await orgsService.updateOrg(id, data);
+      }
+
+      return response.status(200).json({ data: updatedUser });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+router.post(
   "/forgot-password",
   async (request: Request, response: Response) => {
     try {
@@ -316,35 +350,6 @@ router.post(
       }
 
       await sendResetPasswordMail(email, _newPassword);
-
-      return response.status(200).json({ data: updatedUser });
-    } catch (error) {
-      logger.error(error);
-      return response.status(400).json({ error });
-    }
-  }
-);
-
-router.post(
-  "/change-password",
-  jwtMiddleware.verifyToken,
-  async (request: Request, response: Response) => {
-    try {
-      const { id, userType } = request["user"];
-      const { password } = request.body;
-      //TODO: validate password
-      const _newPasswordHash = await makeHash(password);
-
-      let updatedUser;
-      if (userType === UserType.INDIVIDUAL) {
-        updatedUser = await userService.updateUser(id, {
-          password: _newPasswordHash
-        });
-      } else {
-        updatedUser = await orgsService.updateOrg(id, {
-          password: _newPasswordHash
-        });
-      }
 
       return response.status(200).json({ data: updatedUser });
     } catch (error) {

@@ -38,7 +38,9 @@ const updateOrg = async (orgId, updateData) => {
       { _id: orgId },
       { ...updateData, updatedAt: new Date().toISOString() },
       { new: true }
-    ).select(selectInfo).lean();
+    )
+      .select(selectInfo)
+      .lean();
 
     return updatedOrg;
   } catch (error) {
