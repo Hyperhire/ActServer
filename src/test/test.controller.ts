@@ -1,14 +1,8 @@
 import { Request, Router, Response } from "express";
-import KasWallet from "../utils/kasWallet";
 import multer from "multer";
-import { getBuckets, uploadFile } from "../utils/upload";
-import { kakaopayRequestSubcriptionPayment } from "../utils/kakaopay";
-import authMiddleware from "../middleware/auth.middleware";
-import jwtMiddleware from "../middleware/jwt.middleware";
 import { sendTestMail, sendVerificationMail } from "../utils/mailer";
 import {
   getRedisValueByKey,
-  setRedisValueByKey,
   setRedisValueByKeyWithExpireSec
 } from "../utils/redis";
 import { verificationCodeGenerator } from "../utils/random";
@@ -50,17 +44,12 @@ router.post("/mail", async (request: Request, response: Response) => {
 });
 
 router.post("/verify", async (request: Request, response: Response) => {
-  // TODO: generate Verification code
-  const verificationCode = verificationCodeGenerator();
-  // TODO: save code into redis with key
-  // await setKey(`verification${result._id}`, verificationCode);
-  // TODO: send Email with Verification code
-  sendVerificationMail("juhyun.kim0204@gmail.com", verificationCode);
+  sendVerificationMail("juhyun.kim0204@gmail.com", "hello");
   try {
     return response.json({
       status: 200,
       data: {
-        verificationCode,
+        code: "hello",
         timestamp: new Date()
       }
     });

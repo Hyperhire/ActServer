@@ -41,12 +41,9 @@ router.get(
 
       let orgDonations = [];
       if (id && userType === UserType.INDIVIDUAL) {
-        const _orgDonations = await subscriptionService.getActiveSubscriptionOrdersByUserId(
+        orgDonations = await subscriptionService.getActiveSubscriptionTargetIdListByUserId(
           id
         );
-        orgDonations = [
-          ...new Set(_orgDonations.map(item => item.targetId.toString()))
-        ];
       }
 
       const list = [];
@@ -78,14 +75,11 @@ router.get(
 
       let orgDonations = [];
       if (id && userType === UserType.INDIVIDUAL) {
-        const _orgDonations = await subscriptionService.getActiveSubscriptionOrdersByUserId(
+        orgDonations = await subscriptionService.getActiveSubscriptionTargetIdListByUserId(
           id
         );
-        orgDonations = [
-          ...new Set(_orgDonations.map(item => item.targetId.toString()))
-        ];
       }
-      
+
       return response.status(200).json({
         data: { ...org, isDonating: orgDonations.indexOf(idDto.id) > -1 }
       });
