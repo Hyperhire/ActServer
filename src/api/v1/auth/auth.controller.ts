@@ -317,7 +317,7 @@ router.post(
 
       await sendResetPasswordMail(email, _newPassword);
 
-      return response.status(201).json({ data: updatedUser });
+      return response.status(200).json({ data: updatedUser });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -346,7 +346,7 @@ router.post(
         });
       }
 
-      return response.status(201).json({ data: updatedUser });
+      return response.status(200).json({ data: updatedUser });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -383,7 +383,7 @@ router.post(
         });
       }
 
-      return response.status(201).json({ data: updatedUser });
+      return response.status(200).json({ data: updatedUser });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -417,7 +417,7 @@ router.post(
       // send Email with Verification code
       sendVerificationMail(user.email, code);
 
-      return response.status(201).json({ data: { sent: true } });
+      return response.status(200).json({ data: { sent: true } });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
@@ -501,7 +501,7 @@ router.post(
         });
       }
 
-      return response.status(201).json({ data: updatedUser });
+      return response.status(200).json({ data: updatedUser });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
