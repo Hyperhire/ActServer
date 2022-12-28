@@ -1,5 +1,9 @@
 import { Schema, model, Types } from "mongoose";
-import { OrderType, PaymentGateway, SubscriptionDate } from "../../../../common/constants";
+import {
+  OrderType,
+  PaymentGateway,
+  SubscriptionDate
+} from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Donation {
@@ -7,10 +11,9 @@ interface Donation {
   targetType: string;
   targetId: Types.ObjectId;
   pg: string;
-  isRecurring: boolean;
-  recurringCount: number;
-  recurringOn: string;
   amount: number;
+  paymentType: string;
+  subscriptionOn: number;
   isTerminated: boolean;
   startedAt: Date;
   endedAt: Date;
@@ -26,10 +29,9 @@ const schema = new Schema<Donation>({
     isRequired: true
   },
   targetId: { type: Schema.Types.ObjectId },
-  isRecurring: { type: Boolean },
   pg: { type: String, enums: Object.values(PaymentGateway) },
-  recurringCount: { type: Number, default: 1 },
-  recurringOn: { type: String, enums: Object.values(SubscriptionDate) },
+  paymentType: {type: String},
+  subscriptionOn: {type: Number, enums: Object.values(SubscriptionDate)},
   amount: { type: Number },
   isTerminated: { type: Boolean, default: false },
   startedAt: { type: Date },

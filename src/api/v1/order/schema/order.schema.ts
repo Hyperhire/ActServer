@@ -1,5 +1,11 @@
 import { Schema, model, Types } from "mongoose";
-import { OrderPaidStatus } from "../../../../common/constants";
+import {
+  OrderPaidStatus,
+  SubscriptionDate,
+  OrderPaymentType,
+  OrderType,
+  PaymentGateway
+} from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 interface Order {
@@ -22,18 +28,18 @@ interface Order {
 
 const schema = new Schema<Order>({
   userId: { type: Schema.Types.ObjectId },
-  targetType: { type: String, enums: ["ORG", "CAMPAIGN"] },
+  targetType: { type: String, enums: Object.values(OrderType) },
   targetId: { type: Schema.Types.ObjectId },
   donationId: { type: Schema.Types.ObjectId },
-  pg: { type: String, enums: ["KAKAO", "NAVER"] },
+  pg: { type: String, enums: Object.values(PaymentGateway) },
   amount: { type: Number },
   paidStatus: {
     type: String,
-    enums: ["notyet", "cancel", "approved"],
+    enums: Object.values(OrderPaidStatus),
     default: OrderPaidStatus.NOT_YET
   }, // ["notyet", "cancel", "approved"]
-  paymentType: { type: String, enums: ["SINGLE", "SUBSCRIPTION"] },
-  subscriptionOn: { type: Number, enums: [1, 10, 20] },
+  paymentType: { type: String, enums: Object.values(OrderPaymentType) },
+  subscriptionOn: { type: Number, enums: Object.values(SubscriptionDate) },
   kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal
   kakaoSID: { type: String }, // kakao pay subscription tansaction id
   nft: { type: String },
