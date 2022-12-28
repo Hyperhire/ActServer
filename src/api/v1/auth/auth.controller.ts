@@ -297,15 +297,17 @@ router.post(
   uploadFile("images").single("image"),
   async (request: MulterRequest, response: Response) => {
     try {
+      console.log("edit profile 11");
       const { id, userType } = request["user"];
       const data = { ...JSON.parse(request.body.data) };
-
+      console.log("edit profile 22");
       const file = request.file;
       if (file) {
         if (userType === UserType.INDIVIDUAL) {
-          data.profileUrl = file;
+          data.profileUrl = file.location;
         }
       }
+      console.log("edit profile 33");
       if (data.email) {
         throw "Email cannot be changed";
       }
@@ -318,7 +320,7 @@ router.post(
         if (!valid) throw "Invalid Password";
         data.password = await makeHash(data.password);
       }
-
+      console.log("edit profile 44");
       let updatedUser;
       if (userType === UserType.INDIVIDUAL) {
         const user = await userService.getUserById(id);
@@ -336,7 +338,7 @@ router.post(
         }
         updatedUser = await orgsService.updateOrg(id, data);
       }
-
+      console.log("edit profile 55");
       return response.status(200).json({ data: updatedUser });
     } catch (error) {
       logger.error(error);
