@@ -118,7 +118,7 @@ const doPaymentAll = async () => {
           donationId,
           kakaoSID,
           paymentType: OrderPaymentType.SUBSCRIPTION_PAYMENT,
-          // subscriptionOn,
+          subscriptionOn,
           paidStatus: OrderPaidStatus.APPROVED,
           paidAt: data.approved_at
         });
@@ -174,7 +174,7 @@ const doPaymentAllOnDate = async date => {
           donationId,
           kakaoSID,
           paymentType: OrderPaymentType.SUBSCRIPTION_PAYMENT,
-          // subscriptionOn,
+          subscriptionOn,
           paidStatus: OrderPaidStatus.APPROVED,
           paidAt: data.approved_at
         });
