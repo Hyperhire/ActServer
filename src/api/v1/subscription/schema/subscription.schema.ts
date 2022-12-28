@@ -15,7 +15,7 @@ interface Subscription {
   paidCount: number;
   subscriptionOn: number;
   lastPaidAt: Date;
-  inactiveAt: Date;
+  inactivatedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,7 +32,7 @@ const schema = new Schema<Subscription>({
   active: { type: Boolean, default: true },
   paidCount: { type: Number, default: 1 },
   lastPaidAt: { type: Date },
-  inactiveAt: { type: Date },
+  inactivatedAt: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

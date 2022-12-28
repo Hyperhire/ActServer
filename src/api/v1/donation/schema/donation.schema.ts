@@ -16,7 +16,7 @@ interface Donation {
   subscriptionOn: number;
   active: boolean;
   startedAt: Date;
-  endedAt: Date;
+  inactivatedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,7 +35,7 @@ const schema = new Schema<Donation>({
   amount: { type: Number },
   active: { type: Boolean, default: true },
   startedAt: { type: Date },
-  endedAt: { type: Date },
+  inactivatedAt: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

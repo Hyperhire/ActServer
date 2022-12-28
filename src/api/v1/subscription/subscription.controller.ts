@@ -27,16 +27,13 @@ router.post(
         subscription.kakaoSID
       );
 
-      const updatedSubscription = await subscriptionService.updateSubscription(
-        subscription._id,
-        {
-          active: false,
-          inactiveAt: kakaoResponse.data.inactivated_at
-        }
-      );
+      await subscriptionService.updateSubscription(subscription._id, {
+        active: false,
+        inactivatedAt: kakaoResponse.data.inactivated_at
+      });
       const updatedDonation = await donationService.updateDonation(
         subscription.donationId,
-        { active: false }
+        { active: false, inactivatedAt: kakaoResponse.data.inactivated_at }
       );
       return response.status(200).send({ data: updatedDonation });
     } catch (error) {
