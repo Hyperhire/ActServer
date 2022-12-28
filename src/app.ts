@@ -8,7 +8,11 @@ import { connectDB } from "./database/mongo-connection";
 import morganMiddleware from "./logger/morgan.logger";
 import swagger from "./utils/swagger";
 import cors from "cors";
-import { scheduleTest } from "./utils/scheduler";
+import {
+  subscriptionFirst,
+  subscriptionTenth,
+  subscriptionTwenteith
+} from "./utils/scheduler";
 
 const app: Express = express();
 app.use(cors());
@@ -29,7 +33,15 @@ connectDB()
     app.listen(config.port || 4001, () => {
       console.log(`server started on ${config.port}`);
     });
-    // scheduleTest;/
+
+    // 1일날 정기결제 처리
+    subscriptionFirst;
+
+    // 10일날 정기결제 처리
+    subscriptionTenth;
+
+    // 20일날 정기결제 처리
+    subscriptionTwenteith;
   })
   .catch(error => {
     console.error(error);

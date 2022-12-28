@@ -1,7 +1,7 @@
 import { SubscriptionModel } from "./schema/subscription.schema";
 import { kakaopayRequestSubcriptionPayment } from "../../../utils/kakaopay";
 import orderService from "../order/order.service";
-import { OrderPaidStatus } from "../../../common/constants";
+import { OrderPaidStatus, OrderPaymentType } from "../../../common/constants";
 import KasWallet from "../../../utils/kasWallet";
 import authService from "../auth/auth.service";
 import userService from "../user/user.service";
@@ -62,6 +62,19 @@ const getActiveSubscriptions = async () => {
   }
 };
 
+const getActiveSubscriptionsByDate = async date => {
+  try {
+    const order = await SubscriptionModel.find({
+      active: true,
+      subscriptionOn: date
+    });
+
+    return order;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getActiveSubscriptionTargetIdListByUserId = async userId => {
   try {
     const _order = await SubscriptionModel.find({ userId, active: true })
@@ -80,7 +93,6 @@ const doPaymentAll = async () => {
   try {
     const subscriptionList = await getActiveSubscriptions();
     subscriptionList.map(async subscription => {
-      // console.log("order 121", order);
       const {
         _id,
         userId,
@@ -89,6 +101,7 @@ const doPaymentAll = async () => {
         donationId,
         pg,
         amount,
+        subscriptionOn,
         kakaoSID
       } = subscription;
       const { status, data } = await kakaopayRequestSubcriptionPayment(
@@ -104,6 +117,8 @@ const doPaymentAll = async () => {
           amount,
           donationId,
           kakaoSID,
+          paymentType: OrderPaymentType.SUBSCRIPTION_PAYMENT,
+          // subscriptionOn,
           paidStatus: OrderPaidStatus.APPROVED,
           paidAt: data.approved_at
         });
@@ -129,6 +144,65 @@ const doPaymentAll = async () => {
   }
 };
 
+const doPaymentAllOnDate = async date => {
+  try {
+    if (!date) throw "no date";
+    const subscriptionList = await getActiveSubscriptionsByDate(date);
+    subscriptionList.map(async subscription => {
+      const {
+        _id,
+        userId,
+        targetType,
+        targetId,
+        donationId,
+        pg,
+        amount,
+        subscriptionOn,
+        kakaoSID
+      } = subscription;
+      const { status, data } = await kakaopayRequestSubcriptionPayment(
+        subscription
+      );
+      if (status === 200) {
+        // create order
+        const order = await orderService.createOrder({
+          userId,
+          targetType,
+          targetId,
+          pg,
+          amount,
+          donationId,
+          kakaoSID,
+          paymentType: OrderPaymentType.SUBSCRIPTION_PAYMENT,
+          // subscriptionOn,
+          paidStatus: OrderPaidStatus.APPROVED,
+          paidAt: data.approved_at
+        });
+
+        // update subscription
+        await updateSubscription(_id, {
+          paidCount: subscription.paidCount + 1,
+          lastPaidAt: data.approved_at
+        });
+
+        // create nft
+        const user = await userService.getUserById(userId.toString());
+        const { token_id } = await KasWallet.mintNft(
+          order,
+          user.wallet.address
+        );
+
+        // update nft
+        await orderService.updateOrder(order._id, {
+          nft: token_id
+        });
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   createSubscription,
   updateSubscription,
@@ -136,5 +210,6 @@ export default {
   getSubscriptionByDonationId,
   getActiveSubscriptions,
   getActiveSubscriptionTargetIdListByUserId,
-  doPaymentAll
+  doPaymentAll,
+  doPaymentAllOnDate
 };
