@@ -7,6 +7,7 @@ const schema = new Schema({
     type: String,
     enums: Object.values(LoginType)
   },
+  profileUrl: { type: String },
   email: { type: String, required: true, unique: true },
   nickname: { type: String, required: true, unique: true },
   name: { type: String },

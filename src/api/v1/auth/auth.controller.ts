@@ -294,10 +294,18 @@ router.post(
 router.post(
   "/edit-profile",
   jwtMiddleware.verifyToken,
-  async (request: Request, response: Response) => {
+  uploadFile("images").single("image"),
+  async (request: MulterRequest, response: Response) => {
     try {
       const { id, userType } = request["user"];
-      const data = { ...request.body };
+      const data = { ...JSON.parse(request.body.data) };
+
+      const file = request.file;
+      if (file) {
+        if (userType === UserType.INDIVIDUAL) {
+          data.profileUrl = file;
+        }
+      }
       if (data.email) {
         throw "Email cannot be changed";
       }
@@ -306,9 +314,8 @@ router.post(
         if (duplicated) throw "Nickname Exists";
       }
       if (data.password) {
-        //TODO: validate password
         const valid = validatePassword(data.password);
-        if (!valid) throw "Password Invalid";
+        if (!valid) throw "Invalid Password";
         data.password = await makeHash(data.password);
       }
 

@@ -49,7 +49,7 @@ const schema = new Schema({
   bankDetail: {
     bankName: { type: String },
     accountHolder: { type: String },
-    acountNumber: { type: String },
+    accountNumber: { type: String },
     accountCopyUrl: { type: String }
   },
   nftImageUrl: {
