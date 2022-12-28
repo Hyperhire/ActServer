@@ -8,6 +8,7 @@ import { connectDB } from "./database/mongo-connection";
 import morganMiddleware from "./logger/morgan.logger";
 import swagger from "./utils/swagger";
 import cors from "cors";
+import { scheduleTest } from "./utils/scheduler";
 
 const app: Express = express();
 app.use(cors());
@@ -28,6 +29,7 @@ connectDB()
     app.listen(config.port || 4001, () => {
       console.log(`server started on ${config.port}`);
     });
+    // scheduleTest;/
   })
   .catch(error => {
     console.error(error);

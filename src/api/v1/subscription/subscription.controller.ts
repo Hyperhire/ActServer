@@ -22,10 +22,12 @@ router.post(
 
       if (subscription.userId !== userId) throw "Unauthorized";
 
-      const kakaoResponse = await kakaopayRequestInactiveSubscriptionBySid(subscription.kakaoSID);
+      const kakaoResponse = await kakaopayRequestInactiveSubscriptionBySid(
+        subscription.kakaoSID
+      );
 
       const updatedSubscription = await subscriptionService.updateSubscription(
-        id,
+        subscription._id,
         {
           active: false,
           inactiveAt: kakaoResponse.data.inactivated_at
