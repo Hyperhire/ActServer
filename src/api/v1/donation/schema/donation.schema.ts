@@ -14,7 +14,7 @@ interface Donation {
   amount: number;
   paymentType: string;
   subscriptionOn: number;
-  isTerminated: boolean;
+  active: boolean;
   startedAt: Date;
   endedAt: Date;
   createdAt: Date;
@@ -30,10 +30,10 @@ const schema = new Schema<Donation>({
   },
   targetId: { type: Schema.Types.ObjectId },
   pg: { type: String, enums: Object.values(PaymentGateway) },
-  paymentType: {type: String},
-  subscriptionOn: {type: Number, enums: Object.values(SubscriptionDate)},
+  paymentType: { type: String },
+  subscriptionOn: { type: Number, enums: Object.values(SubscriptionDate) },
   amount: { type: Number },
-  isTerminated: { type: Boolean, default: false },
+  active: { type: Boolean, default: true },
   startedAt: { type: Date },
   endedAt: { type: Date },
   createdAt: { type: Date, default: Date.now },

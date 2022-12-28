@@ -11,6 +11,21 @@ const createDonation = async donationData => {
   }
 };
 
+const updateDonation = async (id, updateData) => {
+  try {
+    const newDonation = await DonationModel.findOneAndUpdate(
+      { _id: id },
+      { ...updateData, updatedAt: new Date().toISOString() },
+      {
+        new: true
+      }
+    );
+    return newDonation;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getMyDonation = async userId => {
   try {
     const orgDonations = await DonationModel.aggregate([
@@ -115,6 +130,7 @@ const getCampaignDonationsByUserId = async userId => {
 
 export default {
   createDonation,
+  updateDonation,
   getMyDonation,
   getOrgDonationsByUserId,
   getCampaignDonationsByUserId

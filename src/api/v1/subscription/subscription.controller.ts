@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import { kakaopayRequestInactiveSubscriptionBySid } from "../../../utils/kakaopay";
+import donationService from "../donation/donation.service";
 import subscriptionService from "./subscription.service";
 
 const router = Router();
@@ -33,7 +34,11 @@ router.post(
           inactiveAt: kakaoResponse.data.inactivated_at
         }
       );
-      return response.status(200).send({ data: updatedSubscription });
+      const updatedDonation = await donationService.updateDonation(
+        subscription.donationId,
+        { active: false }
+      );
+      return response.status(200).send({ data: updatedDonation });
     } catch (error) {
       return response.status(400).send({ error });
     }
