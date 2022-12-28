@@ -20,9 +20,7 @@ router.post(
         id
       );
 
-      console.log('---', subscription.userId, userId);
-
-      if (subscription.userId !== userId) throw "Unauthorized";
+      if (subscription.userId.toString() !== userId) throw "Unauthorized";
 
       const kakaoResponse = await kakaopayRequestInactiveSubscriptionBySid(
         subscription.kakaoSID
