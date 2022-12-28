@@ -88,7 +88,9 @@ const getOrgDonationsByUserId = async userId => {
     const list = await DonationModel.find({
       userId: new mongoose.Types.ObjectId(userId),
       targetType: OrderType.ORGANIZATION
-    }).select({ targetId: 1 });
+    })
+      .select({ targetId: 1 })
+      .lean();
 
     return list;
   } catch (error) {
@@ -101,7 +103,9 @@ const getCampaignDonationsByUserId = async userId => {
     const list = await DonationModel.find({
       userId: new mongoose.Types.ObjectId(userId),
       targetType: OrderType.CAMPAIGN
-    }).select({ targetId: 1 });
+    })
+      .select({ targetId: 1 })
+      .lean();
 
     return list;
   } catch (error) {

@@ -189,7 +189,7 @@ router.post(
 
       if (order.paymentType === OrderPaymentType.SUBSCRIPTION_PAYMENT) {
         // if order is subscription payment, create subscription order for next time
-        const sOrder = await subscriptionService.createSubscriptionOrder({
+        const sOrder = await subscriptionService.createSubscription({
           userId,
           targetType,
           targetId,

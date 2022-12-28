@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import { kakaopayRequestInactiveSubscriptionBySid } from "../../../utils/kakaopay";
 import subscriptionService from "./subscription.service";
 
 const router = Router();
@@ -14,16 +15,20 @@ router.post(
       const { id } = request.body;
       if (!id) throw "Id is empty";
       const userId = request["user"].id;
-      const subscription = await subscriptionService.getSubscriptionOrderById(
+
+      const subscription = await subscriptionService.getSubscriptionByDonationId(
         id
       );
+
       if (subscription.userId !== userId) throw "Unauthorized";
 
-      const updatedSubscription = await subscriptionService.updateSubscriptionOrder(
+      const kakaoResponse = await kakaopayRequestInactiveSubscriptionBySid(subscription.kakaoSID);
+
+      const updatedSubscription = await subscriptionService.updateSubscription(
         id,
         {
           active: false,
-          inactiveAt: new Date().toISOString(),
+          inactiveAt: kakaoResponse.data.inactivated_at
         }
       );
       return response.status(200).send({ data: updatedSubscription });

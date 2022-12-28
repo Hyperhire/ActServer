@@ -63,7 +63,7 @@ const kakaopayApprove = async (order, pg_token) => {
 
 const kakaopayRequestSubcriptionPayment = async order => {
   try {
-    if (!order?.kakaoSID) throw "No kakao SID";
+    if (!order.kakaoSID) throw "No kakao SID";
     const result = await axios.post(
       "https://kapi.kakao.com/v1/payment/subscription",
       {
@@ -88,4 +88,31 @@ const kakaopayRequestSubcriptionPayment = async order => {
   }
 };
 
-export { kakaopayReady, kakaopayApprove, kakaopayRequestSubcriptionPayment };
+const kakaopayRequestInactiveSubscriptionBySid = async kakaoSID => {
+  try {
+    if (!kakaoSID) throw "No kakao SID";
+    const result = await axios.post(
+      "https://kapi.kakao.com/v1/payment/manage/subscription/inactive",
+      {
+        cid: process.env.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
+        sid: kakaoSID
+      },
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+          Authorization: `KakaoAK ${process.env.KAKAO_ADMIN_KEY}`
+        }
+      }
+    );
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export {
+  kakaopayReady,
+  kakaopayApprove,
+  kakaopayRequestSubcriptionPayment,
+  kakaopayRequestInactiveSubscriptionBySid
+};

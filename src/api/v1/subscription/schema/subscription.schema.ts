@@ -25,7 +25,7 @@ const schema = new Schema<Subscription>({
   donationId: { type: Schema.Types.ObjectId },
   pg: { type: String, enums: ["KAKAO", "NAVER"] },
   amount: { type: Number },
-  kakaoSID: { type: String }, // kakao pay subscription tansaction id
+  kakaoSID: { type: String, isRequired: true }, // kakao pay subscription tansaction id
   active: { type: Boolean, default: true },
   paidCount: { type: Number, default: 1 },
   lastPaidAt: { type: Date },

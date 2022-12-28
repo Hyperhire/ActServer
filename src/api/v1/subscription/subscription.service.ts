@@ -6,7 +6,7 @@ import KasWallet from "../../../utils/kasWallet";
 import authService from "../auth/auth.service";
 import userService from "../user/user.service";
 
-const createSubscriptionOrder = async data => {
+const createSubscription = async data => {
   try {
     const sOrder = await SubscriptionModel.create(data);
 
@@ -16,7 +16,7 @@ const createSubscriptionOrder = async data => {
   }
 };
 
-const updateSubscriptionOrder = async (id, updateData) => {
+const updateSubscription = async (id, updateData) => {
   try {
     const order = await SubscriptionModel.findOneAndUpdate(
       { _id: id },
@@ -32,7 +32,7 @@ const updateSubscriptionOrder = async (id, updateData) => {
   }
 };
 
-const getSubscriptionOrderById = async id => {
+const getSubscriptionById = async id => {
   try {
     const order = await SubscriptionModel.findOne({ _id: id });
 
@@ -42,7 +42,17 @@ const getSubscriptionOrderById = async id => {
   }
 };
 
-const getActiveSubscriptionOrders = async () => {
+const getSubscriptionByDonationId = async id => {
+  try {
+    const order = await SubscriptionModel.findOne({ donationId: id });
+
+    return order;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getActiveSubscriptions = async () => {
   try {
     const order = await SubscriptionModel.find({ active: true });
 
@@ -68,7 +78,7 @@ const getActiveSubscriptionTargetIdListByUserId = async userId => {
 
 const doPaymentAll = async () => {
   try {
-    const subscriptionList = await getActiveSubscriptionOrders();
+    const subscriptionList = await getActiveSubscriptions();
     subscriptionList.map(async subscription => {
       // console.log("order 121", order);
       const {
@@ -99,7 +109,7 @@ const doPaymentAll = async () => {
         });
 
         // update subscription
-        await updateSubscriptionOrder(_id, {
+        await updateSubscription(_id, {
           paidCount: subscription.paidCount + 1,
           lastPaidAt: data.approved_at
         });
@@ -120,10 +130,11 @@ const doPaymentAll = async () => {
 };
 
 export default {
-  createSubscriptionOrder,
-  updateSubscriptionOrder,
-  getSubscriptionOrderById,
-  getActiveSubscriptionOrders,
+  createSubscription,
+  updateSubscription,
+  getSubscriptionById,
+  getSubscriptionByDonationId,
+  getActiveSubscriptions,
   getActiveSubscriptionTargetIdListByUserId,
   doPaymentAll
 };
