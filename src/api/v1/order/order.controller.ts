@@ -164,13 +164,23 @@ router.post(
       );
 
       // create Donation
-      const { targetType, targetId, pg, amount, paidAt } = receiptAddedOrder;
+      const {
+        targetType,
+        targetId,
+        pg,
+        amount,
+        paidAt,
+        paymentType,
+        subscriptionOn
+      } = receiptAddedOrder;
       const donation = await donationService.createDonation({
         userId,
         targetType,
         targetId,
         pg,
         amount,
+        paymentType,
+        subscriptionOn,
         startedAt: paidAt
       });
 
