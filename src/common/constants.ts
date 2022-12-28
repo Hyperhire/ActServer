@@ -61,3 +61,8 @@ export const WithdrawStatus = {
   PENDING: "PENDING",
   COMPELETE: "COMPLETE"
 };
+
+export const UserSex = {
+  MALE: "male",
+  FEMALE: "female"
+};

@@ -32,7 +32,6 @@ router.post(
         orgId,
         amount
       });
-      console.log("withdraw", withdraw);
       return response.status(200).send({ data: withdraw });
     } catch (error) {
       return response.status(400).send({ error });

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { LoginType, UserStatus } from "../../../../common/constants";
+import { LoginType, UserSex, UserStatus } from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
 const schema = new Schema({
@@ -23,7 +23,8 @@ const schema = new Schema({
   indInfo: {
     name: { type: String },
     mobile: { type: String },
-    dateOfBirth: { type: Date }
+    dateOfBirth: { type: Date },
+    sex: { type: String, enums: Object.values(UserSex) }
   },
   status: {
     type: String,

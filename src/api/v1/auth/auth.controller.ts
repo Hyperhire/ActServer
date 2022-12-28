@@ -314,8 +314,19 @@ router.post(
 
       let updatedUser;
       if (userType === UserType.INDIVIDUAL) {
+        const user = await userService.getUserById(id);
+        if (data.indInfo) {
+          data.indInfo = { ...user.indInfo, ...data.indInfo };
+        }
         updatedUser = await userService.updateUser(id, data);
       } else {
+        const user = await orgsService.getOrgById(id);
+        if (data.manager) {
+          data.manager = { ...user.manager, ...data.manager };
+        }
+        if (data.bankDetail) {
+          data.bankDetail = { ...user.bankDetail, ...data.bankDetail };
+        }
         updatedUser = await orgsService.updateOrg(id, data);
       }
 
