@@ -65,18 +65,17 @@ router.post("/login", async (request: Request, response: Response) => {
       result = await authService.loginOrg(loginDto);
     }
 
+    const user = userType === UserType.INDIVIDUAL ? result.user : result.org;
+
     await userTokenService.createOrUpdate({
-      userId:
-        userType === UserType.INDIVIDUAL ? result.user._id : result.org._id,
+      userId: user._id,
       userType,
       refreshToken: result.token.refreshToken
     });
 
     // if user email is not verified, create verification code and send email
-    if (!result.user.constant.isEmailVerified) {
-      const key = `verification_${userType === UserType.INDIVIDUAL
-        ? result.user._id
-        : result.org._id}`;
+    if (!user.constant.isEmailVerified) {
+      const key = `verification_${user._id}`;
       let code = await getRedisValueByKey(key);
       if (!code) {
         // generate Verification code
@@ -86,10 +85,7 @@ router.post("/login", async (request: Request, response: Response) => {
       }
 
       // send Email with Verification code
-      sendVerificationMail(
-        userType === UserType.INDIVIDUAL ? result.user.email : result.org.email,
-        code
-      );
+      sendVerificationMail(user.email, code);
     }
 
     return response.status(200).json({ data: result });
