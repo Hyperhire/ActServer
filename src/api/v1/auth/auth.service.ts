@@ -44,18 +44,22 @@ const registerOrg = async body => {
 const loginUser = async (loginDto: LoginDto) => {
   try {
     const user = await userService.getUserByEmail(loginDto.email);
+
     if (!user) {
       throw "User not found";
     }
+
     const isEqualHash = await compareHash(loginDto.password, user.password);
     if (!isEqualHash) {
       throw "password missmatch";
     }
+
     const token = createJWT({
       id: user._id.toString(),
       userType: UserType.INDIVIDUAL
     });
-    return { token, user };
+
+    return { token, user, userType: UserType.INDIVIDUAL };
   } catch (error) {
     throw error;
   }
@@ -70,16 +74,20 @@ const loginOrg = async (loginDto: LoginDto) => {
   try {
     const org = await orgsService.getOrgByEmail(loginDto.email);
     const isEqualHash = await compareHash(loginDto.password, org.password);
+
     if (!isEqualHash) {
       throw "password missmatch";
     }
+
     const token = createJWT({
       id: org._id.toString(),
       userType: UserType.ORGANIZATION
     });
+
     return {
       token,
-      org
+      org,
+      userType: UserType.ORGANIZATION
     };
   } catch (error) {
     throw error;

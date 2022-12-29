@@ -54,25 +54,21 @@ router.post("/login", async (request: Request, response: Response) => {
     await validateBody<LoginDto>(loginDto);
 
     const userType = await authService.checkUserTypeOnLoginByEmail(
-      request.body.email
+      loginDto.email
     );
 
     let result;
-
     if (userType === UserType.INDIVIDUAL) {
       result = await authService.loginUser(loginDto);
     } else {
       result = await authService.loginOrg(loginDto);
     }
-
     const user = userType === UserType.INDIVIDUAL ? result.user : result.org;
-
     await userTokenService.createOrUpdate({
       userId: user._id,
       userType,
       refreshToken: result.token.refreshToken
     });
-
     // if user email is not verified, create verification code and send email
     if (!user.constant.isEmailVerified) {
       const key = `verification_${user._id}`;
@@ -83,7 +79,6 @@ router.post("/login", async (request: Request, response: Response) => {
         // save code into redis with key
         await setRedisValueByKeyWithExpireSec(key, code, 60 * 30);
       }
-
       // send Email with Verification code
       sendVerificationMail(user.email, code);
     }
