@@ -8,6 +8,7 @@ import donationService from "./donation.service";
 import { kakaopayReady, kakaopayApprove } from "../../../utils/kakaopay";
 import { CreateDonationDTO } from "./dto/create-donation.dto";
 import authMiddleware from "../../../middleware/auth.middleware";
+import { UserType } from "../../../common/constants";
 
 const router = Router();
 
@@ -145,11 +146,15 @@ router.post(
 router.get(
   "/my",
   jwtMiddleware.verifyToken,
-  authMiddleware.validOnlyUser,
   async (request: Request, response: Response) => {
     try {
       const { id, userType } = request["user"];
-      const donations = await donationService.getMyDonation(id);
+      let donations;
+      if (userType === UserType.INDIVIDUAL) {
+        donations = await donationService.getMyIndDonation(id);
+      } else {
+        donations = await donationService.getMyOrgDonation(id);
+      }
 
       return response.status(200).json({ data: donations });
     } catch (error) {

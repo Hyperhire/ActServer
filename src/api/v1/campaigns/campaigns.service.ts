@@ -107,7 +107,34 @@ const getCampaignById = async campaignId => {
   }
 };
 
-const getCampaignByOrgId = async orgId => {
+const getAllCampaignsByOrgId = async orgId => {
+  try {
+    const now = new Date();
+    const campaign = await CampaignModel.aggregate([
+      {
+        $match: {
+          orgId: new mongoose.Types.ObjectId(orgId)
+        }
+      },
+      {
+        $lookup: {
+          from: "orgs",
+          foreignField: "_id",
+          localField: "orgId",
+          as: "org"
+        }
+      },
+      {
+        $unwind: "$org"
+      }
+    ]);
+    return campaign;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getActiveCampaignsByOrgId = async orgId => {
   try {
     const now = new Date();
     const campaign = await CampaignModel.aggregate([
@@ -141,5 +168,6 @@ export default {
   update,
   getList,
   getCampaignById,
-  getCampaignByOrgId
+  getAllCampaignsByOrgId,
+  getActiveCampaignsByOrgId
 };

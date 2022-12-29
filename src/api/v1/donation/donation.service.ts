@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { OrderType } from "../../../common/constants";
 import { DonationModel } from "./schema/donation.schema";
+import campaignsService from "../campaigns/campaigns.service";
 
 const createDonation = async donationData => {
   try {
@@ -26,7 +27,7 @@ const updateDonation = async (id, updateData) => {
   }
 };
 
-const getMyDonation = async userId => {
+const getMyIndDonation = async userId => {
   try {
     const orgDonations = await DonationModel.aggregate([
       {
@@ -98,6 +99,144 @@ const getMyDonation = async userId => {
   }
 };
 
+const getMyOrgDonation = async orgId => {
+  try {
+    const orgDonations = await DonationModel.aggregate([
+      {
+        $match: {
+          targetId: new mongoose.Types.ObjectId(orgId),
+          targetType: OrderType.ORGANIZATION
+        }
+      },
+      {
+        $lookup: {
+          from: "orgs",
+          foreignField: "_id",
+          localField: "targetId",
+          as: "org"
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          foreignField: "_id",
+          localField: "userId",
+          as: "user"
+        }
+      },
+      {
+        $lookup: {
+          from: "orders",
+          foreignField: "donationId",
+          localField: "_id",
+          as: "orders"
+        }
+      },
+      { $unwind: "$org" },
+      { $unwind: "$user" },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          targetType: 1,
+          targetId: 1,
+          pg: 1,
+          paymentType: 1,
+          subscriptionOn: 1,
+          amount: 1,
+          active: 1,
+          startedAt: 1,
+          inactivatedAt: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          org: { name: 1 },
+          user: { nickname: 1 }
+        }
+      },
+      { $sort: { createdAt: -1 } }
+    ]);
+
+    const campaignList = (await campaignsService.getAllCampaignsByOrgId(
+      orgId
+    )).map(item => item._id);
+
+    const campaignDonations = await DonationModel.aggregate([
+      {
+        $match: {
+          targetId: { $in: campaignList },
+          targetType: OrderType.CAMPAIGN
+        }
+      },
+      {
+        $lookup: {
+          from: "campaigns",
+          foreignField: "_id",
+          localField: "targetId",
+          as: "campaign"
+        }
+      },
+      { $unwind: "$campaign" },
+      {
+        $lookup: {
+          from: "orgs",
+          foreignField: "_id",
+          localField: "campaign.orgId",
+          as: "org"
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          foreignField: "_id",
+          localField: "userId",
+          as: "user"
+        }
+      },
+      {
+        $lookup: {
+          from: "orders",
+          foreignField: "donationId",
+          localField: "_id",
+          as: "orders"
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          targetType: 1,
+          targetId: 1,
+          pg: 1,
+          paymentType: 1,
+          subscriptionOn: 1,
+          amount: 1,
+          active: 1,
+          startedAt: 1,
+          inactivatedAt: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          campaign: {
+            title: 1,
+            description: 1
+          },
+          org: { name: 1 },
+          user: { nickname: 1 }
+        }
+      },
+      { $unwind: "$org" },
+      { $unwind: "$user" },
+      { $sort: { createdAt: -1 } }
+    ]);
+
+    return {
+      orgs: orgDonations,
+      campaigns: campaignDonations
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getOrgDonationsByUserId = async userId => {
   try {
     const list = await DonationModel.find({
@@ -131,7 +270,8 @@ const getCampaignDonationsByUserId = async userId => {
 export default {
   createDonation,
   updateDonation,
-  getMyDonation,
+  getMyIndDonation,
+  getMyOrgDonation,
   getOrgDonationsByUserId,
   getCampaignDonationsByUserId
 };

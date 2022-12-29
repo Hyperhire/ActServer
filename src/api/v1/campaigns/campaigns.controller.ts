@@ -111,7 +111,7 @@ router.get(
   async (request: Request, response: Response) => {
     try {
       const { id, userType } = request["user"];
-      const campaign = await campaignsService.getCampaignByOrgId(
+      const campaign = await campaignsService.getActiveCampaignsByOrgId(
         request.params.id
       );
 
