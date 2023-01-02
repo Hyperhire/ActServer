@@ -18,6 +18,7 @@ const createWithdraw = async data => {
 
 const getWithdrawPreRequestListByOrgId = async orgId => {
   try {
+    console.log("start");
     const orgCampaigns = await campaignsService.getAllCampaignIdsByOrgId(orgId);
     const amountByStatus = await OrderModel.aggregate([
       {
@@ -34,7 +35,6 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
         }
       }
     ]);
-
     const NOT_YET_AMOUNT =
       (amountByStatus.filter(status => !status._id)[0]?.amount || 0) +
       (amountByStatus.filter(
@@ -63,7 +63,6 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
       { $unwind: "$org" },
       { $sort: { createdAt: -1 } }
     ]);
-
     const campaign_order_list = await OrderModel.aggregate([
       {
         $match: {
@@ -90,9 +89,9 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
       { $unwind: "$org" },
       { $sort: { createdAt: -1 } }
     ]);
-
-    const all_list = [...org_order_list, ...campaign_order_list].sort((a, b) =>
-      a.createdAt.localeCompare(b.createdAt)
+    const all_list = [...org_order_list, ...campaign_order_list].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
     const NOT_YET = all_list.filter(
@@ -101,9 +100,9 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
         order.withdrawRequestStatus === OrderWithdrawRequestStatus.NOT_YET
     );
     const REQUESTED = all_list.filter(
-      order => order.withdrawRequestStatus === OrderWithdrawRequestStatus.REQUESTED
+      order =>
+        order.withdrawRequestStatus === OrderWithdrawRequestStatus.REQUESTED
     );
-
     return {
       amount: {
         NOT_YET: NOT_YET_AMOUNT,
