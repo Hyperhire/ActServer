@@ -149,6 +149,7 @@ const getMyOrgDonation = async orgId => {
           inactivatedAt: 1,
           createdAt: 1,
           updatedAt: 1,
+          orders: 1,
           org: { name: 1 },
           user: { nickname: 1 }
         }
@@ -156,9 +157,7 @@ const getMyOrgDonation = async orgId => {
       { $sort: { createdAt: -1 } }
     ]);
 
-    const campaignList = (await campaignsService.getAllCampaignsByOrgId(
-      orgId
-    )).map(item => item._id);
+    const campaignList = await campaignsService.getAllCampaignIdsByOrgId(orgId);
 
     const campaignDonations = await DonationModel.aggregate([
       {
@@ -215,6 +214,7 @@ const getMyOrgDonation = async orgId => {
           inactivatedAt: 1,
           createdAt: 1,
           updatedAt: 1,
+          orders: 1,
           campaign: {
             title: 1,
             description: 1

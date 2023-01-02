@@ -109,14 +109,11 @@ const getCampaignById = async campaignId => {
 
 const getAllCampaignIdsByOrgId = async orgId => {
   try {
-    const campaign = (await CampaignModel.aggregate([
-      {
-        $match: {
-          orgId: new mongoose.Types.ObjectId(orgId)
-        }
-      },
-      { $project: { _id: 1 } }
-    ])).map(item => item._id);
+    const campaign = (await CampaignModel.find({ orgId })
+      .select({
+        _id: 1
+      })
+      .lean()).map(item => item._id);
     return campaign;
   } catch (error) {
     throw error;
