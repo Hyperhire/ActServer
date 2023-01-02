@@ -13,6 +13,7 @@ const schema = new Schema({
     enums: Object.values(WithdrawStatus),
     default: WithdrawStatus.PENDING
   },
+  orders: { type: [Types.ObjectId] },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

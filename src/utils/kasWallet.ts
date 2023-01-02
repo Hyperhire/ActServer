@@ -1,23 +1,24 @@
 import orderService from "../api/v1/order/order.service";
 import { PaymentGateway } from "../common/constants";
+import { config } from "./../config/config";
 
 const CaverExtKAS = require("caver-js-ext-kas");
 
 const caver = new CaverExtKAS();
 caver.initWalletAPI(
-  process.env.KAS_CHAIN_ID,
-  process.env.KAS_ACCESS_KEY,
-  process.env.KAS_SECRET_ACCESS_KEY
+  config.KAS_CHAIN_ID,
+  config.KAS_ACCESS_KEY,
+  config.KAS_SECRET_ACCESS_KEY
 );
 caver.initMetadataAPI(
-  process.env.KAS_CHAIN_ID,
-  process.env.KAS_ACCESS_KEY,
-  process.env.KAS_SECRET_ACCESS_KEY
+  config.KAS_CHAIN_ID,
+  config.KAS_ACCESS_KEY,
+  config.KAS_SECRET_ACCESS_KEY
 );
 caver.initKIP17API(
-  process.env.KAS_CHAIN_ID,
-  process.env.KAS_ACCESS_KEY,
-  process.env.KAS_SECRET_ACCESS_KEY,
+  config.KAS_CHAIN_ID,
+  config.KAS_ACCESS_KEY,
+  config.KAS_SECRET_ACCESS_KEY,
   2
 );
 
@@ -29,7 +30,7 @@ const registerNftImage = async file => {
   try {
     const result = await caver.kas.metadata.uploadAsset(
       file
-      // process.env.KAS_STORAGE_KRN
+      // config.KAS_STORAGE_KRN
     );
     return result;
   } catch (error) {
@@ -73,7 +74,7 @@ const createMetadata = async order => {
     };
     const result = await caver.kas.metadata.uploadMetadata(
       metadata,
-      process.env.KAS_STORAGE_KRN
+      config.KAS_STORAGE_KRN
     );
     return result;
   } catch (error) {
@@ -86,7 +87,7 @@ const mintNft = async (order, userWallet) => {
     const token_id = new Date().getTime();
     const { uri: metadataUri } = await createMetadata(order);
     const receipt = await caver.kas.kip17.mint(
-      process.env.KAS_NFT_CONTRACT_ADDRESS,
+      config.KAS_NFT_CONTRACT_ADDRESS,
       userWallet,
       token_id,
       metadataUri
@@ -100,7 +101,7 @@ const mintNft = async (order, userWallet) => {
 const getNftDetail = async token_id => {
   try {
     const data = await caver.kas.kip17.getToken(
-      process.env.KAS_NFT_CONTRACT_ADDRESS,
+      config.KAS_NFT_CONTRACT_ADDRESS,
       token_id
     );
     return data;

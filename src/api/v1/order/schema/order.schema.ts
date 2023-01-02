@@ -4,7 +4,8 @@ import {
   SubscriptionDate,
   OrderPaymentType,
   OrderType,
-  PaymentGateway
+  PaymentGateway,
+  OrderWithdrawRequestStatus
 } from "../../../../common/constants";
 import { ModelNames } from "../../../../common/constants/model.constants";
 
@@ -18,6 +19,7 @@ interface Order {
   paymentType: string;
   subscriptionOn: number;
   paidStatus: string;
+  withdrawRequestStatus: string;
   kakaoTID: string;
   kakaoSID: string;
   nft: string;
@@ -37,6 +39,11 @@ const schema = new Schema<Order>({
     type: String,
     enums: Object.values(OrderPaidStatus),
     default: OrderPaidStatus.NOT_YET
+  }, // ["notyet", "cancel", "approved"]
+  withdrawRequestStatus: {
+    type: String,
+    enums: Object.values(OrderWithdrawRequestStatus),
+    default: OrderWithdrawRequestStatus.NOT_YET
   }, // ["notyet", "cancel", "approved"]
   paymentType: { type: String, enums: Object.values(OrderPaymentType) },
   subscriptionOn: { type: Number, enums: Object.values(SubscriptionDate) },

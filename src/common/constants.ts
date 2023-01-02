@@ -15,6 +15,11 @@ export const OrderPaidStatus = {
   APPROVED: "approved"
 };
 
+export const OrderWithdrawRequestStatus = {
+  NOT_YET: "notyet",
+  REQUESTED: "requested",
+};
+
 export const OrderPaymentType = {
   SINGLE_PAYMENT: "SINGLE",
   SUBSCRIPTION_PAYMENT: "SUBSCRIPTION"
@@ -59,7 +64,7 @@ export const SubscriptionDate = {
 
 export const WithdrawStatus = {
   PENDING: "PENDING",
-  COMPELETE: "COMPLETE"
+  COMPLETE: "COMPLETE"
 };
 
 export const UserSex = {

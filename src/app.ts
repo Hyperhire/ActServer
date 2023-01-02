@@ -29,9 +29,9 @@ app.use(router);
 
 connectDB()
   .then(() => {
-    console.log("connected to mongo");
-    app.listen(config.port || 4001, () => {
-      console.log(`server started on ${config.port}`);
+    console.log("connected to mongo for", config.KAS_CHAIN_ID);
+    app.listen(config.PORT || 4001, () => {
+      console.log(`server started on ${config.PORT}`);
     });
 
     // 1일날 정기결제 처리

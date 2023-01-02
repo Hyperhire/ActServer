@@ -1,6 +1,6 @@
 import { Request, Router, Response } from "express";
 import multer from "multer";
-import { sendTestMail, sendVerificationMail } from "../utils/mailer";
+import { sendVerificationMail } from "../utils/mailer";
 import {
   getRedisValueByKey,
   setRedisValueByKeyWithExpireSec

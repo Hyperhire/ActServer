@@ -6,7 +6,7 @@ const logFormat = format.printf(info => `${info.timestamp} : ${info.message}`)
 const options = {
     file: {
         level: "info",
-        filename: `${config.logDir}/app.log`,
+        filename: `${config.LOG_DIR}/app.log`,
         handleExceptions: true,
         maxsize: 5242880, // 5MB
         maxFiles: 5,

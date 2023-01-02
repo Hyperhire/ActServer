@@ -4,6 +4,7 @@ import { UserType, UserStatus, OrgStatus } from "../../../common/constants";
 import { makeHash } from "../../../common/helper/crypto.helper";
 import { createJWT, encode, decode } from "../../../common/helper/jwt.helper";
 import { validateBody } from "../../../common/helper/validate.helper";
+import { config } from "../../../config/config";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import {
@@ -209,7 +210,7 @@ router.post(
       await setRedisValueByKeyWithExpireSec(
         `verification_${result._id}`,
         verificationCode,
-        60 * 30
+        config.EMAIL_VERIFICATION_TIME
       );
       // send Email with Verification code
       sendVerificationMail(_registerData.email, verificationCode);
@@ -269,7 +270,7 @@ router.post(
       await setRedisValueByKeyWithExpireSec(
         `verification_${result._id}`,
         verificationCode,
-        60 * 30
+        config.EMAIL_VERIFICATION_TIME
       );
       // send Email with Verification code
       sendVerificationMail(_registerData.email, verificationCode);

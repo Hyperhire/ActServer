@@ -43,7 +43,7 @@ const schema = new Schema({
   businessRegistrationNumber: { type: String },
   homepageUrl: { type: String },
   logoUrl: { type: String },
-  imageUrls: { type: [String], default: [] },
+  imageUrls: { type: [String]},
   shortDescription: { type: String },
   longDescription: { type: String },
   bankDetail: {

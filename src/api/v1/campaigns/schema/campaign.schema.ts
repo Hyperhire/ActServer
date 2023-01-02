@@ -14,7 +14,7 @@ const schema = new Schema({
   targetAmount: { type: Number, default: 0 },
   currentAmount: { type: Number, default: 0 },
   numberOfDonor: { type: Number, default: 0 },
-  donorList: { type: [Schema.Types.ObjectId], default: [] },
+  donorList: { type: [Schema.Types.ObjectId]},
   startedAt: { type: Date, default: Date.now },
   endedAt: { type: Date },
   createdAt: { type: Date, default: Date.now },

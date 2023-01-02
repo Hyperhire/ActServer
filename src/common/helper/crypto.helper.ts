@@ -3,7 +3,7 @@ import { config } from "../../config/config"
 
 const makeHash = async (password: string): Promise<string> => {
     try {
-        const hash = createHmac('sha256', config.hashKey)
+        const hash = createHmac('sha256', config.HASH_KEY)
         const update = hash.update(password)
         const digest = update.digest("hex")
         return digest

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { OrderPaymentType, OrderType } from "../common/constants";
+import { config } from "./../config/config";
 
 const kakaopayReady = async order => {
   try {
@@ -8,8 +9,8 @@ const kakaopayReady = async order => {
       {
         cid:
           order.paymentType === OrderPaymentType.SINGLE_PAYMENT
-            ? process.env.KAKAOPAY_SINGLE_PAYMENT_CID
-            : process.env.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
+            ? config.KAKAOPAY_SINGLE_PAYMENT_CID
+            : config.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
         partner_order_id: order._id,
         partner_user_id: order.userId,
         item_name: `${order.targetType === "ORG" ? "단체" : "캠페인"} 일시 후원하기`,
@@ -24,7 +25,7 @@ const kakaopayReady = async order => {
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-          Authorization: `KakaoAK ${process.env.KAKAO_ADMIN_KEY}`
+          Authorization: `KakaoAK ${config.KAKAO_ADMIN_KEY}`
         }
       }
     );
@@ -40,7 +41,7 @@ const kakaopayApprove = async (order, pg_token) => {
     const result = await axios.post(
       "https://kapi.kakao.com/v1/payment/approve",
       {
-        cid: process.env.KAKAOPAY_SINGLE_PAYMENT_CID,
+        cid: config.KAKAOPAY_SINGLE_PAYMENT_CID,
         tid: order.kakaoTID,
         partner_order_id: order._id,
         partner_user_id: order.userId,
@@ -50,7 +51,7 @@ const kakaopayApprove = async (order, pg_token) => {
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-          Authorization: `KakaoAK ${process.env.KAKAO_ADMIN_KEY}`
+          Authorization: `KakaoAK ${config.KAKAO_ADMIN_KEY}`
         }
       }
     );
@@ -67,7 +68,7 @@ const kakaopayRequestSubcriptionPayment = async order => {
     const result = await axios.post(
       "https://kapi.kakao.com/v1/payment/subscription",
       {
-        cid: process.env.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
+        cid: config.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
         sid: order.kakaoSID,
         partner_order_id: order._id,
         partner_user_id: order.userId,
@@ -78,7 +79,7 @@ const kakaopayRequestSubcriptionPayment = async order => {
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-          Authorization: `KakaoAK ${process.env.KAKAO_ADMIN_KEY}`
+          Authorization: `KakaoAK ${config.KAKAO_ADMIN_KEY}`
         }
       }
     );
@@ -94,13 +95,13 @@ const kakaopayRequestInactiveSubscriptionBySid = async kakaoSID => {
     const result = await axios.post(
       "https://kapi.kakao.com/v1/payment/manage/subscription/inactive",
       {
-        cid: process.env.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
+        cid: config.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
         sid: kakaoSID
       },
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-          Authorization: `KakaoAK ${process.env.KAKAO_ADMIN_KEY}`
+          Authorization: `KakaoAK ${config.KAKAO_ADMIN_KEY}`
         }
       }
     );

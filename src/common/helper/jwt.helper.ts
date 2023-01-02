@@ -5,7 +5,7 @@ import { UserToken } from "../dto/response.dto";
 const decode = (token: string) => {
   try {
     if (!token) throw "Token is empty";
-    const decoded = jwt.verify(token.split(" ").slice(-1)[0], config.jwtKey);
+    const decoded = jwt.verify(token.split(" ").slice(-1)[0], config.JWT_KEY);
     return decoded as UserToken;
   } catch (error) {
     throw error;
@@ -17,7 +17,7 @@ const encode = (userData: UserToken, expiresIn: string | number) => {
     const options = {
       expiresIn
     };
-    return "Bearer " + jwt.sign(userData, config.jwtKey, options);
+    return "Bearer " + jwt.sign(userData, config.JWT_KEY, options);
   } catch (error) {
     throw error;
   }

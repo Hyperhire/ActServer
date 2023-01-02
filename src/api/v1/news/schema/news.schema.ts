@@ -11,7 +11,7 @@ const schema = new Schema({
     type: String,
     required: true
   },
-  images: { type: [String], default: [] },
+  images: { type: [String]},
   orgId: { type: Schema.Types.ObjectId, ref: ModelNames.Org },
   status: {
     type: String,

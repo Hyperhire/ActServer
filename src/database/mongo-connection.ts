@@ -5,5 +5,5 @@ export async function connectDB() {
     const options = {
         ignoreUndefined: true,
     }
-    await connect(config.database, options)
+    await connect(config.DATABASE, options)
 }

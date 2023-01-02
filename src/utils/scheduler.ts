@@ -8,14 +8,23 @@ subscriptionRule0.tz = "Etc/GMT+9";
 
 const subscriptionRule1 = new schedule.RecurrenceRule();
 subscriptionRule1.date = SubscriptionDate.FIRST;
+subscriptionRule1.hour = 0;
+subscriptionRule1.minute = 30;
+subscriptionRule1.second = 0;
 subscriptionRule1.tz = "Etc/GMT+9";
 
 const subscriptionRule10 = new schedule.RecurrenceRule();
 subscriptionRule10.date = SubscriptionDate.TENTH;
+subscriptionRule10.hour = 0;
+subscriptionRule10.minute = 30;
+subscriptionRule10.second = 0;
 subscriptionRule10.tz = "Etc/GMT+9";
 
 const subscriptionRule20 = new schedule.RecurrenceRule();
 subscriptionRule20.date = SubscriptionDate.TWENTIETH;
+subscriptionRule20.hour = 0;
+subscriptionRule20.minute = 30;
+subscriptionRule20.second = 0;
 subscriptionRule20.tz = "Etc/GMT+9";
 
 // const subscriptionTest = schedule.scheduleJob(
