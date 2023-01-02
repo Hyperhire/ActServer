@@ -95,10 +95,31 @@ const getOrgInfoByOrder = async order => {
   }
 };
 
+const getOrdersByOrderIdList = async orders => {
+  try {
+    const _orders = await OrderModel.aggregate([
+      {
+        $match: {
+          _id: { $in: orders.map(order => order.toString()) }
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
+      }
+    ]);
+    return _orders;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   createOrder,
   updateOrder,
   getOrderById,
   getMyOrders,
-  getOrgInfoByOrder
+  getOrgInfoByOrder,
+  getOrdersByOrderIdList
 };

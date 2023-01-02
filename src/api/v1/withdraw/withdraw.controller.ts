@@ -4,6 +4,7 @@ import orgsService from "../orgs/orgs.service";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import { config } from "./../../../config/config";
+import orderService from "../order/order.service";
 
 const router = Router();
 
@@ -19,7 +20,10 @@ router.post(
         throw "Need at least 1 orders";
       }
 
-      const amount = orders.reduce((a, b) => a + b.amount, 0);
+      const amount = (await orderService.getOrdersByOrderIdList(orders)).reduce(
+        (a, b) => a + b.amount,
+        0
+      );
 
       const validMinimumAmount = amount >= config.MIN_WITHDRAW_AVAILABLE_AMOUNT;
       if (!validMinimumAmount) {
@@ -57,7 +61,9 @@ router.get(
     try {
       const { id: orgId } = request["user"];
 
-      const withdraw = await withdrawService.getWithdrawPreRequestListByOrgId(orgId);
+      const withdraw = await withdrawService.getWithdrawPreRequestListByOrgId(
+        orgId
+      );
       return response.status(200).send({ data: withdraw });
     } catch (error) {
       return response.status(400).send({ error });
