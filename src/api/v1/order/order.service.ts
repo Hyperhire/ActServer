@@ -31,6 +31,19 @@ const updateOrder = async (id, updateData) => {
   }
 };
 
+const updateOrdersMany = async (ids, updateData) => {
+  try {
+    const updatedOrder = await OrderModel.updateMany(
+      { _id: { $in: ids } },
+      { $set: updateData }
+    );
+
+    return updatedOrder;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getOrderById = async orderId => {
   try {
     const order = await OrderModel.findOne({ _id: orderId });
@@ -118,6 +131,7 @@ const getOrdersByOrderIdList = async orders => {
 export default {
   createOrder,
   updateOrder,
+  updateOrdersMany,
   getOrderById,
   getMyOrders,
   getOrgInfoByOrder,

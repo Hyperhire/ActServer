@@ -5,6 +5,7 @@ import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import { config } from "./../../../config/config";
 import orderService from "../order/order.service";
+import { OrderWithdrawRequestStatus } from "../../../common/constants";
 
 const router = Router();
 
@@ -39,12 +40,19 @@ router.post(
       }
 
       //TODO: orders withdrawRequestStatus 변경하기
+      await orderService.updateOrdersMany(orders, {
+        withdrawRequestStatus: OrderWithdrawRequestStatus.REQUESTED
+      });
 
-      const withdraw = await withdrawService.createWithdraw({
+      await withdrawService.createWithdraw({
         orgId,
         amount,
         orders
       });
+
+      const withdraw = await withdrawService.getWithdrawPreRequestListByOrgId(
+        orgId
+      );
 
       return response.status(200).send({ data: withdraw });
     } catch (error) {

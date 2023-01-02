@@ -18,7 +18,6 @@ const createWithdraw = async data => {
 
 const getWithdrawPreRequestListByOrgId = async orgId => {
   try {
-    console.log("start");
     const orgCampaigns = await campaignsService.getAllCampaignIdsByOrgId(orgId);
     const amountByStatus = await OrderModel.aggregate([
       {
@@ -35,12 +34,12 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
         }
       }
     ]);
+
     const NOT_YET_AMOUNT =
       (amountByStatus.filter(status => !status._id)[0]?.amount || 0) +
       (amountByStatus.filter(
         status => status._id === OrderWithdrawRequestStatus.NOT_YET
       )[0]?.amount || 0);
-
     const REQUESTED_AMOUNT =
       amountByStatus.filter(
         status => status._id === OrderWithdrawRequestStatus.REQUESTED
@@ -63,6 +62,7 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
       { $unwind: "$org" },
       { $sort: { createdAt: -1 } }
     ]);
+
     const campaign_order_list = await OrderModel.aggregate([
       {
         $match: {
@@ -89,6 +89,7 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
       { $unwind: "$org" },
       { $sort: { createdAt: -1 } }
     ]);
+
     const all_list = [...org_order_list, ...campaign_order_list].sort(
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -103,6 +104,7 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
       order =>
         order.withdrawRequestStatus === OrderWithdrawRequestStatus.REQUESTED
     );
+
     return {
       amount: {
         NOT_YET: NOT_YET_AMOUNT,
@@ -118,12 +120,15 @@ const getWithdrawPreRequestListByOrgId = async orgId => {
 const getWithdrawListByOrgId = async orgId => {
   try {
     const res = await WithdrawModel.find({ orgId }).lean();
+    
     const PENDING = res.filter(item => item.status === WithdrawStatus.PENDING);
     const COMPLETE = res.filter(
       item => item.status === WithdrawStatus.COMPLETE
     );
+
     const PENDING_AMOUNT = PENDING.reduce((a, b) => a + b.amount, 0);
     const COMPLETE_AMOUNT = COMPLETE.reduce((a, b) => a + b.amount, 0);
+    
     return {
       amount: {
         PENDING: PENDING_AMOUNT,
