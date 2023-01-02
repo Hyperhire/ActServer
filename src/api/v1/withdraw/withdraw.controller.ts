@@ -21,10 +21,15 @@ router.post(
         throw "Need at least 1 orders";
       }
 
-      const amount = (await orderService.getOrdersByOrderIdList(orders)).reduce(
-        (a, b) => a + b.amount,
-        0
+      const validOrders = await orderService.getValidOrdersByOrderIdList(
+        orders
       );
+      const validOrderIdList = validOrders.map(order => order._id);
+      if (!validOrderIdList.length) {
+        throw "Need at least 1 valid orders";
+      }
+
+      const amount = validOrders.reduce((a, b) => a + b.amount, 0);
 
       const validMinimumAmount = amount >= config.MIN_WITHDRAW_AVAILABLE_AMOUNT;
       if (!validMinimumAmount) {
@@ -39,17 +44,18 @@ router.post(
         throw "Cannot create withdrawal due to lack of balance";
       }
 
-      //TODO: orders withdrawRequestStatus 변경하기
-      await orderService.updateOrdersMany(orders, {
+      // orders withdrawRequestStatus 변경하기
+      await orderService.updateOrdersMany(validOrderIdList, {
         withdrawRequestStatus: OrderWithdrawRequestStatus.REQUESTED
       });
 
       await withdrawService.createWithdraw({
         orgId,
         amount,
-        orders
+        validOrderIdList
       });
 
+      // renewed pre-request-list
       const withdraw = await withdrawService.getWithdrawPreRequestListByOrgId(
         orgId
       );

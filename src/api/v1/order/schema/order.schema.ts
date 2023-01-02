@@ -44,7 +44,7 @@ const schema = new Schema<Order>({
     type: String,
     enums: Object.values(OrderWithdrawRequestStatus),
     default: OrderWithdrawRequestStatus.NOT_YET
-  }, // ["notyet", "cancel", "approved"]
+  },
   paymentType: { type: String, enums: Object.values(OrderPaymentType) },
   subscriptionOn: { type: Number, enums: Object.values(SubscriptionDate) },
   kakaoTID: { type: String }, // kakao pay tansaction id - It is temperal

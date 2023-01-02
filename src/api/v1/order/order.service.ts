@@ -2,7 +2,11 @@ import { Types } from "mongoose";
 import { DonationModel } from "../donation/schema/donation.schema";
 import orgsService from "../orgs/orgs.service";
 import { OrderModel } from "./schema/order.schema";
-import { OrderPaidStatus, OrderType } from "./../../../common/constants";
+import {
+  OrderPaidStatus,
+  OrderType,
+  OrderWithdrawRequestStatus
+} from "./../../../common/constants";
 import campaignsService from "../campaigns/campaigns.service";
 
 const createOrder = async orderData => {
@@ -128,6 +132,30 @@ const getOrdersByOrderIdList = async orders => {
   }
 };
 
+const getValidOrdersByOrderIdList = async orders => {
+  try {
+    const _orders = await OrderModel.aggregate([
+      {
+        $match: {
+          _id: { $in: orders.map(order => new Types.ObjectId(order)) },
+          $or: [
+            { withdrawRequestStatus: { $exists: false } },
+            { withdrawRequestStatus: OrderWithdrawRequestStatus.NOT_YET }
+          ]
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
+      }
+    ]);
+    return _orders;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   createOrder,
   updateOrder,
@@ -135,5 +163,6 @@ export default {
   getOrderById,
   getMyOrders,
   getOrgInfoByOrder,
-  getOrdersByOrderIdList
+  getOrdersByOrderIdList,
+  getValidOrdersByOrderIdList
 };
