@@ -1,26 +1,27 @@
 import axios from "axios";
-import { OrderPaymentType, OrderType } from "../common/constants";
+import { OrderPaymentType } from "../common/constants";
 import { config } from "./../config/config";
 
 const kakaopayReady = async order => {
   try {
+    const { _id, userId, targetType, targetId, amount, paymentType } = order;
     const result = await axios.post(
       "https://kapi.kakao.com/v1/payment/ready",
       {
         cid:
-          order.paymentType === OrderPaymentType.SINGLE_PAYMENT
+          paymentType === OrderPaymentType.SINGLE_PAYMENT
             ? config.KAKAOPAY_SINGLE_PAYMENT_CID
             : config.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
-        partner_order_id: order._id,
-        partner_user_id: order.userId,
-        item_name: `${order.targetType === "ORG" ? "단체" : "캠페인"} 일시 후원하기`,
-        item_code: order.targetId,
+        partner_order_id: _id,
+        partner_user_id: userId,
+        item_name: `${targetType === "ORG" ? "단체" : "캠페인"} 일시 후원하기`,
+        item_code: targetId,
         quantity: 1,
-        total_amount: order.amount,
+        total_amount: amount,
         tax_free_amount: 0,
-        approval_url: `http://dev.doact.co.kr/payment/${order._id}/approval`,
-        cancel_url: `http://dev.doact.co.kr/payment/${order._id}/cancel`,
-        fail_url: `http://dev.doact.co.kr/payment/${order._id}/fail`
+        approval_url: `http://dev.doact.co.kr/payment/${_id}/approval`,
+        cancel_url: `http://dev.doact.co.kr/payment/${_id}/cancel`,
+        fail_url: `http://dev.doact.co.kr/payment/${_id}/fail`
       },
       {
         headers: {
@@ -38,15 +39,16 @@ const kakaopayReady = async order => {
 
 const kakaopayApprove = async (order, pg_token) => {
   try {
+    const { kakaoTID, _id, userId, amount } = order;
     const result = await axios.post(
       "https://kapi.kakao.com/v1/payment/approve",
       {
         cid: config.KAKAOPAY_SINGLE_PAYMENT_CID,
-        tid: order.kakaoTID,
-        partner_order_id: order._id,
-        partner_user_id: order.userId,
+        tid: kakaoTID,
+        partner_order_id: _id,
+        partner_user_id: userId,
         pg_token: pg_token,
-        total_amount: order.amount
+        total_amount: amount
       },
       {
         headers: {
@@ -64,16 +66,17 @@ const kakaopayApprove = async (order, pg_token) => {
 
 const kakaopayRequestSubcriptionPayment = async order => {
   try {
-    if (!order.kakaoSID) throw "No kakao SID";
+    const { _id, userId, amount, kakaoSID } = order;
+    if (!kakaoSID) throw "No kakao SID";
     const result = await axios.post(
       "https://kapi.kakao.com/v1/payment/subscription",
       {
         cid: config.KAKAOPAY_SUBSCRIPTION_PAYMENT_CID,
-        sid: order.kakaoSID,
-        partner_order_id: order._id,
-        partner_user_id: order.userId,
+        sid: kakaoSID,
+        partner_order_id: _id,
+        partner_user_id: userId,
         quantity: 1,
-        total_amount: order.amount,
+        total_amount: amount,
         tax_free_amount: 0
       },
       {

@@ -1,6 +1,8 @@
 import orderService from "../api/v1/order/order.service";
+import userService from "../api/v1/user/user.service";
 import { PaymentGateway } from "../common/constants";
 import { config } from "./../config/config";
+import { OrderPaymentType } from "./../common/constants";
 
 const CaverExtKAS = require("caver-js-ext-kas");
 
@@ -41,8 +43,10 @@ const registerNftImage = async file => {
 
 const createMetadata = async order => {
   try {
-    const { pg, isRecurring, amount } = order;
+    const { pg, paymentType, amount, userId } = order;
     const org = await orderService.getOrgInfoByOrder(order);
+    const user = await userService.getUserById(userId);
+
     // TODO: metadata 체크해야함
     const metadata = {
       name: "ACT 기부영수증",
@@ -52,7 +56,10 @@ const createMetadata = async order => {
       attributes: [
         {
           trait_type: "후원방식",
-          value: isRecurring ? "정기후원" : "일시후원"
+          value:
+            paymentType === OrderPaymentType.SUBSCRIPTION_PAYMENT
+              ? "정기후원"
+              : "일시후원"
         },
         {
           trait_type: "단체명",
@@ -69,14 +76,16 @@ const createMetadata = async order => {
         {
           display_type: "date",
           trait_type: "birthday",
-          value: 1546360800
+          value: user.indInfo.dateOfBirth || "-"
         }
       ]
     };
+
     const result = await caver.kas.metadata.uploadMetadata(
       metadata,
       config.KAS_STORAGE_KRN
     );
+    
     return result;
   } catch (error) {
     return error;

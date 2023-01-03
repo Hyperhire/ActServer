@@ -27,6 +27,7 @@ const schema = new Schema({
     dateOfBirth: { type: Date },
     sex: { type: String, enums: Object.values(UserSex) }
   },
+  socialProfile: { type: Object },
   status: {
     type: String,
     enums: Object.values(UserStatus),

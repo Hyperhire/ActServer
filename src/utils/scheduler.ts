@@ -27,15 +27,6 @@ subscriptionRule20.minute = 30;
 subscriptionRule20.second = 0;
 subscriptionRule20.tz = "Etc/GMT+9";
 
-// const subscriptionTest = schedule.scheduleJob(
-//   subscriptionRule0,
-//   async function() {
-//     console.log("subscription started", new Date());
-//     await subscriptionService.doPaymentAll();
-//     console.log("subscription ended", new Date());
-//   }
-// );
-
 const subscriptionFirst = schedule.scheduleJob(
   subscriptionRule1,
   async function() {

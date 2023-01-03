@@ -30,6 +30,7 @@ const schema = new Schema({
   nickname: { type: String, required: true, unique: true },
   name: { type: String },
   password: { type: String },
+  socialProfile: { type: Object },
   manager: {
     name: { type: String },
     mobile: { type: String }

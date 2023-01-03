@@ -8,20 +8,15 @@ const redis = new Redis({
 });
 
 const setRedisValueByKey = async (key, value) => {
-  //   await redisClient.connect();
-  const res = await redis.set(key, value);
-  return res;
+  return await redis.set(key, value);
 };
 
 const setRedisValueByKeyWithExpireSec = async (key, value, sec) => {
-  //   await redisClient.connect();
-  const res = await redis.set(key, value, "EX", sec);
-  return res;
+  return await redis.set(key, value, "EX", sec);
 };
 
 const getRedisValueByKey = async key => {
-  const value = await redis.get(key);
-  return value;
+  return await redis.get(key);
 };
 
 export {

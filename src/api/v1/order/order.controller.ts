@@ -10,7 +10,6 @@ import {
   OrderPaidStatus,
   OrderPaymentType,
   OrderType,
-  UserType
 } from "./../../../common/constants";
 import subscriptionService from "../subscription/subscription.service";
 import authMiddleware from "../../../middleware/auth.middleware";
