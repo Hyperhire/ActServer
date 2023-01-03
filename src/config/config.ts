@@ -25,6 +25,7 @@ interface ConfigKeys {
   AWS_ACCESS_KEY_ID: string;
   AWS_SECRET_ACCESS_KEY: string;
   AWS_S3_BUCKET: string;
+  AWS_S3_IMAGE_LIMIT: number;
 }
 
 const isDev = process.env.NODE_ENV === "production" ? false : true;
@@ -76,6 +77,7 @@ export const config: ConfigKeys = {
   AWS_S3_BUCKET: isDev
     ? process.env.TEST_AWS_S3_BUCKET
     : process.env.AWS_S3_BUCKET,
+  AWS_S3_IMAGE_LIMIT: 1024 * 1024 * 5,
   EMAIL_VERIFICATION_TIME: 60 * 30,
   JWT_EXPIRE_TIME_ACCESS: 60 * 30,
   JWT_EXPIRE_TIME_REFRESH: 60 * 60 * 24,

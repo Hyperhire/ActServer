@@ -4,6 +4,11 @@ import jwtMiddleware from "../../../middleware/jwt.middleware";
 import noticeService from "./notice.service";
 import { UserType } from "./../../../common/constants";
 import authMiddleware from "../../../middleware/auth.middleware";
+import { uploadFile } from "../../../utils/upload";
+
+interface MulterRequest extends Request {
+  files: any;
+}
 
 const router = Router();
 
@@ -12,14 +17,19 @@ router.post(
   "/",
   jwtMiddleware.verifyToken,
   authMiddleware.validOnlyOrg,
-  async (request: Request, response: Response) => {
+  uploadFile("notice").array("images"),
+  async (request: MulterRequest, response: Response) => {
     try {
       const { id, userType } = request["user"];
-      if (userType !== UserType.ORGANIZATION) {
-        throw "Unauthorized access";
+
+      const files = request.files;
+      if (!files || !files.length) {
+        throw "no Images are added";
       }
+
       const _notice = await noticeService.createNotice({
         ...request.body,
+        images: request.files.map(file => file.location),
         orgId: id
       });
 

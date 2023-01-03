@@ -9,6 +9,11 @@ import { CampaignDto, CampaignOrgDto } from "./dto/response.dto";
 import { UserType } from "./../../../common/constants";
 import authMiddleware from "../../../middleware/auth.middleware";
 import donationService from "../donation/donation.service";
+import { uploadFile } from "../../../utils/upload";
+
+interface MulterRequest extends Request {
+  files: any;
+}
 
 const router = Router();
 
@@ -16,20 +21,27 @@ router.post(
   "/",
   jwtMiddleware.verifyToken,
   authMiddleware.validOnlyOrg,
-  async (request: Request, response: Response) => {
+  uploadFile("campaigns").array("images"),
+  async (request: MulterRequest, response: Response) => {
     try {
       const { id, userType } = request["user"];
-      if (userType !== UserType.ORGANIZATION) {
-        throw "Unauthorized access";
+      
+      const files = request.files;
+      if (!files || !files.length) {
+        throw "no Images are added";
       }
-      const createCampaignDto = plainToInstance(CreateCampaignDto, {
+
+      const data = {
         ...request.body,
+        images: request.files.map(file => file.location),
         orgId: id
-      });
-      await validateBody<CreateCampaignDto>(createCampaignDto);
-      const campaign: CampaignDto = await campaignsService.create(
-        createCampaignDto
-      );
+      };
+
+      // const createCampaignDto = plainToInstance(CreateCampaignDto, data);
+      // await validateBody<CreateCampaignDto>(createCampaignDto);
+
+      const campaign: CampaignDto = await campaignsService.create(data);
+
       return response.status(201).json({ data: campaign });
     } catch (error) {
       logger.error(error);

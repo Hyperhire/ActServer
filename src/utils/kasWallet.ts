@@ -43,11 +43,12 @@ const createMetadata = async order => {
   try {
     const { pg, isRecurring, amount } = order;
     const org = await orderService.getOrgInfoByOrder(order);
+    // TODO: metadata 체크해야함
     const metadata = {
       name: "ACT 기부영수증",
       description: "따뜻한 세상을 향한 움직임, 블록체인 기부플랫폼 ACT.",
       image: org.nftImageUrl,
-      external_url: "https://cojamact.example",
+      external_url: "https://doact.co.kr",
       attributes: [
         {
           trait_type: "후원방식",

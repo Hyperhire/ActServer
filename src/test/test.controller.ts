@@ -1,17 +1,13 @@
 import { Request, Router, Response } from "express";
 import multer from "multer";
-import { sendVerificationMail } from "../utils/mailer";
-import {
-  getRedisValueByKey,
-  setRedisValueByKeyWithExpireSec
-} from "../utils/redis";
-import { verificationCodeGenerator } from "../utils/random";
+import { uploadFile } from "../utils/upload";
 
 const router = Router();
 const upload = multer();
 
 interface MulterRequest extends Request {
   file: any;
+  files: any;
 }
 
 router.get("/", (request: Request, response: Response) => {
@@ -28,20 +24,24 @@ router.get("/", (request: Request, response: Response) => {
   }
 });
 
-router.post("/email", (request: Request, response: Response) => {
-  try {
-    sendVerificationMail("juhyun.kim0204@gmail.com", "helloaha");
-    return response.json({
-      status: 200,
-      data: {
-        text: "hello, this is conan from hyperhire",
-        timestamp: new Date()
-      }
-    });
-  } catch (error) {
-    return response.json({ status: 400, error });
+router.post(
+  "/upload-images",
+  uploadFile('test').array("images"),
+  (request: MulterRequest, response: Response) => {
+    try {
+      console.log(request.files);
+      return response.json({
+        status: 200,
+        data: {
+          text: "hello, this is conan from hyperhire",
+          timestamp: new Date()
+        }
+      });
+    } catch (error) {
+      return response.json({ status: 400, error });
+    }
   }
-});
+);
 
 // //TODO: form data 처리하는게 이슈네
 // router.post(

@@ -15,7 +15,7 @@ const uploadFile = folder =>
   multer({
     storage: multerS3({
       s3,
-      bucket: "doact-dev",
+      bucket: config.AWS_S3_BUCKET,
       acl: "public-read",
       contentType: multerS3.AUTO_CONTENT_TYPE,
       key: (req, file, cb) => {
@@ -24,19 +24,8 @@ const uploadFile = folder =>
       }
     }),
     limits: {
-      fileSize: 1024 * 1024 * 5
+      fileSize: config.AWS_S3_IMAGE_LIMIT
     }
   });
 
-const getBuckets = async () => {
-  await s3.listBuckets((err, data) => {
-    if (err) {
-      console.log("error", err);
-    } else {
-      console.log("success", data);
-      return data.Buckets;
-    }
-  });
-};
-
-export { getBuckets, uploadFile };
+export { uploadFile };
