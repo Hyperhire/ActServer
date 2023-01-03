@@ -1,5 +1,6 @@
 import { Request, Router, Response } from "express";
 import multer from "multer";
+import { getRedisValueByKey } from "../utils/redis";
 import { uploadFile } from "../utils/upload";
 
 const router = Router();
@@ -24,9 +25,24 @@ router.get("/", (request: Request, response: Response) => {
   }
 });
 
+router.get("/redis", async (request: Request, response: Response) => {
+  try {
+    const value = await getRedisValueByKey("hello");
+    return response.json({
+      status: 200,
+      data: {
+        text: "hello, this is conan from hyperhire",
+        timestamp: new Date()
+      }
+    });
+  } catch (error) {
+    return response.json({ status: 400, error });
+  }
+});
+
 router.post(
   "/upload-images",
-  uploadFile('test').array("images"),
+  uploadFile("test").array("images"),
   (request: MulterRequest, response: Response) => {
     try {
       console.log(request.files);

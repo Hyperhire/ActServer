@@ -4,7 +4,7 @@ import { config } from "./../config/config";
 const redis = new Redis({
   host: config.REDIS_HOST,
   port: config.REDIS_PORT,
-  username: "default"
+  password: config.REDIS_PASSWORD
 });
 
 const setRedisValueByKey = async (key, value) => {

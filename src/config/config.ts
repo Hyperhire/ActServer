@@ -5,6 +5,9 @@ interface ConfigKeys {
   LOG_DIR: string;
   JWT_KEY: string;
   HASH_KEY: string;
+  REDIS_HOST: string;
+  REDIS_PORT: number;
+  REDIS_PASSWORD: string;
   KAS_CHAIN_ID: string;
   KAS_ACCESS_KEY: string;
   KAS_SECRET_ACCESS_KEY: string;
@@ -17,8 +20,6 @@ interface ConfigKeys {
   MIN_WITHDRAW_AVAILABLE_AMOUNT: number;
   MAILER_EMAIL: string;
   MAILER_PASSWORD: string;
-  REDIS_HOST: string;
-  REDIS_PORT: number;
   KAKAOPAY_SINGLE_PAYMENT_CID: string;
   KAKAOPAY_SUBSCRIPTION_PAYMENT_CID: string;
   KAKAO_ADMIN_KEY: string;
@@ -41,6 +42,9 @@ export const config: ConfigKeys = {
   REDIS_PORT:
     Number(isDev ? process.env.TEST_REDIS_HOST : process.env.REDIS_PORT) ||
     6379,
+  REDIS_PASSWORD: isDev
+    ? process.env.TEST_REDIS_PASSWORD
+    : process.env.REDIS_PASSWORD,
   KAS_CHAIN_ID: isDev
     ? process.env.TEST_KAS_CHAIN_ID
     : process.env.KAS_CHAIN_ID,
