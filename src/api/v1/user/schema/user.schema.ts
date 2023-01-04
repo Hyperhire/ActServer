@@ -30,7 +30,6 @@ const schema = new Schema({
   // socialProfile: { type: Object },
   socialProfile: { 
     _id: false,
-    type: { type: String }, // [ "kakao", "naver", "apple", "google"]
     clientId: { type: String },
   },
   status: {

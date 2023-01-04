@@ -57,6 +57,18 @@ const getUserById = async (userId: string) => {
   }
 };
 
+const getUserBySocialClientId = async (loginType: string, clientId: string) => {
+  try {
+    const user = await UserModel.findOne({
+      loginType,
+      "socialProfile.id": clientId
+    }).lean();
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getUserByEmail = async (email: string): Promise<UserDto> => {
   try {
     const user: UserDto = await UserModel.findOne({
@@ -146,5 +158,6 @@ export default {
   getUserById,
   getUserByEmail,
   getUserByNickName,
-  getUserPgSummary
+  getUserPgSummary,
+  getUserBySocialClientId
 };

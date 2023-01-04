@@ -1,12 +1,13 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Router, Response } from "express";
-import { UserType, UserStatus, OrgStatus } from "../../../common/constants";
+import { UserType, UserStatus, OrgStatus, LoginType } from "../../../common/constants";
 import { makeHash } from "../../../common/helper/crypto.helper";
 import { createJWT, encode, decode } from "../../../common/helper/jwt.helper";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { config } from "../../../config/config";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import { getKakaoAccessToken, getKakaoProfile } from "../../../utils/kakaoLogin";
 import {
   sendResetPasswordMail,
   sendVerificationMail
@@ -85,6 +86,30 @@ router.post("/login", async (request: Request, response: Response) => {
     }
 
     return response.status(200).json({ data: result });
+  } catch (error) {
+    logger.error(error);
+    return response.status(400).json({ error });
+  }
+});
+
+router.post("/login/kakao/user", async (request: Request, response: Response) => {
+  try {
+    const { code } = request.body;
+
+    const kakaoTokenResponse = await getKakaoAccessToken(code);
+    const socialUserProfile = await authService.getUserProfileKakao(kakaoTokenResponse.access_token)
+    const user = await userService.getUserBySocialClientId(LoginType.KAKAO, socialUserProfile);
+    
+    // :TODO 회원가입 만들고 처리
+    const token = createJWT({ id: String(user._id), userType: LoginType.KAKAO });
+    
+    await userTokenService.createOrUpdate({
+      userId: String(user._id),
+      userType: LoginType.KAKAO,
+      refreshToken: token.refreshToken
+    });
+
+    return response.status(200).json({ data: token });
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
