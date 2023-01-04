@@ -21,6 +21,11 @@ router.post(
   async (request: MulterRequest, response: Response) => {
     try {
       const { id, userType } = request["user"];
+      const { data } = request.body;
+      if (!data) {
+        throw "no Data";
+      }
+      const _data = JSON.parse(data);
 
       const files = request.files;
       if (!files || !files.length) {
@@ -28,7 +33,7 @@ router.post(
       }
 
       const news = await newsService.createNews({
-        ...request.body,
+        ..._data,
         images: request.files.map(file => file.location),
         orgId: id
       });
