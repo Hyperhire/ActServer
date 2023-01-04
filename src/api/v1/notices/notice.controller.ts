@@ -26,9 +26,15 @@ router.post(
       if (!files || !files.length) {
         throw "no Images are added";
       }
+            
+      const { data } = request.body;
+      if (!data) {
+        throw "no Data";
+      }
+      const _data = JSON.parse(data);
 
       const _notice = await noticeService.createNotice({
-        ...request.body,
+        ..._data,
         images: request.files.map(file => file.location),
         orgId: id
       });

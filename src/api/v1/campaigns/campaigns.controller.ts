@@ -31,8 +31,14 @@ router.post(
         throw "no Images are added";
       }
 
-      const data = {
-        ...request.body,
+      const { data } = request.body;
+      if (!data) {
+        throw "no Data";
+      }
+      const _data = JSON.parse(data);
+
+      const createData = {
+        ..._data,
         images: request.files.map(file => file.location),
         orgId: id
       };
@@ -40,7 +46,7 @@ router.post(
       // const createCampaignDto = plainToInstance(CreateCampaignDto, data);
       // await validateBody<CreateCampaignDto>(createCampaignDto);
 
-      const campaign: CampaignDto = await campaignsService.create(data);
+      const campaign: CampaignDto = await campaignsService.create(createData);
 
       return response.status(201).json({ data: campaign });
     } catch (error) {

@@ -21,16 +21,17 @@ router.post(
   async (request: MulterRequest, response: Response) => {
     try {
       const { id, userType } = request["user"];
+      const files = request.files;
+      if (!files || !files.length) {
+        throw "no Images are added";
+      }
+      
       const { data } = request.body;
       if (!data) {
         throw "no Data";
       }
       const _data = JSON.parse(data);
 
-      const files = request.files;
-      if (!files || !files.length) {
-        throw "no Images are added";
-      }
 
       const news = await newsService.createNews({
         ..._data,
