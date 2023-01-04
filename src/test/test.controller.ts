@@ -42,7 +42,10 @@ router.get("/redis", async (request: Request, response: Response) => {
 
 router.post(
   "/upload-images",
-  uploadFile("test").array("images"),
+  uploadFile("test").fields([
+    { name: "logo", maxCount: 1 },
+    { name: "images", maxCount: 3 }
+  ]),
   (request: MulterRequest, response: Response) => {
     try {
       console.log(request.files);
