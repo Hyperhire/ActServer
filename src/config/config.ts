@@ -23,6 +23,7 @@ interface ConfigKeys {
   KAKAOPAY_SINGLE_PAYMENT_CID: string;
   KAKAOPAY_SUBSCRIPTION_PAYMENT_CID: string;
   KAKAO_ADMIN_KEY: string;
+  AWS_ACCESS_REGION: string;
   AWS_ACCESS_KEY_ID: string;
   AWS_SECRET_ACCESS_KEY: string;
   AWS_S3_BUCKET: string;
@@ -72,6 +73,9 @@ export const config: ConfigKeys = {
   KAKAO_ADMIN_KEY: isDev
     ? process.env.TEST_KAKAO_ADMIN_KEY
     : process.env.KAKAO_ADMIN_KEY,
+    AWS_ACCESS_REGION: isDev
+    ? process.env.TEST_AWS_ACCESS_REGION
+    : process.env.AWS_ACCESS_REGION,
   AWS_ACCESS_KEY_ID: isDev
     ? process.env.TEST_AWS_ACCESS_KEY_ID
     : process.env.AWS_ACCESS_KEY_ID,
