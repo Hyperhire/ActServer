@@ -60,7 +60,7 @@ router.post(
       };
 
       const updatedOrg = await orgsService.updateOrg(id, updateData);
-      return response.status(201).json({ data: updatedOrg });
+      return response.status(200).json({ data: updatedOrg });
     } catch (error) {
       logger.error(error);
       return response.status(400).json({ error });
