@@ -27,7 +27,12 @@ const schema = new Schema({
     dateOfBirth: { type: Date },
     sex: { type: String, enums: Object.values(UserSex) }
   },
-  socialProfile: { type: Object },
+  // socialProfile: { type: Object },
+  socialProfile: { 
+    _id: false,
+    type: { type: String }, // [ "kakao", "naver", "apple", "google"]
+    clientId: { type: String },
+  },
   status: {
     type: String,
     enums: Object.values(UserStatus),
