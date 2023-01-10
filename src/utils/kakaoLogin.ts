@@ -15,7 +15,7 @@ const getKakaoAccessToken = async (code: string): Promise<any>  => {
     const body = {
       grant_type: 'authorization_code',
       client_id: process.env.KAKAO_CLIENT_ID,
-      redirect_uri: process.env.FRONT_END_URL,
+      redirect_uri: process.env.KAKAO_REDIRECT_URL,
       code: code,
     };
     
