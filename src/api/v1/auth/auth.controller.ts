@@ -148,24 +148,76 @@ router.post("/login", async (request: Request, response: Response) => {
   }
 });
 
+/**
+ * @swagger
+ *  /api/v1/auth/login/kakao/user:
+ *    get:
+ *      tags:
+ *      - Auth
+ *      description: kakao 로그인하기
+ *      comsumes:
+ *      - application/json
+ *      parameters:
+ *        - name: email
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: string
+ *              example: conan.kim@hyperhire.in
+ *          description: Email
+ *      responses:
+ *       '201':
+ *         description: 성공
+ *         examples:
+ *          application/json:
+ *            {
+ *              "data": {
+ *                  "accessToken": "shfioj123",
+ *                  "accessTokenExpiresAt": 123123,
+ *                  "refreshToken": "shfioj123",
+ *                  "refreshTokenExpiresAt": 123123;
+ *                }
+ *            }
+ *       '401':
+ *         description: 없는 유저, 회원가입 진행하시오
+ *         examples:
+ *            application/json:
+ *              {
+ *                  "data": {
+ *                      "clientId": 2609475055,
+ *                      "loginType": "KAKAO"
+ *                  },
+ *                  "message": "Need to signup"
+ *              }
+ */
 router.post("/login/kakao/user", async (request: Request, response: Response) => {
   try {
     const { code } = request.body;
 
+    // 다른 social 방식 확인하고 분기 설정할 예정
     const kakaoTokenResponse = await getKakaoAccessToken(code);
     const socialUserProfile = await authService.getUserProfileKakao(kakaoTokenResponse.access_token)
-    const user = await userService.getUserBySocialClientId(LoginType.KAKAO, socialUserProfile);
+    const user = await userService.getUserBySocialClientId(LoginType.KAKAO, socialUserProfile.id);
     
-    // :TODO 회원가입 만들고 처리
-    const token = createJWT({ id: String(user._id), userType: LoginType.KAKAO });
-    
-    await userTokenService.createOrUpdate({
-      userId: String(user._id),
-      userType: LoginType.KAKAO,
-      refreshToken: token.refreshToken
-    });
-
-    return response.status(200).json({ data: token });
+    if (user) {
+      const token = createJWT({ id: String(user._id), userType: LoginType.KAKAO });
+      
+      await userTokenService.createOrUpdate({
+        userId: String(user._id),
+        userType: LoginType.KAKAO,
+        refreshToken: token.refreshToken
+      });
+      
+      return response.status(200).json({ data: token });
+    } else {
+      return response.status(401).json({
+        message: "Need to signup",
+        data: {
+          clientId: socialUserProfile.id,
+          loginType: LoginType.KAKAO
+        }
+      })
+    }
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });

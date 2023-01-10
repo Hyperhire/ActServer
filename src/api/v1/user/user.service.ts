@@ -61,7 +61,7 @@ const getUserBySocialClientId = async (loginType: string, clientId: string) => {
   try {
     const user = await UserModel.findOne({
       loginType,
-      "socialProfile.id": clientId
+      "socialProfile.clientId": clientId
     }).lean();
     return user;
   } catch (error) {
