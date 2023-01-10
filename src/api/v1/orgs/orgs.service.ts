@@ -4,7 +4,7 @@ import { logger } from "../../../logger/winston.logger";
 import { RegisterOrgDto, RegisterUserDto } from "../auth/dto/request.dto";
 import { BaseOrgDto, OrgDto } from "./dto/request.dto";
 import { OrgModel } from "./schema/org.schema";
-import { OrderPaidStatus, OrgStatus } from "./../../../common/constants";
+import { OrderPaidStatus, OrgStatus, TLoginType } from "./../../../common/constants";
 import { OrderModel } from "../order/schema/order.schema";
 import { SubscriptionModel } from "../subscription/schema/subscription.schema";
 import { Types } from "mongoose";
@@ -67,6 +67,19 @@ const getOrgByEmail = async email => {
   try {
     const org = await OrgModel.findOne({
       email: email
+    }).lean();
+    return org;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getOrgByClientId = async (loginType: TLoginType, clientId: number) => {
+  // This is used for login
+  try {
+    const org = await OrgModel.findOne({
+      loginType,
+      "socialProfile.clientId": clientId
     }).lean();
     return org;
   } catch (error) {
@@ -216,5 +229,6 @@ export default {
   getOrgByEmail,
   getOrgByNickName,
   getList,
-  getOrgPgSummary
+  getOrgPgSummary,
+  getOrgByClientId
 };

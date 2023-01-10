@@ -1,6 +1,6 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Router, Response, response } from "express";
-import { UserType, UserStatus, OrgStatus, LoginType } from "../../../common/constants";
+import { UserType, UserStatus, OrgStatus, LoginType, TLoginType } from "../../../common/constants";
 import { makeHash } from "../../../common/helper/crypto.helper";
 import { createJWT, encode, decode } from "../../../common/helper/jwt.helper";
 import { validateBody } from "../../../common/helper/validate.helper";
@@ -114,21 +114,28 @@ router.post("/login", async (request: Request, response: Response) => {
 
 /**
  * @swagger
- *  /api/v1/auth/login/kakao/user:
- *    get:
+ *  /api/v1/auth/login/social/:loginType:
+ *    post:
  *      tags:
  *      - Auth
- *      description: kakao 로그인하기
+ *      description: 소셜 로그인하기
  *      comsumes:
  *      - application/json
  *      parameters:
- *        - name: email
+ *        - name: loginType
+ *          in: params
+ *          required: true
+ *          schema:
+ *              type: string
+ *              example: KAKAO
+ *          description: 소셜로그인 종류
+ *        - name: code
  *          in: body
  *          required: true
  *          schema:
  *              type: string
- *              example: conan.kim@hyperhire.in
- *          description: Email
+ *              example: 3U5-NVaufNDisbtJO8cwZALuTqtS4aopfQlB7pS6H7xIhb2pLzedrSYHJdBVbV4FEXBnWAorDNMAAAGFnnL_Dw
+ *          description: /kakao/code에서 받은 코드
  *      responses:
  *       '201':
  *         description: 성공
@@ -154,33 +161,47 @@ router.post("/login", async (request: Request, response: Response) => {
  *                  "message": "Need to signup"
  *              }
  */
-router.post("/login/kakao/user", async (request: Request, response: Response) => {
+router.post("/login/social/:loginType", async (request: Request, response: Response) => {
   try {
     const { code } = request.body;
-
+    const { loginType } = request.params;
+    
     // 다른 social 방식 확인하고 분기 설정할 예정
     const kakaoTokenResponse = await getKakaoAccessToken(code);
-    const socialUserProfile = await authService.getUserProfileKakao(kakaoTokenResponse.access_token)
-    const user = await userService.getUserBySocialClientId(LoginType.KAKAO, socialUserProfile.id);
-    
-    if (user) {
-      const token = createJWT({ id: String(user._id), userType: LoginType.KAKAO });
+    const socialUserProfile = await getKakaoProfile(kakaoTokenResponse.access_token)
+
+    try {
+      const userType = await authService.checkUserTypeOnLoginByClientId(
+        LoginType.KAKAO,
+        socialUserProfile.id
+      );    
       
+      let result;
+      if (userType === UserType.INDIVIDUAL) {
+        result = await authService.loginUserSocial(loginType as TLoginType, socialUserProfile.id);
+      } else {
+        result = await authService.loginOrgSocial(loginType as TLoginType, socialUserProfile.id);
+      }
+      const user = userType === UserType.INDIVIDUAL ? result.user : result.org;
       await userTokenService.createOrUpdate({
         userId: String(user._id),
         userType: LoginType.KAKAO,
-        refreshToken: token.refreshToken
+        refreshToken: result.token.refreshToken
       });
       
-      return response.status(200).json({ data: token });
-    } else {
-      return response.status(401).json({
-        message: "Need to signup",
-        data: {
-          clientId: socialUserProfile.id,
-          loginType: LoginType.KAKAO
-        }
-      })
+      return response.status(200).json({ data: result });
+    } catch (err) {
+      if (err.message === "user not found") {
+        return response.status(401).json({
+          message: "Need to signup",
+          data: {
+            clientId: socialUserProfile.id,
+            loginType: LoginType.KAKAO
+          }
+        })
+      } else {
+        throw err;
+      }
     }
   } catch (error) {
     logger.error(error);
