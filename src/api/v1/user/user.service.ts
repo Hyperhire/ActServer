@@ -6,19 +6,26 @@ import { OrderModel } from "../order/schema/order.schema";
 import { BaseUserDto, UserDto } from "./dto/request.dto";
 import { UserModel } from "./schema/user.schema";
 import { Types } from "mongoose";
-import { OrderPaidStatus } from "./../../../common/constants";
+import { LoginType, OrderPaidStatus } from "./../../../common/constants";
 import { SubscriptionModel } from "../subscription/schema/subscription.schema";
 
 const selectInfo = {};
 
 const createUser = async userDto => {
   try {
-    const userExist = await getUserByEmail(userDto.email);
-    if (userExist) {
-      throw "Email already exists";
+    if (userDto.loginType === LoginType.EMAIL) {
+      const userExist = await getUserByEmail(userDto.email);
+      if (userExist) {
+        throw "Email already exists";
+      }
+      const passwordHash = await makeHash(userDto.password);
+      userDto.password = passwordHash;
+    } else if (userDto.socialProfile.clientId) {
+      const userExist = await getUserBySocialClientId(userDto.loginType, userDto.socialProfile.clientId);
+      if (userExist) {
+        throw `${userDto.loginType}-${userDto.socialProfile.clientId} already exists`;
+      }
     }
-    const passwordHash = await makeHash(userDto.password);
-    userDto.password = passwordHash;
     const wallet = await KasWallet.createWallet();
     userDto.wallet = wallet;
 

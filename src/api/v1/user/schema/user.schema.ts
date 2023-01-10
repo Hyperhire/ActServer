@@ -8,7 +8,8 @@ const schema = new Schema({
     enums: Object.values(LoginType)
   },
   profileUrl: { type: String },
-  email: { type: String, required: true, unique: true },
+  // email: { type: String, required: true, unique: true },
+  email: { type: String, unique: true },
   nickname: { type: String, required: true, unique: true },
   name: { type: String },
   password: { type: String },
