@@ -61,42 +61,6 @@ router.get("/kakao/code", async (_:Request, response: Response) => {
   return response.status(302).redirect(url);
 })
 
-/**
- * @swagger
- *  /api/v1/auth/kakao/user-profile:
- *    get:
- *      tags:
- *      - Auth
- *      description: kakao 로그인 url 받기
- *      responses:
-   *       '201':
-   *         description: 성공
-   *         examples:
-   *            application/json:
-   *                {
-   *                    "data": {
-   *                        "loginType": "KAKAO",
-   *                        "clientId": 2609475055
-   *                            }
-   *                }
- */
-router.get("/kakao/user-profile", async (request: Request, response: Response) => {
-  try {
-    const { code } = request.query;
-
-    const kakaoTokenResponse = await getKakaoAccessToken(code as string);
-    const socialUserProfile = await authService.getUserProfileKakao(kakaoTokenResponse.access_token)
-
-    return response.status(200).json({ data: { 
-      loginType: LoginType.KAKAO,
-      clientId: socialUserProfile.id 
-    }});
-  } catch (error) {
-    logger.error(error);
-    return response.status(400).json({ error });
-  }
-});
-
 // user login
 /*
 {
