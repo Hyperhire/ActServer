@@ -476,6 +476,91 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ *  /api/v1/auth/org/register/social:
+ *    post:
+ *      tags:
+ *      - Auth
+ *      description: 단체 가입 (social)
+ *      comsumes:
+ *      - application/json
+ *      parameters:
+ *        - name: socialProfile.clientId
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: integer
+ *          example: 2392832
+ *          description: 소셜 고유 ID
+ *        - name: nickname
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: string
+ *              example: CONANANA
+ *          description: 별명
+ *        - name: loginType
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: string
+ *              enum: ["EMAIL", "NAVER", "KAKAO", "APPLE", "GOOGLE"]
+ *              example: EMAIL
+ *          description: 단체 회원가입 타입
+ *        - name: constant.getGovernmentReceiptService
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: boolean
+ *              example: false
+ *          description: 연말정산 간소화 서비스 동의 여부
+ *        - name: constant.agreeTnc
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: boolean
+ *              example: false
+ *          description: 서비스 이용약관 동의 여부
+ *        - name: constant.agreePrivacyPolicy
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: boolean
+ *              example: false
+ *          description: 개인정보수집 동의 여부
+ */
+router.post(
+  "/org/register/social",
+  uploadFile("images").single("image"),
+  async (request: MulterRequest, response: Response) => {
+    try {
+      const file = request.file;
+      if (!file) {
+        throw "no Business Registration Image";
+      }
+
+      const registerData = request.body.data;
+      if (!registerData) {
+        throw "no Register Data";
+      }
+
+      const _registerData = JSON.parse(registerData);
+      _registerData.businessRegistrationUrl = file.location;
+      // const orgDto = plainToInstance(RegisterOrgDto, request.body);
+      // await validateBody<LoginDto>(orgDto);
+
+      const result = await authService.registerOrg(_registerData);
+
+      return response.status(201).json({ data: result });
+    } catch (error) {
+      console.log(error)
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
 router.post(
   "/edit-profile",
   jwtMiddleware.verifyToken,

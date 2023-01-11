@@ -26,7 +26,7 @@ const schema = new Schema({
     type: String,
     enums: Object.values(LoginType)
   },
-  email: { type: String, required: true, unique: true },
+  email: { type: String, unique: true },
   nickname: { type: String, required: true, unique: true },
   name: { type: String },
   password: { type: String },
