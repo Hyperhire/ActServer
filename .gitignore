@@ -42,3 +42,4 @@ faym-dev.json
 firebase.json
 *.json
 tsconfig.tsbuildinfo
+*.pem

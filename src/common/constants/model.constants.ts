@@ -1,10 +1,18 @@
 const ModelNames = {
-    User: "User",
-    UserSettings: "UserSetting",
-    Org: "Org",
-    Campaign: "Campaign",
-    FAQ: "faq",
-    Home: "home"
-}
+  User: "User",
+  UserToken: "UserToken",
+  UserSettings: "UserSetting",
+  Org: "Org",
+  Campaign: "Campaign",
+  FAQ: "faq",
+  Home: "home",
+  Banner: "banner",
+  News: "news",
+  Notice: "notice",
+  Donation: "donation",
+  Order: "order",
+  Subscription: "subscription",
+  Withdraw: "withdraw",
+};
 
-export { ModelNames }
+export { ModelNames };

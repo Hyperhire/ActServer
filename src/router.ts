@@ -1,19 +1,35 @@
 import { Router } from "express";
-import hello from './hello/hello.controller'
-import auth from './auth/auth.controller'
-import orgs from './orgs/orgs.controller'
-import campaigns from './campaigns/campaigns.controller'
+import test from "./test/test.controller";
+import auth from "./api/v1/auth/auth.controller";
+import orgs from "./api/v1/orgs/orgs.controller";
+import campaigns from "./api/v1/campaigns/campaigns.controller";
+import notices from "./api/v1/notices/notice.controller";
+import news from "./api/v1/news/news.controller";
+import faqs from "./api/v1/faq/faq.controller";
+import banner from "./api/v1/banner/banner.controller";
+import donation from "./api/v1/donation/donation.controller";
+import withdraw from "./api/v1/withdraw/withdraw.controller";
+import order from "./api/v1/order/order.controller";
+import subscription from "./api/v1/subscription/subscription.controller";
+import nft from "./api/v1/nft/nft.controller";
+import utils from "./api/v1/utils/utils.controller";
 
-import home from './home/home.controller'
-import faqs from './faq/faq.controller'
+const router: Router = Router();
 
-const router: Router = Router()
+router.use("/test", test);
 
-router.use("/hello", hello)
-router.use("/auth", auth)
-router.use("/orgs", orgs)
-router.use("/campaigns", campaigns)
-router.use("/faqs", faqs)
-router.use("/home", home)
+router.use("/api/v1/auth", auth);
+router.use("/api/v1/org", orgs);
+router.use("/api/v1/campaign", campaigns);
+router.use("/api/v1/news", news);
+router.use("/api/v1/notice", notices);
+router.use("/api/v1/faq", faqs);
+router.use("/api/v1/banner", banner);
+router.use("/api/v1/order", order);
+router.use("/api/v1/subscription", subscription);
+router.use("/api/v1/donation", donation);
+router.use("/api/v1/withdraw", withdraw);
+router.use("/api/v1/nft", nft);
+router.use("/api/v1/utils", utils);
 
-export default router
+export default router;
