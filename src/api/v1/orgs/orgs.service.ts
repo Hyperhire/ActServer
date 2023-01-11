@@ -4,7 +4,7 @@ import { logger } from "../../../logger/winston.logger";
 import { RegisterOrgDto, RegisterUserDto } from "../auth/dto/request.dto";
 import { BaseOrgDto, OrgDto } from "./dto/request.dto";
 import { OrgModel } from "./schema/org.schema";
-import { OrderPaidStatus, OrgStatus, TLoginType } from "./../../../common/constants";
+import { LoginType, OrderPaidStatus, OrgStatus, TLoginType } from "./../../../common/constants";
 import { OrderModel } from "../order/schema/order.schema";
 import { SubscriptionModel } from "../subscription/schema/subscription.schema";
 import { Types } from "mongoose";
@@ -15,17 +15,21 @@ const selectInfo = { bankDetail: 0, password: 0 };
 
 const createOrg = async orgDto => {
   try {
-    let org = await getOrgByEmail(orgDto.email);
-
-    if (org) {
-      throw "Email already exists";
+    if (orgDto.loginType === LoginType.EMAIL) {
+      let org = await getOrgByEmail(orgDto.email);
+      if (org) {
+        throw "Email already exists";
+      }
+      const passwordHash = await makeHash(orgDto.password);
+      orgDto.password = passwordHash;
+    } else if (orgDto.socialProfile.clientId) {
+      const orgExist = await getOrgByClientId(orgDto.loginType, orgDto.socialProfile.clientId);
+      if (orgExist) {
+        throw `${orgDto.loginType}-${orgDto.socialProfile.clientId} already exists`;
+      }
     }
-
-    const passwordHash = await makeHash(orgDto.password);
-    orgDto.password = passwordHash;
-
-    org = await OrgModel.create(orgDto);
-
+    
+    const org = await OrgModel.create(orgDto);
     return org;
   } catch (error) {
     throw error;
