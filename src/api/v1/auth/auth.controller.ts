@@ -355,8 +355,8 @@ router.post(
  *          in: body
  *          required: true
  *          schema:
- *              type: number
- *              example: 2609475055
+ *              type: integer
+ *          example: 2392832
  *          description: 소셜 고유 ID
  *        - name: nickname
  *          in: body
