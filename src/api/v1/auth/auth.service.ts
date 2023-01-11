@@ -1,7 +1,8 @@
-import { UserType } from "../../../common/constants";
+import { TLoginType, UserType } from "../../../common/constants";
 import { compareHash } from "../../../common/helper/crypto.helper";
 import { createJWT, encode } from "../../../common/helper/jwt.helper";
 import { logger } from "../../../logger/winston.logger";
+import { getKakaoProfile } from "../../../utils/kakaoLogin";
 import { BaseOrgDto, OrgDto } from "../orgs/dto/request.dto";
 import orgsService from "../orgs/orgs.service";
 import { UserDto } from "../user/dto/request.dto";
@@ -65,6 +66,25 @@ const loginUser = async (loginDto: LoginDto) => {
   }
 };
 
+const loginUserSocial = async (loginType: TLoginType, clientId: number) => {
+  try {
+    const user = await userService.getUserByClientId(loginType, clientId);
+
+    if (!user) {
+      throw "User not found";
+    }
+
+    const token = createJWT({
+      id: user._id.toString(),
+      userType: UserType.INDIVIDUAL
+    });
+
+    return { token, user, userType: UserType.INDIVIDUAL };
+  } catch (error) {
+    throw error;
+  }
+};
+
 /**
  * 
  * @param loginDto 
@@ -79,6 +99,25 @@ const loginOrg = async (loginDto: LoginDto) => {
       throw "password missmatch";
     }
 
+    const token = createJWT({
+      id: org._id.toString(),
+      userType: UserType.ORGANIZATION
+    });
+
+    return {
+      token,
+      org,
+      userType: UserType.ORGANIZATION
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+const loginOrgSocial = async (loginType: TLoginType, clientId: number) => {
+  try {
+    const org = await orgsService.getOrgByClientId(loginType, clientId);
+    
     const token = createJWT({
       id: org._id.toString(),
       userType: UserType.ORGANIZATION
@@ -148,6 +187,22 @@ const checkUserTypeOnLoginByEmail = async email => {
   }
 };
 
+const checkUserTypeOnLoginByClientId = async (loginType: TLoginType, clientId: number) => {
+  try {
+    const user = await userService.getUserByClientId(loginType, clientId);
+    if (!!user) {
+      return UserType.INDIVIDUAL;
+    }
+    const org = await orgsService.getOrgByClientId(loginType, clientId);
+    if (!!org) {
+      return UserType.ORGANIZATION;
+    }
+    throw Error("user not found")
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   registerUser,
   registerOrg,
@@ -156,5 +211,9 @@ export default {
   checkNickName,
   checkEmail,
   checkOrgNickName,
-  checkUserTypeOnLoginByEmail
+  checkUserTypeOnLoginByEmail,
+  checkUserTypeOnLoginByClientId,
+  getKakaoProfile,
+  loginUserSocial,
+  loginOrgSocial
 };

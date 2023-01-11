@@ -36,7 +36,9 @@ export const LoginType = {
   NAVER: "NAVER",
   APPLE: "APPLE",
   GOOGLE: "GOOGLE"
-};
+} as const;
+
+export type TLoginType = typeof LoginType[keyof typeof LoginType]
 
 export const UserStatus = {
   NORMAL: "NORMAL",

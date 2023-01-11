@@ -8,7 +8,8 @@ const schema = new Schema({
     enums: Object.values(LoginType)
   },
   profileUrl: { type: String },
-  email: { type: String, required: true, unique: true },
+  // email: { type: String, required: true, unique: true },
+  email: { type: String, unique: true },
   nickname: { type: String, required: true, unique: true },
   name: { type: String },
   password: { type: String },
@@ -27,7 +28,11 @@ const schema = new Schema({
     dateOfBirth: { type: Date },
     sex: { type: String, enums: Object.values(UserSex) }
   },
-  socialProfile: { type: Object },
+  // socialProfile: { type: Object },
+  socialProfile: { 
+    _id: false,
+    clientId: { type: String },
+  },
   status: {
     type: String,
     enums: Object.values(UserStatus),

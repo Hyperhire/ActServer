@@ -1,12 +1,13 @@
 import { plainToInstance } from "class-transformer";
-import { Request, Router, Response } from "express";
-import { UserType, UserStatus, OrgStatus } from "../../../common/constants";
+import { Request, Router, Response, response } from "express";
+import { UserType, UserStatus, OrgStatus, LoginType, TLoginType } from "../../../common/constants";
 import { makeHash } from "../../../common/helper/crypto.helper";
 import { createJWT, encode, decode } from "../../../common/helper/jwt.helper";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { config } from "../../../config/config";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import { getKakaoAccessToken, getKakaoProfile } from "../../../utils/kakaoLogin";
 import {
   sendResetPasswordMail,
   sendVerificationMail
@@ -39,6 +40,26 @@ interface MulterRequest extends Request {
   file: any;
   image: any;
 }
+
+/**
+ * @swagger
+ *  /api/v1/auth/kakao/code:
+ *    get:
+ *      tags:
+ *      - Auth
+ *      description: kakao 로그인 url 받기
+ *      responses:
+ *       '302':
+ *         description: 카카오톡 로그인 화면으로 이동
+ */
+router.get("/kakao/code", async (_:Request, response: Response) => {
+  const hostName = 'https://kauth.kakao.com';
+  const restApiKey = process.env.KAKAO_CLIENT_ID;
+  // 카카오 로그인 redirectURI 등록
+  const redirectUrl = process.env.KAKAO_REDIRECT_URL;  // :TODO 프론트와 맞추기
+  const url = `${hostName}/oauth/authorize?client_id=${restApiKey}&redirect_uri=${redirectUrl}&response_type=code`;
+  return response.status(302).redirect(url);
+})
 
 // user login
 /*
@@ -85,6 +106,103 @@ router.post("/login", async (request: Request, response: Response) => {
     }
 
     return response.status(200).json({ data: result });
+  } catch (error) {
+    logger.error(error);
+    return response.status(400).json({ error });
+  }
+});
+
+/**
+ * @swagger
+ *  /api/v1/auth/login/social/:loginType:
+ *    post:
+ *      tags:
+ *      - Auth
+ *      description: 소셜 로그인하기
+ *      comsumes:
+ *      - application/json
+ *      parameters:
+ *        - name: loginType
+ *          in: params
+ *          required: true
+ *          schema:
+ *              type: string
+ *              example: KAKAO
+ *          description: 소셜로그인 종류
+ *        - name: code
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: string
+ *              example: 3U5-NVaufNDisbtJO8cwZALuTqtS4aopfQlB7pS6H7xIhb2pLzedrSYHJdBVbV4FEXBnWAorDNMAAAGFnnL_Dw
+ *          description: /kakao/code에서 받은 코드
+ *      responses:
+ *       '201':
+ *         description: 성공
+ *         examples:
+ *          application/json:
+ *            {
+ *              "data": {
+ *                  "accessToken": "shfioj123",
+ *                  "accessTokenExpiresAt": 123123,
+ *                  "refreshToken": "shfioj123",
+ *                  "refreshTokenExpiresAt": 123123;
+ *                }
+ *            }
+ *       '401':
+ *         description: 없는 유저, 회원가입 진행하시오
+ *         examples:
+ *            application/json:
+ *              {
+ *                  "data": {
+ *                      "clientId": 2609475055,
+ *                      "loginType": "KAKAO"
+ *                  },
+ *                  "message": "Need to signup"
+ *              }
+ */
+router.post("/login/social/:loginType", async (request: Request, response: Response) => {
+  try {
+    const { code } = request.body;
+    const { loginType } = request.params;
+    
+    // 다른 social 방식 확인하고 분기 설정할 예정
+    const kakaoTokenResponse = await getKakaoAccessToken(code);
+    const socialUserProfile = await getKakaoProfile(kakaoTokenResponse.access_token)
+
+    try {
+      const userType = await authService.checkUserTypeOnLoginByClientId(
+        LoginType.KAKAO,
+        socialUserProfile.id
+      );    
+      
+      let result;
+      if (userType === UserType.INDIVIDUAL) {
+        result = await authService.loginUserSocial(loginType as TLoginType, socialUserProfile.id);
+      } else {
+        result = await authService.loginOrgSocial(loginType as TLoginType, socialUserProfile.id);
+      }
+      const user = userType === UserType.INDIVIDUAL ? result.user : result.org;
+      await userTokenService.createOrUpdate({
+        userId: String(user._id),
+        userType: LoginType.KAKAO,
+        refreshToken: result.token.refreshToken
+      });
+      
+      return response.status(200).json({ data: result });
+    } catch (err) {
+      if (err.message === "user not found") {
+        return response.status(401).json({
+          message: "Need to signup",
+          data: {
+            clientId: socialUserProfile.id,
+            loginType: LoginType.KAKAO
+          }
+        })
+      } else {
+        throw err;
+      }
+    }
   } catch (error) {
     logger.error(error);
     return response.status(400).json({ error });
@@ -217,6 +335,81 @@ router.post(
 
       return response.status(201).json({ data: result });
     } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
+/**
+ * @swagger
+ *  /api/v1/auth/user/register/social:
+ *    post:
+ *      tags:
+ *      - Auth
+ *      description: 유저 가입 (social)
+ *      comsumes:
+ *      - application/json
+ *      parameters:
+ *        - name: socialProfile.clientId
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: integer
+ *          example: 2392832
+ *          description: 소셜 고유 ID
+ *        - name: nickname
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: string
+ *              example: CONANANA
+ *          description: 별명
+ *        - name: loginType
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: string
+ *              enum: ["EMAIL", "NAVER", "KAKAO", "APPLE", "GOOGLE"]
+ *              example: EMAIL
+ *          description: 유저 회원가입 타입
+ *        - name: constant.getGovernmentReceiptService
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: boolean
+ *              example: false
+ *          description: 연말정산 간소화 서비스 동의 여부
+ *        - name: constant.agreeTnc
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: boolean
+ *              example: false
+ *          description: 서비스 이용약관 동의 여부
+ *        - name: constant.agreePrivacyPolicy
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: boolean
+ *              example: false
+ *          description: 개인정보수집 동의 여부
+ */
+ router.post(
+  "/user/register/social",
+  uploadFile("images").single("image"),
+  async (request: Request, response: Response) => {
+    try {
+      const registerData = request.body.data;
+      if (!registerData) {
+        throw "no Register Data";
+      }
+      const _registerData = JSON.parse(registerData);
+      const result = await authService.registerUser(_registerData);
+
+      return response.status(201).json({ data: result });
+    } catch (error) {
+      console.log(error)
       logger.error(error);
       return response.status(400).json({ error });
     }
