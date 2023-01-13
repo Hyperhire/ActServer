@@ -28,6 +28,7 @@ interface ConfigKeys {
   AWS_SECRET_ACCESS_KEY: string;
   AWS_S3_BUCKET: string;
   AWS_S3_IMAGE_LIMIT: number;
+  CORS_OPTIONS: any;
 }
 
 const isDev = process.env.NODE_ENV === "production" ? false : true;
@@ -91,5 +92,13 @@ export const config: ConfigKeys = {
   JWT_EXPIRE_TIME_REFRESH: 60 * 60 * 24,
   MIN_WITHDRAW_AVAILABLE_AMOUNT: 0,
   MAILER_EMAIL: process.env.MAILER_EMAIL,
-  MAILER_PASSWORD: process.env.MAILER_PASSWORD
+  MAILER_PASSWORD: process.env.MAILER_PASSWORD,
+  CORS_OPTIONS: {
+    origin: [
+      `http://52.78.166.10:3000/`,
+      `${process.env.FRONT_END_URL}`,
+      "http://localhost:3000",
+    ],
+    credentials: true,
+  }
 };

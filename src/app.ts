@@ -15,7 +15,7 @@ import {
 } from "./utils/scheduler";
 
 const app: Express = express();
-app.use(cors());
+app.use(cors(config.CORS_OPTIONS));
 app.use(express.json());
 app.use(morganMiddleware);
 
