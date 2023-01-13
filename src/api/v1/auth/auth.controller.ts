@@ -58,7 +58,7 @@ router.get("/kakao/code", async (_:Request, response: Response) => {
   // 카카오 로그인 redirectURI 등록
   const redirectUrl = process.env.KAKAO_REDIRECT_URL;  // :TODO 프론트와 맞추기
   const url = `${hostName}/oauth/authorize?client_id=${restApiKey}&redirect_uri=${redirectUrl}&response_type=code`;
-  return response.status(302).redirect(url);
+  return response.status(200).json({data: {url}});
 })
 
 // user login
