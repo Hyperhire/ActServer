@@ -2,6 +2,7 @@ import { Router } from "express";
 import test from "./test/test.controller";
 import auth from "./api/v1/auth/auth.controller";
 import orgs from "./api/v1/orgs/orgs.controller";
+import users from "./api/v1/user/user.controller";
 import campaigns from "./api/v1/campaigns/campaigns.controller";
 import notices from "./api/v1/notices/notice.controller";
 import news from "./api/v1/news/news.controller";
@@ -20,6 +21,7 @@ router.use("/test", test);
 
 router.use("/api/v1/auth", auth);
 router.use("/api/v1/org", orgs);
+router.use("/api/v1/user", users);
 router.use("/api/v1/campaign", campaigns);
 router.use("/api/v1/news", news);
 router.use("/api/v1/notice", notices);

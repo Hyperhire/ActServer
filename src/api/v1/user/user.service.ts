@@ -171,6 +171,48 @@ const getUserPgSummary = async userId => {
   }
 };
 
+const getList = async query => {
+  try {
+    const { limit, lastIndex } = query;
+    const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
+    const _limit = 1 * limit || 10;
+    const _lastIndex = 1 * lastIndex || 0;
+    
+    let searchQuery: any;
+    if (query?.userType) searchQuery.userType = query.userType;
+    if (query?.status) searchQuery.status = query.status;
+    if (query?.from && query?.to) {
+      searchQuery.$and = [
+        { createdAt: { $gte: query.from } },
+        { createdAt: { $lte: query.to }}
+      ];
+    } 
+    else if (query?.from) searchQuery.createdAt = { $gte: query.from }
+    else if (query?.to) searchQuery.createdAt = { $gte: query.to }
+
+    const _result = await UserModel.find(searchQuery)
+      .sort({ createdAt: -1 })
+      .select(selectInfo)
+      .skip(_lastIndex)
+      .limit(_limit)
+      .lean();
+
+    const totalCount = await UserModel.countDocuments(searchQuery);
+    const currentLastIndex = _lastIndex + _result.length;
+
+    pagination.totalCount = totalCount;
+    pagination.lastIndex = currentLastIndex;
+    pagination.hasNext = totalCount === currentLastIndex ? false : true;
+
+    return {
+      pagination,
+      list: _result
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   createUser,
   updateUser,
@@ -179,5 +221,6 @@ export default {
   getUserByNickName,
   getUserPgSummary,
   getUserBySocialClientId,
-  getUserByClientId
+  getUserByClientId,
+  getList
 };
