@@ -113,7 +113,45 @@ router.post("/login", async (request: Request, response: Response) => {
   }
 });
 
-router.post("/admin/login", async (request: Request, response: Response) => {
+/**
+ * @swagger
+ *  /api/v1/auth/login/admin:
+ *    post:
+ *      tags:
+ *      - Auth
+ *      description: admin 로그인하기
+ *      comsumes:
+ *      - application/json
+ *      parameters:
+ *        - name: id
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: string
+ *              example: kim123123
+ *          description: ID
+ *        - name: password
+ *          in: body
+ *          required: true
+ *          schema:
+ *              type: string
+ *              example: password123
+ *          description: 비밀번호
+ *      responses:
+ *       '201':
+ *         description: 성공
+ *         examples:
+ *          application/json:
+ *            {
+ *              "data": {
+ *                  "accessToken": "shfioj123",
+ *                  "accessTokenExpiresAt": 123123,
+ *                  "refreshToken": "shfioj123",
+ *                  "refreshTokenExpiresAt": 123123;
+ *                }
+ *            }
+ */
+router.post("/login/admin", async (request: Request, response: Response) => {
   try {
     const { id, password } = request.body;
 
