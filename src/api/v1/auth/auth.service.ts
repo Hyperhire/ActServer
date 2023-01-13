@@ -3,6 +3,7 @@ import { compareHash } from "../../../common/helper/crypto.helper";
 import { createJWT, encode } from "../../../common/helper/jwt.helper";
 import { logger } from "../../../logger/winston.logger";
 import { getKakaoProfile } from "../../../utils/kakaoLogin";
+import adminService from "../admin/admin.service";
 import { BaseOrgDto, OrgDto } from "../orgs/dto/request.dto";
 import orgsService from "../orgs/orgs.service";
 import { UserDto } from "../user/dto/request.dto";
@@ -33,6 +34,15 @@ const registerOrg = async body => {
   try {
     return await orgsService.createOrg(body);
   } catch (error) {
+    throw error;
+  }
+};
+
+const registerAdmin = async (id:string, password:string) => {
+  try {
+    return await adminService.createAdmin(id, password);
+  } catch (error) {
+    logger.debug(error);
     throw error;
   }
 };
@@ -206,6 +216,7 @@ const checkUserTypeOnLoginByClientId = async (loginType: TLoginType, clientId: n
 export default {
   registerUser,
   registerOrg,
+  registerAdmin,
   loginOrg,
   loginUser,
   checkNickName,

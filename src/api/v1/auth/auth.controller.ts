@@ -344,6 +344,26 @@ router.post(
   }
 );
 
+router.post(
+  "/admin/register",
+  // :TODO 어드민 체크 미들웨어
+  async (request: Request, response: Response) => {
+    try {
+      const { id, password } = request.body;
+      if (!id || !password) {
+        throw "id | password required"
+      }
+
+      const result = await authService.registerAdmin(id, password);
+
+      return response.status(201).json({ data: result });
+    } catch (error) {
+      logger.error(error);
+      return response.status(400).json({ error });
+    }
+  }
+);
+
 /**
  * @swagger
  *  /api/v1/auth/user/register/social:
