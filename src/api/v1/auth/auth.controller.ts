@@ -112,6 +112,25 @@ router.post("/login", async (request: Request, response: Response) => {
   }
 });
 
+router.post("/admin/login", async (request: Request, response: Response) => {
+  try {
+    const { id, password } = request.body;
+
+    let result = await authService.loginAdmin(id, password);
+    
+    await userTokenService.createOrUpdate({
+      userId: result.admin._id,
+      userType: UserType.ADMIN,
+      refreshToken: result.token.refreshToken
+    });
+
+    return response.status(200).json({ data: result });
+  } catch (error) {
+    logger.error(error);
+    return response.status(400).json({ error });
+  }
+});
+
 /**
  * @swagger
  *  /api/v1/auth/login/social/:loginType:

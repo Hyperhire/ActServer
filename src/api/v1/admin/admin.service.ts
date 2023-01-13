@@ -17,6 +17,18 @@ const createAdmin = async (id:string, password:string) => {
   }
 };
 
+const getUserById = async (id: string) => {
+    try {
+      const admin = await AdminModel.findOne({
+        id
+      }).lean();
+      return admin;
+    } catch (error) {
+      throw error;
+    }
+  };
+
 export default {
-  createAdmin
+  createAdmin,
+  getUserById
 };

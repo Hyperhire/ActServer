@@ -76,6 +76,30 @@ const loginUser = async (loginDto: LoginDto) => {
   }
 };
 
+const loginAdmin = async (id: string, password: string) => {
+  try {
+    const admin = await adminService.getUserById(id);
+
+    if (!admin) {
+      throw "Admin not found";
+    }
+
+    const isEqualHash = await compareHash(password, admin.password);
+    if (!isEqualHash) {
+      throw "password missmatch";
+    }
+
+    const token = createJWT({
+      id: admin._id.toString(),
+      userType: UserType.ADMIN
+    });
+
+    return { token, admin, userType: UserType.ADMIN };
+  } catch (error) {
+    throw error;
+  }
+};
+
 const loginUserSocial = async (loginType: TLoginType, clientId: number) => {
   try {
     const user = await userService.getUserByClientId(loginType, clientId);
@@ -219,6 +243,7 @@ export default {
   registerAdmin,
   loginOrg,
   loginUser,
+  loginAdmin,
   checkNickName,
   checkEmail,
   checkOrgNickName,
