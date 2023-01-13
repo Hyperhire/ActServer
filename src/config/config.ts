@@ -94,12 +94,7 @@ export const config: ConfigKeys = {
   MAILER_EMAIL: process.env.MAILER_EMAIL,
   MAILER_PASSWORD: process.env.MAILER_PASSWORD,
   CORS_OPTIONS: {
-    origin: [
-      `http://52.78.166.10:3000/`,
-      `${process.env.FRONT_END_URL}`,
-      "http://localhost:3000",
-      "https://kauth.kakao.com"
-    ],
+    origin: true,
     credentials: true,
   }
 };
