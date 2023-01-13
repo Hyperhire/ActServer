@@ -6,6 +6,7 @@ import { createJWT, encode, decode } from "../../../common/helper/jwt.helper";
 import { validateBody } from "../../../common/helper/validate.helper";
 import { config } from "../../../config/config";
 import { logger } from "../../../logger/winston.logger";
+import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import { getKakaoAccessToken, getKakaoProfile } from "../../../utils/kakaoLogin";
 import {
@@ -365,7 +366,8 @@ router.post(
 
 router.post(
   "/admin/register",
-  // :TODO 어드민 체크 미들웨어
+  jwtMiddleware.verifyToken,
+  authMiddleware.validOnlyAdmin,
   async (request: Request, response: Response) => {
     try {
       const { id, password } = request.body;
