@@ -98,6 +98,7 @@ export const config: ConfigKeys = {
       `http://52.78.166.10:3000/`,
       `${process.env.FRONT_END_URL}`,
       "http://localhost:3000",
+      "https://kauth.kakao.com"
     ],
     credentials: true,
   }
