@@ -164,8 +164,11 @@ router.post("/login", async (request: Request, response: Response) => {
 router.post("/login/social/:loginType", async (request: Request, response: Response) => {
   try {
     const { code } = request.body;
-    const { loginType } = request.params;
-    
+    const _loginType = request.params.loginType;
+    let loginType: TLoginType;
+    if (_loginType === "kakao") {
+      loginType = "KAKAO"
+    }
     // 다른 social 방식 확인하고 분기 설정할 예정
     const kakaoTokenResponse = await getKakaoAccessToken(code);
     const socialUserProfile = await getKakaoProfile(kakaoTokenResponse.access_token)
