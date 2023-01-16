@@ -411,6 +411,7 @@ router.post(
       if (!_registerData?.socialProfile?.clientId) {
         throw "no socialProfile.clientId"
       }
+      _registerData["constant.isEmailVerified"] = true;
       const result = await authService.registerUser(_registerData);
 
       return response.status(201).json({ data: result });
@@ -556,6 +557,7 @@ router.post(
         throw "no socialProfile.clientId"
       }
       _registerData.businessRegistrationUrl = file.location;
+      _registerData["constant.isEmailVerified"] = true;
       // const orgDto = plainToInstance(RegisterOrgDto, request.body);
       // await validateBody<LoginDto>(orgDto);
 
