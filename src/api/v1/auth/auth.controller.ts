@@ -408,6 +408,9 @@ router.post(
         throw "no Register Data";
       }
       const _registerData = JSON.parse(registerData);
+      if (!_registerData?.socialProfile?.clientId) {
+        throw "no socialProfile.clientId"
+      }
       const result = await authService.registerUser(_registerData);
 
       return response.status(201).json({ data: result });
@@ -549,6 +552,9 @@ router.post(
       }
 
       const _registerData = JSON.parse(registerData);
+      if (!_registerData?.socialProfile?.clientId) {
+        throw "no socialProfile.clientId"
+      }
       _registerData.businessRegistrationUrl = file.location;
       // const orgDto = plainToInstance(RegisterOrgDto, request.body);
       // await validateBody<LoginDto>(orgDto);
