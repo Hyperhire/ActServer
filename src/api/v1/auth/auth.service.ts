@@ -3,6 +3,7 @@ import { compareHash } from "../../../common/helper/crypto.helper";
 import { createJWT, encode } from "../../../common/helper/jwt.helper";
 import { logger } from "../../../logger/winston.logger";
 import { getKakaoProfile } from "../../../utils/kakaoLogin";
+import adminService from "../admin/admin.service";
 import { BaseOrgDto, OrgDto } from "../orgs/dto/request.dto";
 import orgsService from "../orgs/orgs.service";
 import { UserDto } from "../user/dto/request.dto";
@@ -37,6 +38,15 @@ const registerOrg = async body => {
   }
 };
 
+const registerAdmin = async (id:string, password:string) => {
+  try {
+    return await adminService.createAdmin(id, password);
+  } catch (error) {
+    logger.debug(error);
+    throw error;
+  }
+};
+
 /**
  * 
  * @param loginDto 
@@ -61,6 +71,30 @@ const loginUser = async (loginDto: LoginDto) => {
     });
 
     return { token, user, userType: UserType.INDIVIDUAL };
+  } catch (error) {
+    throw error;
+  }
+};
+
+const loginAdmin = async (id: string, password: string) => {
+  try {
+    const admin = await adminService.getUserById(id);
+
+    if (!admin) {
+      throw "Admin not found";
+    }
+
+    const isEqualHash = await compareHash(password, admin.password);
+    if (!isEqualHash) {
+      throw "password missmatch";
+    }
+
+    const token = createJWT({
+      id: admin._id.toString(),
+      userType: UserType.ADMIN
+    });
+
+    return { token, admin, userType: UserType.ADMIN };
   } catch (error) {
     throw error;
   }
@@ -206,8 +240,10 @@ const checkUserTypeOnLoginByClientId = async (loginType: TLoginType, clientId: n
 export default {
   registerUser,
   registerOrg,
+  registerAdmin,
   loginOrg,
   loginUser,
+  loginAdmin,
   checkNickName,
   checkEmail,
   checkOrgNickName,

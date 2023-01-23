@@ -13,6 +13,7 @@ const ModelNames = {
   Order: "order",
   Subscription: "subscription",
   Withdraw: "withdraw",
+  Admin: "admin",
 };
 
 export { ModelNames };

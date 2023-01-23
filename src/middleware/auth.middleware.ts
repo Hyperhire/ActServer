@@ -30,4 +30,17 @@ const validOnlyOrg = (req: Request, res: Response, next: Function) => {
   }
 };
 
-export default { validOnlyUser, validOnlyOrg };
+const validOnlyAdmin = (req: Request, res: Response, next: Function) => {
+  try {
+    const { userType } = req["user"];
+    if (userType !== UserType.ADMIN) {
+      throw unAuthorizedResponse;
+    }
+    next();
+  } catch (error) {
+    logger.error(error);
+    res.status(401).json(unAuthorizedResponse);
+  }
+};
+
+export default { validOnlyUser, validOnlyOrg, validOnlyAdmin };
