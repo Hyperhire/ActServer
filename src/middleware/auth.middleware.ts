@@ -5,42 +5,42 @@ import { decode } from "../common/helper/jwt.helper";
 import { logger } from "../logger/winston.logger";
 
 const validOnlyUser = (req: Request, res: Response, next: Function) => {
-  try {
-    const { userType } = req["user"];
-    if (userType !== UserType.INDIVIDUAL) {
-      throw unAuthorizedResponse;
+    try {
+        const { userType } = req["user"];
+        if (userType !== UserType.INDIVIDUAL) {
+            throw unAuthorizedResponse;
+        }
+        next();
+    } catch (error) {
+        logger.error(error);
+        res.status(401).json(unAuthorizedResponse);
     }
-    next();
-  } catch (error) {
-    logger.error(error);
-    res.status(401).json(unAuthorizedResponse);
-  }
 };
 
 const validOnlyOrg = (req: Request, res: Response, next: Function) => {
-  try {
-    const { userType } = req["user"];
-    if (userType !== UserType.ORGANIZATION) {
-      throw unAuthorizedResponse;
+    try {
+        const { userType } = req["user"];
+        if (userType !== UserType.ORGANIZATION) {
+            throw unAuthorizedResponse;
+        }
+        next();
+    } catch (error) {
+        logger.error(error);
+        res.status(401).json(unAuthorizedResponse);
     }
-    next();
-  } catch (error) {
-    logger.error(error);
-    res.status(401).json(unAuthorizedResponse);
-  }
 };
 
 const validOnlyAdmin = (req: Request, res: Response, next: Function) => {
-  try {
-    const { userType } = req["user"];
-    if (userType !== UserType.ADMIN) {
-      throw unAuthorizedResponse;
+    try {
+        const { userType } = req["user"];
+        if (userType !== UserType.ADMIN) {
+            throw unAuthorizedResponse;
+        }
+        next();
+    } catch (error) {
+        logger.error(error);
+        res.status(401).json(unAuthorizedResponse);
     }
-    next();
-  } catch (error) {
-    logger.error(error);
-    res.status(401).json(unAuthorizedResponse);
-  }
 };
 
 export default { validOnlyUser, validOnlyOrg, validOnlyAdmin };
