@@ -53,7 +53,9 @@ const getKakaoProfile = async (access_token: string): Promise<any> => {
             throw "internal error";
         }
 
-        return { ...response.data, email: response.data.kakao_account.email };
+        console.log("response from kakao", response.data);
+
+        return { ...response.data, email: response.data?.kakao_account?.email };
     } catch (e) {
         throw e;
     }

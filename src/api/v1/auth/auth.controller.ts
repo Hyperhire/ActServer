@@ -160,7 +160,6 @@ router.post(
     "/login/social/:loginType",
     async (request: Request, response: Response) => {
         try {
-            console.log("11111");
             const { code, redirectUrl } = request.body;
             const _loginType = request.params.loginType;
             let loginType: TLoginType;
