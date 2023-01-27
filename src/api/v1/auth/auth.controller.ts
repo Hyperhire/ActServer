@@ -191,7 +191,6 @@ router.post(
             } else {
                 throw "Invalid loginType";
             }
-            console.log("22222222222222");
             let socialUserProfile = null;
             if (loginType === LoginType.KAKAO) {
                 const { access_token } = await getKakaoAccessToken(
@@ -200,14 +199,11 @@ router.post(
                 );
                 socialUserProfile = await getKakaoProfile(access_token);
             } else if (loginType === LoginType.GOOGLE) {
-                console.log("33333333333");
                 const { access_token } = await getGoogleAccessToken(
                     code,
                     redirectUrl
                 );
-                console.log("44444444444", access_token);
                 socialUserProfile = await getGoogleProfile(access_token);
-                console.log("555555555555", socialUserProfile);
             }
 
             try {
@@ -246,6 +242,7 @@ router.post(
                         data: {
                             clientId: socialUserProfile.id,
                             loginType: loginType,
+                            socialUserProfile,
                         },
                     });
                 } else {
