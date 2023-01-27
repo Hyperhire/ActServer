@@ -13,8 +13,8 @@ const getGoogleAccessToken = async (
 
     const body = {
         code: code,
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SCRECT,
+        client_id: process.env.GOOGLE_CLIENT_ID_DEV,
+        client_secret: process.env.GOOGLE_CLIENT_CREDENTIAL_DEV,
         redirect_uri: redirectUrl,
         grant_type: "authorization_code",
     };
