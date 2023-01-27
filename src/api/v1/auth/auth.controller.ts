@@ -180,6 +180,7 @@ router.post(
     "/login/social/:loginType",
     async (request: Request, response: Response) => {
         try {
+            console.log("11111");
             const { code, redirectUrl } = request.body;
             const _loginType = request.params.loginType;
             let loginType: TLoginType;
@@ -190,7 +191,7 @@ router.post(
             } else {
                 throw "Invalid loginType";
             }
-
+            console.log("22222222222222");
             let socialUserProfile = null;
             if (loginType === LoginType.KAKAO) {
                 const { access_token } = await getKakaoAccessToken(
@@ -199,11 +200,14 @@ router.post(
                 );
                 socialUserProfile = await getKakaoProfile(access_token);
             } else if (loginType === LoginType.GOOGLE) {
+                console.log("33333333333");
                 const { access_token } = await getGoogleAccessToken(
                     code,
                     redirectUrl
                 );
+                console.log("44444444444", access_token);
                 socialUserProfile = await getGoogleProfile(access_token);
+                console.log("555555555555", socialUserProfile);
             }
 
             try {
@@ -235,7 +239,7 @@ router.post(
 
                 return response.status(200).json({ data: result });
             } catch (err) {
-                console.log('Error message', err)
+                console.log("Error message", err);
                 if (err.message === "user not found") {
                     return response.status(401).json({
                         message: "Need to signup",
