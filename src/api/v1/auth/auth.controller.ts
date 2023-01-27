@@ -187,6 +187,8 @@ router.post(
                 loginType = LoginType.KAKAO;
             } else if (_loginType === "google") {
                 loginType = LoginType.GOOGLE;
+            } else {
+                throw "Invalid loginType";
             }
 
             let socialUserProfile = null;
@@ -233,6 +235,7 @@ router.post(
 
                 return response.status(200).json({ data: result });
             } catch (err) {
+                console.log('Error message', err)
                 if (err.message === "user not found") {
                     return response.status(401).json({
                         message: "Need to signup",
