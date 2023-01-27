@@ -55,26 +55,6 @@ interface MulterRequest extends Request {
     image: any;
 }
 
-/**
- * @swagger
- *  /api/v1/auth/kakao/code:
- *    get:
- *      tags:
- *      - Auth
- *      description: kakao 로그인 url 받기
- *      responses:
- *       '302':
- *         description: 카카오톡 로그인 화면으로 이동
- */
-router.get("/kakao/code", async (_: Request, response: Response) => {
-    const hostName = "https://kauth.kakao.com";
-    const restApiKey = process.env.KAKAO_CLIENT_ID;
-    // 카카오 로그인 redirectURI 등록
-    const redirectUrl = process.env.KAKAO_REDIRECT_URL; // :TODO 프론트와 맞추기
-    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${restApiKey}&redirect_uri=${redirectUrl}&response_type=code`;
-    return response.status(200).json({ data: { url } });
-});
-
 // user login
 /*
 {
@@ -205,6 +185,7 @@ router.post(
                 );
                 socialUserProfile = await getGoogleProfile(access_token);
             }
+            console.log("socialUserProfile", socialUserProfile);
 
             try {
                 const userType =
@@ -242,7 +223,7 @@ router.post(
                         data: {
                             clientId: socialUserProfile.id,
                             loginType: loginType,
-                            socialUserProfile,
+                            email: socialUserProfile.email,
                         },
                     });
                 } else {
