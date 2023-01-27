@@ -5,17 +5,18 @@ const defaultHeaders = {
     "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
 };
 
-const getKakaoAccessToken = async (
+const getGoogleAccessToken = async (
     code: string,
     redirectUrl: string
 ): Promise<any> => {
-    const url = `https://kauth.kakao.com/oauth/token`;
+    const url = "https://oauth2.googleapis.com/token";
 
     const body = {
-        grant_type: "authorization_code",
-        client_id: process.env.KAKAO_CLIENT_ID,
-        redirect_uri: redirectUrl,
         code: code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SCRECT,
+        redirect_uri: redirectUrl,
+        grant_type: "authorization_code",
     };
 
     try {
@@ -27,7 +28,7 @@ const getKakaoAccessToken = async (
         });
 
         if (response.status == 500) {
-            throw "kakao interner error";
+            throw "Google interner error";
         }
 
         return response.data;
@@ -36,21 +37,18 @@ const getKakaoAccessToken = async (
     }
 };
 
-const getKakaoProfile = async (access_token: string): Promise<any> => {
-    const url = `https://kapi.kakao.com/v2/user/me`;
+const getGoogleProfile = async (access_token: string): Promise<any> => {
+    const url = `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`;
 
     try {
         const response = await axios({
             method: "get",
             url: url,
-            headers: {
-                ...defaultHeaders,
-                Authorization: `Bearer ${access_token}`,
-            },
+            headers: defaultHeaders,
         });
 
         if (response.status == 500) {
-            throw "internal error";
+            throw "Google internal error";
         }
 
         return response.data;
@@ -59,4 +57,4 @@ const getKakaoProfile = async (access_token: string): Promise<any> => {
     }
 };
 
-export { getKakaoAccessToken, getKakaoProfile };
+export { getGoogleAccessToken, getGoogleProfile };
