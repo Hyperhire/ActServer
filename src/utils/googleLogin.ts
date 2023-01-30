@@ -1,5 +1,6 @@
 import axios from "axios";
 import qs from "qs";
+import { config } from "./../config/config";
 
 const defaultHeaders = {
     "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
@@ -13,8 +14,8 @@ const getGoogleAccessToken = async (
 
     const body = {
         code: code,
-        client_id: process.env.GOOGLE_CLIENT_ID_DEV,
-        client_secret: process.env.GOOGLE_CLIENT_CREDENTIAL_DEV,
+        client_id: config.GOOGLE_CLIENT_ID,
+        client_secret: config.GOOGLE_CLIENT_CREDENTIAL,
         redirect_uri: redirectUrl,
         grant_type: "authorization_code",
     };

@@ -1,5 +1,6 @@
 import axios from "axios";
 import qs from "qs";
+import { config } from './../config/config';
 
 const defaultHeaders = {
     "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
@@ -13,7 +14,7 @@ const getKakaoAccessToken = async (
 
     const body = {
         grant_type: "authorization_code",
-        client_id: process.env.KAKAO_CLIENT_ID,
+        client_id: config.KAKAO_CLIENT_ID,
         redirect_uri: redirectUrl,
         code: code,
     };

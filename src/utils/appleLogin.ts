@@ -1,19 +1,20 @@
 import axios from "axios";
 import qs from "qs";
 import * as jwt from "jsonwebtoken";
+import { config } from "./../config/config";
 
 const defaultHeaders = {
     "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
 };
 
 const createSignWithAppleSecret = () => {
-    const token = jwt.sign({}, process.env.APPLE_SECRET_KEY, {
+    const token = jwt.sign({}, config.APPLE_SECRET_KEY, {
         algorithm: "ES256",
         expiresIn: "1h",
         audience: "https://appleid.apple.com",
-        issuer: process.env.APPLE_TEAM_ID, // TEAM_ID
-        subject: process.env.APPLE_CLIENT_ID, // Service ID
-        keyid: process.env.APPLE_KEY_ID, // KEY_ID
+        issuer: config.APPLE_TEAM_ID,
+        subject: config.APPLE_CLIENT_ID,
+        keyid: config.APPLE_KEY_ID,
     });
     return token;
 };
@@ -25,7 +26,7 @@ const getAppleAccessToken = async (code: string, redirectUrl): Promise<any> => {
         grant_type: "authorization_code",
         code: code,
         client_secret: createSignWithAppleSecret(),
-        client_id: process.env.APPLE_CLIENT_ID,
+        client_id: config.APPLE_CLIENT_ID,
         redirect_uri: redirectUrl,
     };
 
