@@ -1,68 +1,56 @@
-import axios from 'axios';
-import qs from 'qs';
+import axios from "axios";
+import qs from "qs";
 
 const defaultHeaders = {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-  };
+    "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+};
 
-const authHostUrl = 'https://kauth.kakao.com';
-const hostUrl = 'https://kapi.kakao.com';
+const getNaverAccessToken = async (
+    code: string,
+    redirectUrl: string
+): Promise<any> => {
+    const url = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_CLIENT_SECRET}&code=${code}&state=RANDOM_STATE`;
 
-const getNaverAccessToken = async (code: string): Promise<any>  => {
-    const authEndpoint = '/oauth/token';
-    const url = `${authHostUrl}${authEndpoint}`;
-
-    const body = {
-      grant_type: 'authorization_code',
-      client_id: process.env.KAKAO_CLIENT_ID,
-      redirect_uri: process.env.KAKAO_REDIRECT_URL,
-      code: code,
-    };
-    
     try {
-      const response = await axios({
-        method: 'post',
-        url: url,
-        headers: defaultHeaders,
-        data: qs.stringify(body),
-      });
+        const response = await axios({
+            method: "get",
+            url: url,
+            headers: defaultHeaders,
+        });
 
-      if (response.status == 500) {
-        throw "kakao interner error"
-        // throw new InternalServerErrorException('Kakao Internal Server Error');
-      }
+        if (response.status == 500) {
+            throw "Naver interner error";
+        }
 
-      return response.data;
+        return response.data;
     } catch (e) {
-        throw e
+        throw e;
     }
-  }
+};
 
 const getNaverProfile = async (access_token: string): Promise<any> => {
-    const profileEndpoint = '/v2/user/me';
-    const url = `${hostUrl}${profileEndpoint}`;
+    const url = "https://openapi.naver.com/v1/nid/me";
 
     try {
-      const response = await axios({
-        method: 'get',
-        url: url,
-        headers: {
-            ...defaultHeaders,
-            Authorization: `Bearer ${access_token}`
+        const response = await axios({
+            method: "get",
+            url: url,
+            headers: {
+                ...defaultHeaders,
+                Authorization: `Bearer ${access_token}`,
+            },
+        });
+
+        if (response.status == 500) {
+            throw "internal error";
         }
-      });
 
-      if (response.status == 500) {
-        throw "internal error"
-      }
+        console.log("response from naver", response.data);
 
-      return response.data;
+        return { ...response.data, email: response.data?.response?.email };
     } catch (e) {
-      throw e
+        throw e;
     }
-}
+};
 
-export {
-    getNaverAccessToken,
-    getNaverProfile
-}
+export { getNaverAccessToken, getNaverProfile };

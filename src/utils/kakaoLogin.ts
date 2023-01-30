@@ -37,7 +37,6 @@ const getKakaoAccessToken = async (
 };
 
 const getKakaoProfile = async (access_token: string): Promise<any> => {
-    console.log("access token", access_token);
     const url = `https://kapi.kakao.com/v2/user/me`;
 
     try {

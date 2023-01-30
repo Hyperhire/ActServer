@@ -27,6 +27,10 @@ import {
     sendVerificationMail,
 } from "../../../utils/mailer";
 import {
+    getNaverAccessToken,
+    getNaverProfile,
+} from "../../../utils/naverLogin";
+import {
     passwordGenerator,
     verificationCodeGenerator,
 } from "../../../utils/random";
@@ -167,6 +171,8 @@ router.post(
                 loginType = LoginType.KAKAO;
             } else if (_loginType === "google") {
                 loginType = LoginType.GOOGLE;
+            } else if (_loginType === "naver") {
+                loginType = LoginType.NAVER;
             } else {
                 throw "Invalid loginType";
             }
@@ -183,6 +189,12 @@ router.post(
                     redirectUrl
                 );
                 socialUserProfile = await getGoogleProfile(access_token);
+            } else if (loginType === LoginType.NAVER) {
+                const { access_token } = await getNaverAccessToken(
+                    code,
+                    redirectUrl
+                );
+                socialUserProfile = await getNaverProfile(access_token);
             }
             console.log("socialUserProfile", socialUserProfile);
 
@@ -215,7 +227,6 @@ router.post(
 
                 return response.status(200).json({ data: result });
             } catch (err) {
-                console.log("Error message", err);
                 if (err.message === "user not found") {
                     return response.status(401).json({
                         message: "Need to signup",
