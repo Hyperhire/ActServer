@@ -10,7 +10,13 @@ const getNaverAccessToken = async (
     redirectUrl: string
 ): Promise<any> => {
     const url = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_CLIENT_SECRET}&code=${code}&state=RANDOM_STATE`;
-    console.log("code", code, redirectUrl);
+    console.log(
+        "code",
+        code,
+        redirectUrl,
+        process.env.NAVER_CLIENT_ID,
+        process.env.NAVER_CLIENT_SECRET
+    );
     try {
         const response = await axios({
             method: "get",
