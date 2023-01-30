@@ -190,10 +190,12 @@ router.post(
                 );
                 socialUserProfile = await getGoogleProfile(access_token);
             } else if (loginType === LoginType.NAVER) {
+                console.log("11, ", loginType);
                 const { access_token } = await getNaverAccessToken(
                     code,
                     redirectUrl
                 );
+                console.log("22, ", access_token);
                 socialUserProfile = await getNaverProfile(access_token);
             }
             console.log("socialUserProfile", socialUserProfile);
