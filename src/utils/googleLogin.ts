@@ -50,6 +50,7 @@ const getGoogleProfile = async (access_token: string): Promise<any> => {
         if (response.status == 500) {
             throw "Google internal error";
         }
+        console.log(response.data);
 
         return response.data;
     } catch (e) {

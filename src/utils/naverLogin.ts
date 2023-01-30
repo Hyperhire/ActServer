@@ -10,21 +10,12 @@ const getNaverAccessToken = async (
     redirectUrl: string
 ): Promise<any> => {
     const url = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=${process.env.NAVER_CLIENT_ID}&client_secret=${process.env.NAVER_CLIENT_SECRET}&code=${code}&state=RANDOM_STATE`;
-    console.log(
-        "code",
-        code,
-        redirectUrl,
-        process.env.NAVER_CLIENT_ID,
-        process.env.NAVER_CLIENT_SECRET
-    );
     try {
         const response = await axios({
             method: "get",
             url: url,
             headers: defaultHeaders,
         });
-
-        console.log("response", response.data);
 
         if (response.status == 500) {
             throw "Naver interner error";
@@ -52,8 +43,6 @@ const getNaverProfile = async (access_token: string): Promise<any> => {
         if (response.status == 500) {
             throw "internal error";
         }
-
-        console.log("response from naver", response.data);
 
         return { ...response.data?.response };
     } catch (e) {
