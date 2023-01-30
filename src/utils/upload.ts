@@ -4,7 +4,7 @@ const multerS3 = require("multer-s3");
 const { S3Client } = require("@aws-sdk/client-s3");
 
 const s3 = new S3Client({
-  region: "ap-northeast-2",
+  region: config.AWS_ACCESS_REGION,
   credentials: {
     accessKeyId: config.AWS_ACCESS_KEY_ID,
     secretAccessKey: config.AWS_SECRET_ACCESS_KEY

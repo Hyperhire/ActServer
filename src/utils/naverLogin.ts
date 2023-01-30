@@ -1,34 +1,25 @@
 import axios from "axios";
 import qs from "qs";
-import { config } from './../config/config';
+import { config } from "./../config/config";
 
 const defaultHeaders = {
     "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
 };
 
-const getKakaoAccessToken = async (
+const getNaverAccessToken = async (
     code: string,
     redirectUrl: string
 ): Promise<any> => {
-    const url = `https://kauth.kakao.com/oauth/token`;
-
-    const body = {
-        grant_type: "authorization_code",
-        client_id: config.KAKAO_CLIENT_ID,
-        redirect_uri: redirectUrl,
-        code: code,
-    };
-
+    const url = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=${config.NAVER_CLIENT_ID}&client_secret=${config.NAVER_CLIENT_SECRET}&code=${code}&state=RANDOM_STATE`;
     try {
         const response = await axios({
-            method: "post",
+            method: "get",
             url: url,
             headers: defaultHeaders,
-            data: qs.stringify(body),
         });
 
         if (response.status == 500) {
-            throw "kakao interner error";
+            throw "Naver interner error";
         }
 
         return response.data;
@@ -37,8 +28,8 @@ const getKakaoAccessToken = async (
     }
 };
 
-const getKakaoProfile = async (access_token: string): Promise<any> => {
-    const url = `https://kapi.kakao.com/v2/user/me`;
+const getNaverProfile = async (access_token: string): Promise<any> => {
+    const url = "https://openapi.naver.com/v1/nid/me";
 
     try {
         const response = await axios({
@@ -54,12 +45,10 @@ const getKakaoProfile = async (access_token: string): Promise<any> => {
             throw "internal error";
         }
 
-        console.log("response from kakao", response.data);
-
-        return { ...response.data, email: response.data?.kakao_account?.email };
+        return { ...response.data?.response };
     } catch (e) {
         throw e;
     }
 };
 
-export { getKakaoAccessToken, getKakaoProfile };
+export { getNaverAccessToken, getNaverProfile };

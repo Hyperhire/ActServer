@@ -14,6 +14,19 @@ const createNews = async newsData => {
   }
 };
 
+const updateNews = async (id, updateData) => {
+  try {
+      const updated = await NewsModel.findOneAndUpdate(
+          { _id: id },
+          { ...updateData, updatedAt: new Date().toISOString() },
+          { new: true }
+      ).lean();
+      return updated;
+  } catch (error) {
+      throw error;
+  }
+};
+
 const getNews = async query => {
   try {
     const { limit, lastIndex, keyword } = query;
@@ -119,6 +132,7 @@ const getNewsByOrgId = async orgId => {
 
 export default {
   createNews,
+  updateNews,
   getNews,
   getNewsById,
   getNewsByOrgId
