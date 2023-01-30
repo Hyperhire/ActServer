@@ -55,7 +55,7 @@ const getNaverProfile = async (access_token: string): Promise<any> => {
 
         console.log("response from naver", response.data);
 
-        return { ...response.data, email: response.data?.response?.email };
+        return { ...response.data?.response };
     } catch (e) {
         throw e;
     }
