@@ -18,7 +18,7 @@ const getNaverAccessToken = async (
             headers: defaultHeaders,
         });
 
-        console.log("response", response);
+        console.log("response", response.data);
 
         if (response.status == 500) {
             throw "Naver interner error";
