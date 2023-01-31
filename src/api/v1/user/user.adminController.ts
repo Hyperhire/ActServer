@@ -2,7 +2,12 @@ import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import { uploadFile } from "../../../utils/upload";
 import userService from "./user.service";
+
+interface MulterRequest extends Request {
+    file: any;
+}
 
 const router = Router();
 
@@ -43,12 +48,16 @@ router.patch(
     "/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    async (request: Request, response: Response) => {
+    uploadFile("user").single("image"),
+    async (request: MulterRequest, response: Response) => {
         try {
             const id = request.params.id;
-            const updateData = request.body;
-
-            const updatedUser = await userService.updateUser(id, updateData);
+            const data = request.body;
+            const file = request.file;
+            if (file) {
+                data.profileUrl = file.location
+            }
+            const updatedUser = await userService.updateUser(id, data);
 
             return response.status(200).json({ data: updatedUser });
         } catch (error) {
@@ -58,8 +67,8 @@ router.patch(
     }
 );
 
-router.delete(
-    "/:id",
+router.patch(
+    "/delete/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
     async (request: Request, response: Response) => {

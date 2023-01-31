@@ -78,6 +78,63 @@ const getNotice = async (query) => {
     }
 };
 
+const getNoticeByAdmin = async (query) => {
+    try {
+        const { limit, lastIndex, keyword } = query;
+        const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
+        const _limit = 1 * limit || 20;
+        const _lastIndex = 1 * lastIndex || 0;
+        const searchQuery = {} as any;
+
+        if (keyword) {
+            searchQuery["$or"] = [
+                { title: { $regex: keyword, $options: "i" } },
+                { description: { $regex: keyword, $options: "i" } },
+            ];
+        }
+        if (query?.status) searchQuery.status = query.status;
+        if (query?.from && query?.to) {
+            searchQuery.$and = [
+                { createdAt: { $gte: query.from } },
+                { createdAt: { $lte: query.to } },
+            ];
+        } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
+        else if (query?.to) searchQuery.createdAt = { $gte: query.to };
+
+        const _result = await NoticeModel.aggregate([
+            { $match: searchQuery },
+            { $skip: _lastIndex },
+            { $limit: _limit },
+            {
+                $lookup: {
+                    from: "orgs",
+                    foreignField: "_id",
+                    localField: "orgId",
+                    as: "org",
+                },
+            },
+            {
+                $unwind: "$org",
+            },
+        ]);
+
+        const totalCount = await NoticeModel.countDocuments(searchQuery);
+        const currentLastIndex = _lastIndex + _result.length;
+
+        pagination.totalCount = totalCount;
+        pagination.lastIndex = currentLastIndex;
+        pagination.hasNext = totalCount === currentLastIndex ? false : true;
+
+        return {
+            pagination,
+            list: _result,
+        };
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+};
+
 const getNoticeById = async (newsId) => {
     try {
         const _notice = await NoticeModel.aggregate([
@@ -136,10 +193,40 @@ const getNoticeByOrgId = async (orgId) => {
     }
 };
 
+const getNoticeByOrgIdByAdmin = async (orgId) => {
+    try {
+        const _notice = await NoticeModel.aggregate([
+            {
+                $match: {
+                    orgId: new mongoose.Types.ObjectId(orgId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    foreignField: "_id",
+                    localField: "orgId",
+                    as: "org",
+                },
+            },
+            {
+                $unwind: "$org",
+            },
+        ]);
+
+        return _notice;
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+};
+
 export default {
     createNotice,
     updateNotice,
     getNotice,
+    getNoticeByAdmin,
     getNoticeById,
     getNoticeByOrgId,
+    getNoticeByOrgIdByAdmin,
 };

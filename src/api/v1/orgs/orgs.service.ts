@@ -89,6 +89,17 @@ const getOrgById = async (orgId) => {
     }
 };
 
+const getOrgByIdByAdmin = async (orgId) => {
+    try {
+        const org = await OrgModel.findOne({
+            _id: orgId,
+        }).lean();
+        return org;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const getOrgByEmail = async (email) => {
     // This is used for login
     try {
@@ -137,6 +148,55 @@ const getList = async (query) => {
         const searchQuery = {
             status: OrgStatus.AUTHORIZED,
         };
+
+        const _result = await OrgModel.find(searchQuery)
+            .sort({ createdAt: -1 })
+            .select(selectInfo)
+            .skip(_lastIndex)
+            .limit(_limit)
+            .lean();
+
+        const totalCount = await OrgModel.countDocuments(searchQuery);
+        const currentLastIndex = _lastIndex + _result.length;
+
+        pagination.totalCount = totalCount;
+        pagination.lastIndex = currentLastIndex;
+        pagination.hasNext = totalCount === currentLastIndex ? false : true;
+
+        return {
+            pagination,
+            list: _result,
+        };
+    } catch (error) {
+        throw error;
+    }
+};
+
+const getListByAdmin = async (query) => {
+    try {
+        const { limit, lastIndex } = query;
+        const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
+        const _limit = 1 * limit || 20;
+        const _lastIndex = 1 * lastIndex || 0;
+        const searchQuery = {} as any;
+        if (query?.keyword) {
+            searchQuery.$or = [
+                { _id: new Types.ObjectId(query?.keyword) },
+                { "manager.name": { $regex: query?.keyword, $options: "i" } },
+                { name: { $regex: query?.keyword, $options: "i" } },
+                { nickname: { $regex: query?.keyword, $options: "i" } },
+                { "manager.mobile": { $regex: query?.keyword, $options: "i" } },
+                { email: { $regex: query?.keyword, $options: "i" } },
+            ];
+        }
+        if (query?.status) searchQuery.status = query.status;
+        if (query?.from && query?.to) {
+            searchQuery.$and = [
+                { createdAt: { $gte: query.from } },
+                { createdAt: { $lte: query.to } },
+            ];
+        } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
+        else if (query?.to) searchQuery.createdAt = { $gte: query.to };
 
         const _result = await OrgModel.find(searchQuery)
             .sort({ createdAt: -1 })
@@ -254,9 +314,11 @@ const getOrgPgSummary = async (orgId) => {
 
 const deleteOrg = async (id) => {
     try {
-        const org = await OrgModel.findOneAndDelete({
-            _id: id,
-        }).lean();
+        const org = await OrgModel.findOneAndUpdate(
+            { _id: id },
+            { deletedAt: new Date().toISOString(), status: OrgStatus.DELETED },
+            { new: true }
+        ).lean();
         return org;
     } catch (error) {
         logger.error(error);
@@ -269,9 +331,11 @@ export default {
     updateOrg,
     updateOrgByAdmin,
     getOrgById,
+    getOrgByIdByAdmin,
     getOrgByEmail,
     getOrgByNickName,
     getList,
+    getListByAdmin,
     getOrgPgSummary,
     getOrgByClientId,
     deleteOrg,

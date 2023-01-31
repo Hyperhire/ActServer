@@ -6,7 +6,11 @@ import { OrderModel } from "../order/schema/order.schema";
 import { BaseUserDto, UserDto } from "./dto/request.dto";
 import { UserModel } from "./schema/user.schema";
 import { Types } from "mongoose";
-import { LoginType, OrderPaidStatus } from "./../../../common/constants";
+import {
+    LoginType,
+    OrderPaidStatus,
+    UserStatus,
+} from "./../../../common/constants";
 import { SubscriptionModel } from "../subscription/schema/subscription.schema";
 
 const selectInfo = {};
@@ -186,7 +190,16 @@ const getList = async (query) => {
         const _lastIndex = 1 * lastIndex || 0;
 
         let searchQuery: any;
-        if (query?.userType) searchQuery.userType = query.userType;
+        if (query?.keyword) {
+            searchQuery.$or = [
+                { _id: new Types.ObjectId(query?.keyword) },
+                { "indInfo.name": { $regex: query?.keyword, $options: "i" } },
+                { nickname: { $regex: query?.keyword, $options: "i" } },
+                { "indInfo.mobile": { $regex: query?.keyword, $options: "i" } },
+                { email: { $regex: query?.keyword, $options: "i" } },
+            ];
+        }
+        if (query?.loginType) searchQuery.loginType = query.loginType;
         if (query?.status) searchQuery.status = query.status;
         if (query?.from && query?.to) {
             searchQuery.$and = [
@@ -221,9 +234,11 @@ const getList = async (query) => {
 
 const deleteUser = async (id: string) => {
     try {
-        const res = await UserModel.findOneAndDelete({
-            _id: id,
-        });
+        const res = await UserModel.findOneAndUpdate(
+            { _id: id },
+            { deletedAt: new Date().toISOString(), status: UserStatus.DELETED },
+            { new: true }
+        );
         return res;
     } catch (error) {
         logger.error(error);
