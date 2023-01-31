@@ -1,5 +1,6 @@
 import { Router } from "express";
 import test from "./test/test.controller";
+import health from "./health/health.controller";
 import auth from "./api/v1/auth/auth.controller";
 import orgs from "./api/v1/orgs/orgs.controller";
 import users from "./api/v1/user/user.controller";
@@ -27,6 +28,7 @@ import bannerAdmin from "./api/v1/faq/faq.adminController";
 const router: Router = Router();
 
 router.use("/test", test);
+router.use("/health", health);
 
 router.use("/api/v1/auth", auth);
 router.use("/api/v1/org", orgs);

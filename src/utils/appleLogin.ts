@@ -19,7 +19,11 @@ const createSignWithAppleSecret = () => {
     return token;
 };
 
-const getAppleAccessToken = async (code: string, redirectUrl): Promise<any> => {
+const getAppleAccessTokenAndProfile = async (
+    code: string,
+    redirectUrl: string,
+    id_token: string
+): Promise<any> => {
     const url = `https://appleid.apple.com/auth/token`;
 
     const body = {
@@ -38,38 +42,21 @@ const getAppleAccessToken = async (code: string, redirectUrl): Promise<any> => {
             data: qs.stringify(body),
         });
 
+        const { sub: id, email } = (jwt.decode(id_token) ?? {}) as {
+            sub: string;
+            email: string;
+            name?: string;
+        };
+
         if (response.status == 500) {
             throw "kakao interner error";
             // throw new InternalServerErrorException('Kakao Internal Server Error');
         }
 
-        return response.data;
+        return { ...response.data, id, email };
     } catch (e) {
         throw e;
     }
 };
 
-const getAppleProfile = async (access_token: string): Promise<any> => {
-    const url = `https://appleid.apple.com/auth/token`;
-
-    try {
-        const response = await axios({
-            method: "get",
-            url: url,
-            headers: {
-                ...defaultHeaders,
-                Authorization: `Bearer ${access_token}`,
-            },
-        });
-
-        if (response.status == 500) {
-            throw "internal error";
-        }
-
-        return response.data;
-    } catch (e) {
-        throw e;
-    }
-};
-
-export { getAppleAccessToken, getAppleProfile };
+export { getAppleAccessTokenAndProfile };

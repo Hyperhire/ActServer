@@ -14,6 +14,7 @@ import { config } from "../../../config/config";
 import { logger } from "../../../logger/winston.logger";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import { getAppleAccessTokenAndProfile } from "../../../utils/appleLogin";
 import {
     getGoogleAccessToken,
     getGoogleProfile,
@@ -164,7 +165,8 @@ router.post(
     "/login/social/:loginType",
     async (request: Request, response: Response) => {
         try {
-            const { code, redirectUrl } = request.body;
+            const { code, redirectUrl, idToken } = request.body;
+            
             const _loginType = request.params.loginType;
             let loginType: TLoginType;
             if (_loginType === "kakao") {
@@ -173,9 +175,12 @@ router.post(
                 loginType = LoginType.GOOGLE;
             } else if (_loginType === "naver") {
                 loginType = LoginType.NAVER;
+            } else if (_loginType === "apple") {
+                loginType = LoginType.APPLE;
             } else {
                 throw "Invalid loginType";
             }
+
             let socialUserProfile = null;
             if (loginType === LoginType.KAKAO) {
                 const { access_token } = await getKakaoAccessToken(
@@ -190,13 +195,18 @@ router.post(
                 );
                 socialUserProfile = await getGoogleProfile(access_token);
             } else if (loginType === LoginType.NAVER) {
-                console.log("11, ", loginType);
                 const { access_token } = await getNaverAccessToken(
                     code,
                     redirectUrl
                 );
-                console.log("22, ", access_token);
                 socialUserProfile = await getNaverProfile(access_token);
+            } else if (loginType === LoginType.APPLE) {
+                const { id, email } = await getAppleAccessTokenAndProfile(
+                    code,
+                    redirectUrl,
+                    idToken
+                );
+                socialUserProfile = { id, email };
             }
             console.log("socialUserProfile", socialUserProfile);
 
