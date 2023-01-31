@@ -89,6 +89,17 @@ const getOrgById = async (orgId) => {
     }
 };
 
+const getOrgByIdByAdmin = async (orgId) => {
+    try {
+        const org = await OrgModel.findOne({
+            _id: orgId,
+        }).lean();
+        return org;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const getOrgByEmail = async (email) => {
     // This is used for login
     try {
@@ -136,6 +147,39 @@ const getList = async (query) => {
         const _lastIndex = 1 * lastIndex || 0;
         const searchQuery = {
             status: OrgStatus.AUTHORIZED,
+        };
+
+        const _result = await OrgModel.find(searchQuery)
+            .sort({ createdAt: -1 })
+            .select(selectInfo)
+            .skip(_lastIndex)
+            .limit(_limit)
+            .lean();
+
+        const totalCount = await OrgModel.countDocuments(searchQuery);
+        const currentLastIndex = _lastIndex + _result.length;
+
+        pagination.totalCount = totalCount;
+        pagination.lastIndex = currentLastIndex;
+        pagination.hasNext = totalCount === currentLastIndex ? false : true;
+
+        return {
+            pagination,
+            list: _result,
+        };
+    } catch (error) {
+        throw error;
+    }
+};
+
+const getListByAdmin = async (query) => {
+    try {
+        const { limit, lastIndex } = query;
+        const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
+        const _limit = 1 * limit || 20;
+        const _lastIndex = 1 * lastIndex || 0;
+        const searchQuery = {
+            // status: OrgStatus.AUTHORIZED,
         };
 
         const _result = await OrgModel.find(searchQuery)
@@ -269,9 +313,11 @@ export default {
     updateOrg,
     updateOrgByAdmin,
     getOrgById,
+    getOrgByIdByAdmin,
     getOrgByEmail,
     getOrgByNickName,
     getList,
+    getListByAdmin,
     getOrgPgSummary,
     getOrgByClientId,
     deleteOrg,
