@@ -57,17 +57,17 @@ export const config: ConfigKeys = {
         : process.env.REDIS_PASSWORD,
     KAKAO_CLIENT_ID: process.env.KAKAO_CLIENT_ID,
     GOOGLE_CLIENT_ID: isDev
-        ? process.env.GOOGLE_CLIENT_ID
-        : process.env.TEST_GOOGLE_CLIENT_ID,
+        ? process.env.TEST_GOOGLE_CLIENT_ID
+        : process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_CREDENTIAL: isDev
-        ? process.env.GOOGLE_CLIENT_CREDENTIAL
-        : process.env.TEST_GOOGLE_CLIENT_CREDENTIAL,
+        ? process.env.TEST_GOOGLE_CLIENT_CREDENTIAL
+        : process.env.GOOGLE_CLIENT_CREDENTIAL,
     NAVER_CLIENT_ID: isDev
-        ? process.env.NAVER_CLIENT_ID
-        : process.env.TEST_NAVER_CLIENT_ID,
+        ? process.env.TEST_NAVER_CLIENT_ID
+        : process.env.NAVER_CLIENT_ID,
     NAVER_CLIENT_SECRET: isDev
-        ? process.env.NAVER_CLIENT_SECRET
-        : process.env.TEST_NAVER_CLIENT_SECRET,
+        ? process.env.TEST_NAVER_CLIENT_SECRET
+        : process.env.NAVER_CLIENT_SECRET,
     APPLE_CLIENT_ID: process.env.APPLE_CLIENT_ID,
     APPLE_KEY_ID: process.env.APPLE_KEY_ID,
     APPLE_TEAM_ID: process.env.APPLE_TEAM_ID,
