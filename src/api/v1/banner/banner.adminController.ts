@@ -26,7 +26,7 @@ router.get(
     authMiddleware.validOnlyAdmin,
     async (request: Request, response: Response) => {
         try {
-            const banners = await bannerService.getBanners();
+            const banners = await bannerService.getBannersByAdmin();
 
             return response.status(200).send({ data: banners });
         } catch (error) {

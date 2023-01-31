@@ -42,8 +42,35 @@ const getFaqs = async (query) => {
     }
 };
 
+const getFaqsByAdmin = async (query) => {
+    try {
+        const { keyword } = query;
+        const searchQuery = {} as any;
+        if (keyword) {
+            searchQuery["$or"] = [
+                { question: { $regex: keyword, $options: "i" } },
+                { answer: { $regex: keyword, $options: "i" } },
+            ];
+        }
+        if (query?.status) searchQuery.status = query.status;
+        if (query?.from && query?.to) {
+            searchQuery.$and = [
+                { createdAt: { $gte: query.from } },
+                { createdAt: { $lte: query.to } },
+            ];
+        } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
+        else if (query?.to) searchQuery.createdAt = { $gte: query.to };
+        const faqs = await FAQModel.find(searchQuery);
+
+        return faqs;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export default {
     createFaq,
     updateFaq,
     getFaqs,
+    getFaqsByAdmin,
 };

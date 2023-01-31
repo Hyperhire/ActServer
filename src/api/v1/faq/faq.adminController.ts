@@ -15,7 +15,7 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const query = request.query;
-            const faqs: Array<FAQDto> = await faqService.getFaqs(query);
+            const faqs: Array<FAQDto> = await faqService.getFaqsByAdmin(query);
             return response.status(200).json({ data: faqs });
         } catch (error) {
             logger.error(error);
