@@ -24,6 +24,9 @@ import newsAdmin from "./api/v1/news/news.adminController";
 import noticesAdmin from "./api/v1/notices/notice.adminController";
 import faqsAdmin from "./api/v1/faq/faq.adminController";
 import bannerAdmin from "./api/v1/faq/faq.adminController";
+import orderAdmin from "./api/v1/order/order.adminController";
+import donationAdmin from "./api/v1/donation/donation.adminController";
+import withdrawAdmin from "./api/v1/withdraw/withdraw.adminController";
 
 const router: Router = Router();
 
@@ -53,9 +56,9 @@ router.use("/api/admin/v1/news", newsAdmin);
 router.use("/api/admin/v1/notice", noticesAdmin);
 router.use("/api/admin/v1/faq", faqsAdmin);
 router.use("/api/admin/v1/banner", bannerAdmin);
-// router.use("/api/admin/v1/order", orderAdmin);
+router.use("/api/admin/v1/order", orderAdmin);
 // router.use("/api/admin/v1/subscription", subscriptionAdmin);
-// router.use("/api/admin/v1/donation", donationAdmin);
-// router.use("/api/admin/v1/withdraw", withdrawAdmin);
+router.use("/api/admin/v1/donation", donationAdmin);
+router.use("/api/admin/v1/withdraw", withdrawAdmin);
 
 export default router;
