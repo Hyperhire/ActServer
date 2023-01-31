@@ -59,7 +59,7 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const query = request.query;
-            const { pagination, list } = await campaignsService.getList(query);
+            const { pagination, list } = await campaignsService.getListByAdmin(query);
 
             return response.status(200).json({
                 data: {

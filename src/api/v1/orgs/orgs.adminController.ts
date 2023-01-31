@@ -83,9 +83,10 @@ router.get(
     authMiddleware.validOnlyAdmin,
     async (request: Request, response: Response) => {
         try {
-            const { id, userType } = request["user"];
             const query = request.query;
-            const { pagination, list } = await orgsService.getListByAdmin(query);
+            const { pagination, list } = await orgsService.getListByAdmin(
+                query
+            );
 
             return response.status(200).json({ data: { pagination, list } });
         } catch (error) {
@@ -115,8 +116,8 @@ router.get(
 );
 
 // get orgs detail
-router.delete(
-    "/:id",
+router.patch(
+    "/delete/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
     async (request: Request, response: Response) => {

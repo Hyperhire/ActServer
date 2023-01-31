@@ -178,9 +178,25 @@ const getListByAdmin = async (query) => {
         const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
         const _limit = 1 * limit || 20;
         const _lastIndex = 1 * lastIndex || 0;
-        const searchQuery = {
-            // status: OrgStatus.AUTHORIZED,
-        };
+        const searchQuery = {} as any;
+        if (query?.keyword) {
+            searchQuery.$or = [
+                { _id: new Types.ObjectId(query?.keyword) },
+                { "manager.name": { $regex: query?.keyword, $options: "i" } },
+                { name: { $regex: query?.keyword, $options: "i" } },
+                { nickname: { $regex: query?.keyword, $options: "i" } },
+                { "manager.mobile": { $regex: query?.keyword, $options: "i" } },
+                { email: { $regex: query?.keyword, $options: "i" } },
+            ];
+        }
+        if (query?.status) searchQuery.status = query.status;
+        if (query?.from && query?.to) {
+            searchQuery.$and = [
+                { createdAt: { $gte: query.from } },
+                { createdAt: { $lte: query.to } },
+            ];
+        } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
+        else if (query?.to) searchQuery.createdAt = { $gte: query.to };
 
         const _result = await OrgModel.find(searchQuery)
             .sort({ createdAt: -1 })
@@ -298,9 +314,11 @@ const getOrgPgSummary = async (orgId) => {
 
 const deleteOrg = async (id) => {
     try {
-        const org = await OrgModel.findOneAndDelete({
-            _id: id,
-        }).lean();
+        const org = await OrgModel.findOneAndUpdate(
+            { _id: id },
+            { deletedAt: new Date().toISOString(), status: OrgStatus.DELETED },
+            { new: true }
+        ).lean();
         return org;
     } catch (error) {
         logger.error(error);
