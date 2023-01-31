@@ -116,7 +116,7 @@ router.get(
     authMiddleware.validOnlyAdmin,
     async (request: Request, response: Response) => {
         try {
-            const campaign = await campaignsService.getActiveCampaignsByOrgId(
+            const campaign = await campaignsService.getAllCampaignsByOrgId(
                 request.params.id
             );
 

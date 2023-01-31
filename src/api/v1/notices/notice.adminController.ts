@@ -52,7 +52,7 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const query = request.query;
-            const _notice = await noticeService.getNotice(query);
+            const _notice = await noticeService.getNoticeByAdmin(query);
 
             return response.status(200).json({ data: _notice });
         } catch (error) {
@@ -104,7 +104,7 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const noticeId = request.params.id;
-            const _notice = await noticeService.getNoticeByOrgId(noticeId);
+            const _notice = await noticeService.getNoticeByOrgIdByAdmin(noticeId);
 
             return response.status(200).json({ data: _notice });
         } catch (error) {

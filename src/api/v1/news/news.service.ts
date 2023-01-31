@@ -190,6 +190,34 @@ const getNewsByOrgId = async (orgId) => {
     }
 };
 
+const getNewsByOrgIdByAdmin = async (orgId) => {
+    try {
+        const _news = await NewsModel.aggregate([
+            {
+                $match: {
+                    orgId: new mongoose.Types.ObjectId(orgId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    foreignField: "_id",
+                    localField: "orgId",
+                    as: "org",
+                },
+            },
+            {
+                $unwind: "$org",
+            },
+        ]);
+
+        return _news;
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+};
+
 export default {
     createNews,
     updateNews,
@@ -197,4 +225,5 @@ export default {
     getNewsByAdmin,
     getNewsById,
     getNewsByOrgId,
+    getNewsByOrgIdByAdmin,
 };

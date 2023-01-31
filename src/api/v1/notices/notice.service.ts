@@ -193,6 +193,34 @@ const getNoticeByOrgId = async (orgId) => {
     }
 };
 
+const getNoticeByOrgIdByAdmin = async (orgId) => {
+    try {
+        const _notice = await NoticeModel.aggregate([
+            {
+                $match: {
+                    orgId: new mongoose.Types.ObjectId(orgId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    foreignField: "_id",
+                    localField: "orgId",
+                    as: "org",
+                },
+            },
+            {
+                $unwind: "$org",
+            },
+        ]);
+
+        return _notice;
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+};
+
 export default {
     createNotice,
     updateNotice,
@@ -200,4 +228,5 @@ export default {
     getNoticeByAdmin,
     getNoticeById,
     getNoticeByOrgId,
+    getNoticeByOrgIdByAdmin,
 };
