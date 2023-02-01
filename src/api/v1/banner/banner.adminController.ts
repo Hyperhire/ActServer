@@ -1,7 +1,7 @@
 import { Request, Router, Response } from "express";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import { uploadFile } from "../../../utils/upload";
+import { uploadFileToS3 } from "../../../utils/upload";
 import bannerService from "./banner.service";
 
 interface MulterRequest extends Request {
@@ -14,7 +14,7 @@ router.post(
     "/",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    uploadFile("banner").single("image"),
+    uploadFileToS3("banner").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
             const file = request.file;
@@ -66,7 +66,7 @@ router.patch(
     "/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    uploadFile("banner").single("image"),
+    uploadFileToS3("banner").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
             const bannerId = request.params.id;

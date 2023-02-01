@@ -6,7 +6,7 @@ import { validateBody } from "../../../common/helper/validate.helper";
 import { logger } from "../../../logger/winston.logger";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import { uploadFile } from "../../../utils/upload";
+import { uploadFileToS3 } from "../../../utils/upload";
 import subscriptionService from "../subscription/subscription.service";
 import { BaseOrgDto } from "./dto/request.dto";
 import orgsService from "./orgs.service";
@@ -37,7 +37,7 @@ router.patch(
     "/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    uploadFile("images").fields([
+    uploadFileToS3("images").fields([
         { name: "logo", maxCount: 1 },
         { name: "images", maxCount: 3 },
     ]),

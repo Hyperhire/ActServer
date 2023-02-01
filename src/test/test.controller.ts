@@ -2,7 +2,7 @@ import { Request, Router, Response } from "express";
 import multer from "multer";
 import KasWallet from "../utils/kasWallet";
 import { getRedisValueByKey } from "../utils/redis";
-import { uploadFile } from "../utils/upload";
+import { uploadFileToS3 } from "../utils/upload";
 
 const router = Router();
 const upload = multer();
@@ -43,7 +43,7 @@ router.get("/redis", async (request: Request, response: Response) => {
 
 router.post(
     "/upload-images",
-    uploadFile("test").fields([
+    uploadFileToS3("test").fields([
         { name: "logo", maxCount: 1 },
         { name: "images", maxCount: 3 },
     ]),
@@ -66,9 +66,10 @@ router.post(
 //TODO: form data 처리하는게 이슈네
 router.post(
     "/register-nft-image",
-    uploadFile("notice").single("image"),
+    // uploadFileToS3("notice").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
+            console.log("request", request);
             const file = request?.file;
             console.log("file", file);
             if (!file) {
@@ -82,6 +83,7 @@ router.post(
             //     image
             //   }
             // });
+            return response.status(200).json({ data: "" });
         } catch (error) {
             return response.status(400).json({ error });
         }

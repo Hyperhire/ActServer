@@ -9,7 +9,7 @@ import { CampaignDto, CampaignOrgDto } from "./dto/response.dto";
 import { UserType } from "../../../common/constants";
 import authMiddleware from "../../../middleware/auth.middleware";
 import donationService from "../donation/donation.service";
-import { uploadFile } from "../../../utils/upload";
+import { uploadFileToS3 } from "../../../utils/upload";
 
 interface MulterRequest extends Request {
     files: any;
@@ -21,7 +21,7 @@ router.post(
     "/",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    uploadFile("campaigns").array("images"),
+    uploadFileToS3("campaigns").array("images"),
     async (request: MulterRequest, response: Response) => {
         try {
             const files = request.files;
@@ -59,7 +59,9 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const query = request.query;
-            const { pagination, list } = await campaignsService.getListByAdmin(query);
+            const { pagination, list } = await campaignsService.getListByAdmin(
+                query
+            );
 
             return response.status(200).json({
                 data: {
@@ -80,7 +82,7 @@ router.get(
     authMiddleware.validOnlyAdmin,
     async (request: Request, response: Response) => {
         try {
-            const campaign = await campaignsService.getCampaignById(
+            const campaign = await campaignsService.getCampaignByIdByAdmin(
                 request.params.id
             );
 

@@ -142,8 +142,33 @@ const getCampaignById = async (campaignId) => {
             {
                 $match: {
                     _id: new mongoose.Types.ObjectId(campaignId),
-                    startedAt: { $lte: now },
                     endedAt: { $gte: now },
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    foreignField: "_id",
+                    localField: "orgId",
+                    as: "org",
+                },
+            },
+            {
+                $unwind: "$org",
+            },
+        ]);
+        return campaign[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+const getCampaignByIdByAdmin = async (campaignId) => {
+    try {
+        const campaign = await CampaignModel.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(campaignId),
                 },
             },
             {
@@ -240,6 +265,7 @@ export default {
     getList,
     getListByAdmin,
     getCampaignById,
+    getCampaignByIdByAdmin,
     getAllCampaignIdsByOrgId,
     getAllCampaignsByOrgId,
     getActiveCampaignsByOrgId,

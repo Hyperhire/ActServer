@@ -11,7 +11,7 @@ const s3 = new S3Client({
   }
 });
 
-const uploadFile = folder =>
+const uploadFileToS3 = folder =>
   multer({
     storage: multerS3({
       s3,
@@ -28,4 +28,4 @@ const uploadFile = folder =>
     }
   });
 
-export { uploadFile };
+export { uploadFileToS3 };

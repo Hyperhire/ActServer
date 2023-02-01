@@ -2,7 +2,7 @@ import { Request, Router, Response } from "express";
 import multer from "multer";
 import KasWallet from "../utils/kasWallet";
 import { getRedisValueByKey } from "../utils/redis";
-import { uploadFile } from "../utils/upload";
+import { uploadFileToS3 } from "../utils/upload";
 
 const router = Router();
 const upload = multer();

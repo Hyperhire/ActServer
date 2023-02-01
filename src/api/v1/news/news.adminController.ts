@@ -4,7 +4,7 @@ import jwtMiddleware from "../../../middleware/jwt.middleware";
 import newsService from "./news.service";
 import { UserType } from "../../../common/constants";
 import authMiddleware from "../../../middleware/auth.middleware";
-import { uploadFile } from "../../../utils/upload";
+import { uploadFileToS3 } from "../../../utils/upload";
 
 interface MulterRequest extends Request {
     files: any;
@@ -17,7 +17,7 @@ router.post(
     "/",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    uploadFile("news").array("images"),
+    uploadFileToS3("news").array("images"),
     async (request: MulterRequest, response: Response) => {
         try {
             const files = request.files;
@@ -70,7 +70,7 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const newsId = request.params.id;
-            const news = await newsService.getNewsById(newsId);
+            const news = await newsService.getNewsByIdByAdmin(newsId);
 
             return response.status(200).json({ data: news });
         } catch (error) {

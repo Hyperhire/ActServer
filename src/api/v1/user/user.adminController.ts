@@ -2,7 +2,7 @@ import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import { uploadFile } from "../../../utils/upload";
+import { uploadFileToS3 } from "../../../utils/upload";
 import userService from "./user.service";
 
 interface MulterRequest extends Request {
@@ -48,7 +48,7 @@ router.patch(
     "/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    uploadFile("user").single("image"),
+    uploadFileToS3("user").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
             const id = request.params.id;
