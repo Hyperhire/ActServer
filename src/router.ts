@@ -23,7 +23,7 @@ import campaignAdmin from "./api/v1/campaigns/campaigns.adminController";
 import newsAdmin from "./api/v1/news/news.adminController";
 import noticesAdmin from "./api/v1/notices/notice.adminController";
 import faqsAdmin from "./api/v1/faq/faq.adminController";
-import bannerAdmin from "./api/v1/faq/faq.adminController";
+import bannerAdmin from "./api/v1/banner/banner.adminController";
 import orderAdmin from "./api/v1/order/order.adminController";
 import donationAdmin from "./api/v1/donation/donation.adminController";
 import withdrawAdmin from "./api/v1/withdraw/withdraw.adminController";

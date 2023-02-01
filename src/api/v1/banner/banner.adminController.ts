@@ -35,6 +35,22 @@ router.get(
     }
 );
 
+router.get(
+    "/:id",
+    jwtMiddleware.verifyToken,
+    authMiddleware.validOnlyAdmin,
+    async (request: Request, response: Response) => {
+        try {
+            const bannerId = request.params.id;
+            const banner = await bannerService.getBannerByIdByAdmin(bannerId);
+
+            return response.status(200).send({ data: banner });
+        } catch (error) {
+            return response.status(400).send({ error });
+        }
+    }
+);
+
 router.patch(
     "/:id",
     jwtMiddleware.verifyToken,

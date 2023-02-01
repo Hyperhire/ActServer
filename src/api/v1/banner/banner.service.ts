@@ -43,6 +43,19 @@ const getBannersByAdmin = async () => {
     }
 };
 
+const getBannerByIdByAdmin = async (id) => {
+    try {
+        console.log("id", id);
+        const banner = await BannerModel.findOne({ _id: id });
+        console.log("banner", banner);
+
+        return banner;
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+};
+
 const updateBanner = async (bannerId, updateData) => {
     try {
         const updatedBanner = await BannerModel.findOneAndUpdate(
@@ -73,6 +86,7 @@ export default {
     createBanner,
     getBanners,
     getBannersByAdmin,
+    getBannerByIdByAdmin,
     updateBanner,
     getMaxSeq,
 };
