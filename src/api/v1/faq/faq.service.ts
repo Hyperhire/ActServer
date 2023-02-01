@@ -42,6 +42,16 @@ const getFaqs = async (query) => {
     }
 };
 
+const getFaqByIdByAdmin = async (id) => {
+    try {
+        const faq = await FAQModel.findOne({ _id: id });
+
+        return faq;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const getFaqsByAdmin = async (query) => {
     try {
         const { keyword } = query;
@@ -72,5 +82,6 @@ export default {
     createFaq,
     updateFaq,
     getFaqs,
+    getFaqByIdByAdmin,
     getFaqsByAdmin,
 };

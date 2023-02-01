@@ -80,6 +80,55 @@ const getOrderByIdByAdmin = async (id) => {
             { $match: { _id: new Types.ObjectId(id) } },
             {
                 $lookup: {
+                    from: "campaigns",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "campaign",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$campaign",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "orgA",
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    localField: "campaign.orgId",
+                    foreignField: "_id",
+                    as: "orgB",
+                },
+            },
+            {
+                $addFields: {
+                    org: {
+                        $setUnion: ["$orgA", "$orgB"],
+                    },
+                },
+            },
+            {
+                $unwind: {
+                    path: "$org",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $project: {
+                    orgA: 0,
+                    orgB: 0,
+                },
+            },
+            {
+                $lookup: {
                     from: "donations",
                     localField: "donationId",
                     foreignField: "_id",
@@ -141,6 +190,55 @@ const getOrdersByAdmin = async (query) => {
             { $match: searchQuery },
             { $skip: _lastIndex },
             { $limit: _limit },
+            {
+                $lookup: {
+                    from: "campaigns",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "campaign",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$campaign",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "orgA",
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    localField: "campaign.orgId",
+                    foreignField: "_id",
+                    as: "orgB",
+                },
+            },
+            {
+                $addFields: {
+                    org: {
+                        $setUnion: ["$orgA", "$orgB"],
+                    },
+                },
+            },
+            {
+                $unwind: {
+                    path: "$org",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $project: {
+                    orgA: 0,
+                    orgB: 0,
+                },
+            },
             {
                 $lookup: {
                     from: "donations",

@@ -34,7 +34,7 @@ const getBanners = async () => {
 
 const getBannersByAdmin = async () => {
     try {
-        const banners = await BannerModel.find({});
+        const banners = await BannerModel.find({}).sort({ sequence: 1 });
 
         return banners;
     } catch (error) {

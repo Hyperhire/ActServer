@@ -24,6 +24,21 @@ router.get(
     }
 );
 
+router.get(
+    "/:id",
+    jwtMiddleware.verifyToken,
+    authMiddleware.validOnlyAdmin,
+    async (request: Request, response: Response) => {
+        try {
+            const faq = await faqService.getFaqByIdByAdmin(request.params.id);
+            return response.status(200).json({ data: faq });
+        } catch (error) {
+            logger.error(error);
+            return response.status(400).json({ error });
+        }
+    }
+);
+
 router.post(
     "/",
     jwtMiddleware.verifyToken,
