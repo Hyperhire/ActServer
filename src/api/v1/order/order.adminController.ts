@@ -37,7 +37,7 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const id = request.params.id;
-            const order = await orderService.getOrderById(id);
+            const order = await orderService.getOrderByIdByAdmin(id);
 
             return response.status(200).json({
                 data: order,

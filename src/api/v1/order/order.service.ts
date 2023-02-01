@@ -74,6 +74,46 @@ const getOrderById = async (id) => {
     }
 };
 
+const getOrderByIdByAdmin = async (id) => {
+    try {
+        const orders = await OrderModel.aggregate([
+            { $match: { _id: new Types.ObjectId(id) } },
+            {
+                $lookup: {
+                    from: "donations",
+                    localField: "donationId",
+                    foreignField: "_id",
+                    as: "donation",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$donation",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ]);
+
+        return orders[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
 const getOrdersByAdmin = async (query) => {
     try {
         const { limit, lastIndex, keyword } = query;
@@ -112,6 +152,20 @@ const getOrdersByAdmin = async (query) => {
             {
                 $unwind: {
                     path: "$donation",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$user",
                     preserveNullAndEmptyArrays: true,
                 },
             },
@@ -247,6 +301,7 @@ export default {
     updateOrdersMany,
     getOrdersByAdmin,
     getOrderById,
+    getOrderByIdByAdmin,
     getMyOrders,
     getOrgInfoByOrder,
     getOrdersByOrderIdList,
