@@ -18,6 +18,7 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const query = request.query;
+            console.log(query);
             const { pagination, list } = await userService.getList(query);
 
             return response.status(200).json({ data: { pagination, list } });
@@ -55,7 +56,7 @@ router.patch(
             const data = request.body;
             const file = request.file;
             if (file) {
-                data.profileUrl = file.location
+                data.profileUrl = file.location;
             }
             const updatedUser = await userService.updateUser(id, data);
 
