@@ -1,7 +1,12 @@
 import { Request, Router, Response } from "express";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
+import { uploadFile } from "../../../utils/upload";
 import bannerService from "./banner.service";
+
+interface MulterRequest extends Request {
+    file: any;
+}
 
 const router = Router();
 
@@ -9,9 +14,15 @@ router.post(
     "/",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    async (request: Request, response: Response) => {
+    uploadFile("banner").single("image"),
+    async (request: MulterRequest, response: Response) => {
         try {
-            const newBanner = await bannerService.createBanner(request.body);
+            const file = request.file;
+            const data = request.body;
+            if (file?.location) {
+                data.imageUrl = file.location;
+            }
+            const newBanner = await bannerService.createBanner(data);
 
             return response.status(201).send({ data: newBanner });
         } catch (error) {
@@ -55,10 +66,17 @@ router.patch(
     "/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    async (request: Request, response: Response) => {
+    uploadFile("banner").single("image"),
+    async (request: MulterRequest, response: Response) => {
         try {
             const bannerId = request.params.id;
+            const file = request.file;
+
             const updateData = request.body;
+            if (file?.location) {
+                updateData.imageUrl = file.location;
+            }
+
             const banner = await bannerService.updateBanner(
                 bannerId,
                 updateData

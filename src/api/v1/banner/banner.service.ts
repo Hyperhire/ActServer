@@ -45,9 +45,7 @@ const getBannersByAdmin = async () => {
 
 const getBannerByIdByAdmin = async (id) => {
     try {
-        console.log("id", id);
         const banner = await BannerModel.findOne({ _id: id });
-        console.log("banner", banner);
 
         return banner;
     } catch (error) {
