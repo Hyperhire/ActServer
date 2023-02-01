@@ -40,7 +40,7 @@ import {
     setRedisValueByKey,
     setRedisValueByKeyWithExpireSec,
 } from "../../../utils/redis";
-import { uploadFile } from "../../../utils/upload";
+import { uploadFileToS3 } from "../../../utils/upload";
 import { validatePassword } from "../../../utils/validator";
 import orgsService from "../orgs/orgs.service";
 import userService from "../user/user.service";
@@ -359,7 +359,7 @@ router.post("/reissue-token", async (request: Request, response: Response) => {
  */
 router.post(
     "/user/register",
-    uploadFile("images").single("image"),
+    uploadFileToS3("images").single("image"),
     async (request: Request, response: Response) => {
         try {
             // const user = plainToInstance(RegisterUserDto, request.body);
@@ -447,7 +447,7 @@ router.post(
  */
 router.post(
     "/user/register/social",
-    uploadFile("images").single("image"),
+    uploadFileToS3("images").single("image"),
     async (request: Request, response: Response) => {
         try {
             const registerData = request.body.data;
@@ -491,7 +491,7 @@ router.post(
 // org register
 router.post(
     "/org/register",
-    uploadFile("images").single("image"),
+    uploadFileToS3("images").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
             const file = request.file;
@@ -586,7 +586,7 @@ router.post(
  */
 router.post(
     "/org/register/social",
-    uploadFile("images").single("image"),
+    uploadFileToS3("images").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
             const file = request.file;
@@ -622,7 +622,7 @@ router.post(
 router.post(
     "/edit-profile",
     jwtMiddleware.verifyToken,
-    uploadFile("images").single("image"),
+    uploadFileToS3("images").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
             const { id, userType } = request["user"];

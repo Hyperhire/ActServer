@@ -2,7 +2,7 @@ import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
 import authMiddleware from "../../../middleware/auth.middleware";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
-import { uploadFile } from "../../../utils/upload";
+import { uploadFileToS3 } from "../../../utils/upload";
 import userService from "./user.service";
 
 interface MulterRequest extends Request {
@@ -18,6 +18,7 @@ router.get(
     async (request: Request, response: Response) => {
         try {
             const query = request.query;
+            console.log(query);
             const { pagination, list } = await userService.getList(query);
 
             return response.status(200).json({ data: { pagination, list } });
@@ -48,14 +49,14 @@ router.patch(
     "/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    uploadFile("user").single("image"),
+    uploadFileToS3("user").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
             const id = request.params.id;
             const data = request.body;
             const file = request.file;
             if (file) {
-                data.profileUrl = file.location
+                data.profileUrl = file.location;
             }
             const updatedUser = await userService.updateUser(id, data);
 

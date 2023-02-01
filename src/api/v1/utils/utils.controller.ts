@@ -1,7 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
-import { uploadFile } from "../../../utils/upload";
+import { uploadFileToS3 } from "../../../utils/upload";
 
 const router = Router();
 
@@ -12,7 +12,7 @@ interface MulterRequest extends Request {
 
 router.post(
   "/upload-image",
-  uploadFile("images").single("image"),
+  uploadFileToS3("images").single("image"),
   async (request: MulterRequest, response: Response) => {
     try {
       console.log("upload-image", request.body);

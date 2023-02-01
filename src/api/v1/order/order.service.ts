@@ -74,6 +74,95 @@ const getOrderById = async (id) => {
     }
 };
 
+const getOrderByIdByAdmin = async (id) => {
+    try {
+        const orders = await OrderModel.aggregate([
+            { $match: { _id: new Types.ObjectId(id) } },
+            {
+                $lookup: {
+                    from: "campaigns",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "campaign",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$campaign",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "orgA",
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    localField: "campaign.orgId",
+                    foreignField: "_id",
+                    as: "orgB",
+                },
+            },
+            {
+                $addFields: {
+                    org: {
+                        $setUnion: ["$orgA", "$orgB"],
+                    },
+                },
+            },
+            {
+                $unwind: {
+                    path: "$org",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $project: {
+                    orgA: 0,
+                    orgB: 0,
+                },
+            },
+            {
+                $lookup: {
+                    from: "donations",
+                    localField: "donationId",
+                    foreignField: "_id",
+                    as: "donation",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$donation",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ]);
+
+        return orders[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
 const getOrdersByAdmin = async (query) => {
     try {
         const { limit, lastIndex, keyword } = query;
@@ -103,6 +192,55 @@ const getOrdersByAdmin = async (query) => {
             { $limit: _limit },
             {
                 $lookup: {
+                    from: "campaigns",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "campaign",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$campaign",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    localField: "targetId",
+                    foreignField: "_id",
+                    as: "orgA",
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    localField: "campaign.orgId",
+                    foreignField: "_id",
+                    as: "orgB",
+                },
+            },
+            {
+                $addFields: {
+                    org: {
+                        $setUnion: ["$orgA", "$orgB"],
+                    },
+                },
+            },
+            {
+                $unwind: {
+                    path: "$org",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $project: {
+                    orgA: 0,
+                    orgB: 0,
+                },
+            },
+            {
+                $lookup: {
                     from: "donations",
                     localField: "donationId",
                     foreignField: "_id",
@@ -112,6 +250,20 @@ const getOrdersByAdmin = async (query) => {
             {
                 $unwind: {
                     path: "$donation",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$user",
                     preserveNullAndEmptyArrays: true,
                 },
             },
@@ -247,6 +399,7 @@ export default {
     updateOrdersMany,
     getOrdersByAdmin,
     getOrderById,
+    getOrderByIdByAdmin,
     getMyOrders,
     getOrgInfoByOrder,
     getOrdersByOrderIdList,

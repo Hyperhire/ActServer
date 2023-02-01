@@ -34,9 +34,20 @@ const getBanners = async () => {
 
 const getBannersByAdmin = async () => {
     try {
-        const banners = await BannerModel.find({});
+        const banners = await BannerModel.find({}).sort({ sequence: 1 });
 
         return banners;
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+};
+
+const getBannerByIdByAdmin = async (id) => {
+    try {
+        const banner = await BannerModel.findOne({ _id: id });
+
+        return banner;
     } catch (error) {
         logger.error(error);
         throw error;
@@ -73,6 +84,7 @@ export default {
     createBanner,
     getBanners,
     getBannersByAdmin,
+    getBannerByIdByAdmin,
     updateBanner,
     getMaxSeq,
 };

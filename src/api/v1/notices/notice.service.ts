@@ -135,13 +135,41 @@ const getNoticeByAdmin = async (query) => {
     }
 };
 
-const getNoticeById = async (newsId) => {
+const getNoticeById = async (noticeId) => {
     try {
         const _notice = await NoticeModel.aggregate([
             {
                 $match: {
-                    _id: new mongoose.Types.ObjectId(newsId),
+                    _id: new mongoose.Types.ObjectId(noticeId),
                     status: "APPROVED",
+                },
+            },
+            {
+                $lookup: {
+                    from: "orgs",
+                    foreignField: "_id",
+                    localField: "orgId",
+                    as: "org",
+                },
+            },
+            {
+                $unwind: "$org",
+            },
+        ]);
+
+        return _notice[0];
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+};
+
+const getNoticeByIdByAdmin = async (noticeId) => {
+    try {
+        const _notice = await NoticeModel.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(noticeId),
                 },
             },
             {
@@ -227,6 +255,7 @@ export default {
     getNotice,
     getNoticeByAdmin,
     getNoticeById,
+    getNoticeByIdByAdmin,
     getNoticeByOrgId,
     getNoticeByOrgIdByAdmin,
 };

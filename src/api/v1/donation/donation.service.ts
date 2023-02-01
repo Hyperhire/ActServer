@@ -70,6 +70,20 @@ const getOrgDonationsByAdmin = async (query) => {
                     as: "orders",
                 },
             },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             { $unwind: "$org" },
             { $sort: { createdAt: -1 } },
         ]);
@@ -142,6 +156,20 @@ const getCampaignDonationsByAdmin = async (query) => {
                     as: "orders",
                 },
             },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             { $unwind: "$org" },
             { $sort: { createdAt: -1 } },
         ]);
@@ -182,6 +210,20 @@ const getOrgDonationByIdByAdmin = async (id) => {
                     as: "orders",
                 },
             },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             { $unwind: "$org" },
         ]);
         return donations[0];
@@ -216,6 +258,20 @@ const getCampaignDonationByIdByAdmin = async (id) => {
                     foreignField: "donationId",
                     localField: "_id",
                     as: "orders",
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: true,
                 },
             },
             { $unwind: "$org" },

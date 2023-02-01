@@ -181,7 +181,6 @@ const getListByAdmin = async (query) => {
         const searchQuery = {} as any;
         if (query?.keyword) {
             searchQuery.$or = [
-                { _id: new Types.ObjectId(query?.keyword) },
                 { "manager.name": { $regex: query?.keyword, $options: "i" } },
                 { name: { $regex: query?.keyword, $options: "i" } },
                 { nickname: { $regex: query?.keyword, $options: "i" } },

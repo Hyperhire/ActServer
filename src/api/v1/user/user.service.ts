@@ -5,7 +5,7 @@ import { RegisterUserDto } from "../auth/dto/request.dto";
 import { OrderModel } from "../order/schema/order.schema";
 import { BaseUserDto, UserDto } from "./dto/request.dto";
 import { UserModel } from "./schema/user.schema";
-import { Types } from "mongoose";
+import { Types, ObjectId } from "mongoose";
 import {
     LoginType,
     OrderPaidStatus,
@@ -189,10 +189,9 @@ const getList = async (query) => {
         const _limit = 1 * limit || 10;
         const _lastIndex = 1 * lastIndex || 0;
 
-        let searchQuery: any;
+        const searchQuery = {} as any;
         if (query?.keyword) {
-            searchQuery.$or = [
-                { _id: new Types.ObjectId(query?.keyword) },
+            searchQuery["$or"] = [
                 { "indInfo.name": { $regex: query?.keyword, $options: "i" } },
                 { nickname: { $regex: query?.keyword, $options: "i" } },
                 { "indInfo.mobile": { $regex: query?.keyword, $options: "i" } },
@@ -202,12 +201,14 @@ const getList = async (query) => {
         if (query?.loginType) searchQuery.loginType = query.loginType;
         if (query?.status) searchQuery.status = query.status;
         if (query?.from && query?.to) {
-            searchQuery.$and = [
+            searchQuery["$and"] = [
                 { createdAt: { $gte: query.from } },
                 { createdAt: { $lte: query.to } },
             ];
         } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
         else if (query?.to) searchQuery.createdAt = { $gte: query.to };
+
+        console.log(searchQuery);
 
         const _result = await UserModel.find(searchQuery)
             .sort({ createdAt: -1 })
