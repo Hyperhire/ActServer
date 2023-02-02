@@ -17,6 +17,7 @@ router.post(
     uploadFileToS3("banner").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
+            console.log(request.file, request.body);
             const file = request.file;
             const data = request.body;
             if (file?.location) {
@@ -69,6 +70,7 @@ router.patch(
     uploadFileToS3("banner").single("image"),
     async (request: MulterRequest, response: Response) => {
         try {
+            console.log(request.file, request.body);
             const bannerId = request.params.id;
             const file = request.file;
 
