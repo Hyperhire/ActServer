@@ -186,7 +186,6 @@ const getOrdersByAdmin = async (query) => {
         } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
         else if (query?.to) searchQuery.createdAt = { $gte: query.to };
 
-        console.log("limit", _limit, limit);
         const _result = await OrderModel.aggregate([
             { $match: searchQuery },
             {

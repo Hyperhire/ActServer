@@ -2,11 +2,6 @@ import { Request, Router, Response } from "express";
 import { logger } from "../../../logger/winston.logger";
 import jwtMiddleware from "../../../middleware/jwt.middleware";
 import orderService from "./order.service";
-import {
-    OrderPaidStatus,
-    OrderPaymentType,
-    OrderType,
-} from "../../../common/constants";
 import authMiddleware from "../../../middleware/auth.middleware";
 
 const router = Router();
