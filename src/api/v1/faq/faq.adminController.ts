@@ -8,6 +8,22 @@ import authMiddleware from "../../../middleware/auth.middleware";
 
 const router = Router();
 
+router.post(
+    "/",
+    jwtMiddleware.verifyToken,
+    authMiddleware.validOnlyAdmin,
+    async (request: Request, response: Response) => {
+        try {
+            const { question, answer } = request.body;
+            const faq = await faqService.createFaq({ question, answer });
+            return response.status(201).json({ data: faq });
+        } catch (error) {
+            logger.error(error);
+            return response.status(400).json({ error });
+        }
+    }
+);
+
 router.get(
     "/",
     jwtMiddleware.verifyToken,
@@ -62,6 +78,22 @@ router.patch(
         try {
             const id = request.params.id;
             const faq = await faqService.updateFaq(id, request.body);
+            return response.status(201).json({ data: faq });
+        } catch (error) {
+            logger.error(error);
+            return response.status(400).json({ error });
+        }
+    }
+);
+
+router.delete(
+    "/:id",
+    jwtMiddleware.verifyToken,
+    authMiddleware.validOnlyAdmin,
+    async (request: Request, response: Response) => {
+        try {
+            const id = request.params.id;
+            const faq = await faqService.deleteFaq(id);
             return response.status(201).json({ data: faq });
         } catch (error) {
             logger.error(error);

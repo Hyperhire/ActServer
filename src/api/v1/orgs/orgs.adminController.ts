@@ -40,7 +40,6 @@ router.patch(
     async (request: Request, response: Response) => {
         try {
             const { id } = request.params;
-            console.log("request", request.body);
             const updateData = request.body;
 
             const updatedOrg = await orgsService.updateOrgByAdmin(

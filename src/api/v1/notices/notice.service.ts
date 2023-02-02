@@ -101,7 +101,6 @@ const getNoticeByAdmin = async (query) => {
         } else if (query?.from) searchQuery.createdAt = { $gte: new Date(query.from) };
         else if (query?.to) searchQuery.createdAt = { $gte: new Date(query.to) };
 
-        console.log(searchQuery);
         const _result = await NoticeModel.aggregate([
             { $match: searchQuery },
             { $skip: _lastIndex },
@@ -118,7 +117,6 @@ const getNoticeByAdmin = async (query) => {
                 $unwind: { path: "$org", preserveNullAndEmptyArrays: true },
             },
         ]);
-        console.log("result", _result);
 
         const totalCount = await NoticeModel.countDocuments(searchQuery);
         const currentLastIndex = _lastIndex + _result.length;
