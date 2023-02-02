@@ -44,11 +44,11 @@ const getOrgDonationsByAdmin = async (query) => {
         if (query?.status) searchQuery.status = query.status;
         if (query?.from && query?.to) {
             searchQuery.$and = [
-                { createdAt: { $gte: query.from } },
-                { createdAt: { $lte: query.to } },
+                { createdAt: { $gte: new Date(query.from) } },
+                { createdAt: { $lte: new Date(query.to) } },
             ];
-        } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
-        else if (query?.to) searchQuery.createdAt = { $gte: query.to };
+        } else if (query?.from) searchQuery.createdAt = { $gte: new Date(query.from) };
+        else if (query?.to) searchQuery.createdAt = { $gte: new Date(query.to) };
 
         const _result = await DonationModel.aggregate([
             { $match: searchQuery },
@@ -121,11 +121,11 @@ const getCampaignDonationsByAdmin = async (query) => {
         if (query?.status) searchQuery.status = query.status;
         if (query?.from && query?.to) {
             searchQuery.$and = [
-                { createdAt: { $gte: query.from } },
-                { createdAt: { $lte: query.to } },
+                { createdAt: { $gte: new Date(query.from) } },
+                { createdAt: { $lte: new Date(query.to) } },
             ];
-        } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
-        else if (query?.to) searchQuery.createdAt = { $gte: query.to };
+        } else if (query?.from) searchQuery.createdAt = { $gte: new Date(query.from) };
+        else if (query?.to) searchQuery.createdAt = { $gte: new Date(query.to) };
 
         const _result = await DonationModel.aggregate([
             { $match: searchQuery },
