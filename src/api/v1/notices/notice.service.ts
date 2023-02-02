@@ -95,12 +95,13 @@ const getNoticeByAdmin = async (query) => {
         if (query?.status) searchQuery.status = query.status;
         if (query?.from && query?.to) {
             searchQuery.$and = [
-                { createdAt: { $gte: query.from } },
-                { createdAt: { $lte: query.to } },
+                { createdAt: { $gte: new Date(query.from) } },
+                { createdAt: { $lte: new Date(query.to) } },
             ];
-        } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
-        else if (query?.to) searchQuery.createdAt = { $gte: query.to };
+        } else if (query?.from) searchQuery.createdAt = { $gte: new Date(query.from) };
+        else if (query?.to) searchQuery.createdAt = { $gte: new Date(query.to) };
 
+        console.log(searchQuery);
         const _result = await NoticeModel.aggregate([
             { $match: searchQuery },
             { $skip: _lastIndex },
@@ -114,9 +115,10 @@ const getNoticeByAdmin = async (query) => {
                 },
             },
             {
-                $unwind: "$org",
+                $unwind: { path: "$org", preserveNullAndEmptyArrays: true },
             },
         ]);
+        console.log("result", _result);
 
         const totalCount = await NoticeModel.countDocuments(searchQuery);
         const currentLastIndex = _lastIndex + _result.length;

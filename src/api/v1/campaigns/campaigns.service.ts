@@ -80,7 +80,6 @@ const getList = async (query) => {
 
 const getListByAdmin = async (query) => {
     try {
-        const now = new Date();
         const { limit, lastIndex, keyword } = query;
         const pagination = { totalCount: 0, lastIndex: 0, hasNext: true };
         const _limit = 1 * limit || 20;
@@ -96,11 +95,11 @@ const getListByAdmin = async (query) => {
         if (query?.status) searchQuery.status = query.status;
         if (query?.from && query?.to) {
             searchQuery.$and = [
-                { createdAt: { $gte: query.from } },
-                { createdAt: { $lte: query.to } },
+                { createdAt: { $gte: new Date(query.from) } },
+                { createdAt: { $lte: new Date(query.to) } },
             ];
-        } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
-        else if (query?.to) searchQuery.createdAt = { $gte: query.to };
+        } else if (query?.from) searchQuery.createdAt = { $gte: new Date(query.from) };
+        else if (query?.to) searchQuery.createdAt = { $gte: new Date(query.to) };
 
         const _result = await CampaignModel.aggregate([
             { $match: searchQuery },
