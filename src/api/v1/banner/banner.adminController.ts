@@ -74,7 +74,8 @@ router.patch(
             const bannerId = request.params.id;
             const file = request.file;
 
-            const updateData = request.body;
+            const { data } = request.body;
+            const updateData = JSON.parse(data);
             if (file?.location) {
                 updateData.imageUrl = file.location;
             }
