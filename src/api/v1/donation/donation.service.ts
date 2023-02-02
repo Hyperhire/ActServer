@@ -14,6 +14,11 @@ const createDonation = async (donationData) => {
 
 const updateDonation = async (id, updateData) => {
     try {
+        const { active } = updateData;
+        if (!active) {
+            updateData.inactivatedAt = new Date().toISOString();
+        }
+        
         const newDonation = await DonationModel.findOneAndUpdate(
             { _id: id },
             { ...updateData, updatedAt: new Date().toISOString() },
