@@ -14,6 +14,11 @@ const createDonation = async (donationData) => {
 
 const updateDonation = async (id, updateData) => {
     try {
+        const { active } = updateData;
+        if (!active) {
+            updateData.inactivatedAt = new Date().toISOString();
+        }
+        
         const newDonation = await DonationModel.findOneAndUpdate(
             { _id: id },
             { ...updateData, updatedAt: new Date().toISOString() },
@@ -56,6 +61,7 @@ const getOrgDonationsByAdmin = async (query) => {
 
         const _result = await DonationModel.aggregate([
             { $match: searchQuery },
+            { $sort: { createdAt: -1 } },
             { $skip: _lastIndex },
             { $limit: _limit },
             {
@@ -89,7 +95,6 @@ const getOrgDonationsByAdmin = async (query) => {
                 },
             },
             { $unwind: "$org" },
-            { $sort: { createdAt: -1 } },
         ]);
 
         const totalCount = await DonationModel.countDocuments(searchQuery);
@@ -137,6 +142,7 @@ const getCampaignDonationsByAdmin = async (query) => {
 
         const _result = await DonationModel.aggregate([
             { $match: searchQuery },
+            { $sort: { createdAt: -1 } },
             { $skip: _lastIndex },
             { $limit: _limit },
             {
@@ -179,7 +185,6 @@ const getCampaignDonationsByAdmin = async (query) => {
                 },
             },
             { $unwind: "$org" },
-            { $sort: { createdAt: -1 } },
         ]);
 
         const totalCount = await DonationModel.countDocuments(searchQuery);

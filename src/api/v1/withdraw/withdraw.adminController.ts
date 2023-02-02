@@ -48,12 +48,12 @@ router.patch(
     authMiddleware.validOnlyAdmin,
     async (request: Request, response: Response) => {
         try {
-            const updateData = request.body;
+            const id = request.params.id;
             const updatedWithdraw = await withdrawService.updateWithdraw(
-                request.params.id,
-                updateData
+                id,
+                request.body
             );
-            return response.status(200).send({ data: updatedWithdraw });
+            return response.status(201).send({ data: updatedWithdraw });
         } catch (error) {
             return response.status(400).send({ error });
         }

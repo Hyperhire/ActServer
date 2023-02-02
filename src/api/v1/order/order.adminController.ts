@@ -44,4 +44,23 @@ router.get(
     }
 );
 
+router.patch(
+    "/:id",
+    jwtMiddleware.verifyToken,
+    authMiddleware.validOnlyAdmin,
+    async (request: Request, response: Response) => {
+        try {
+            const id = request.params.id;
+            const updatedOrder = await orderService.updateOrder(id, request.body);
+
+            return response.status(201).json({
+                data: updatedOrder,
+            });
+        } catch (error) {
+            logger.error(error);
+            return response.status(400).json({ error });
+        }
+    }
+);
+
 export default router;
