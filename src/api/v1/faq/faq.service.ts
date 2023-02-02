@@ -34,6 +34,7 @@ const getFaqs = async (query) => {
                 { answer: { $regex: keyword, $options: "i" } },
             ];
         }
+        
         const faqs = await FAQModel.find(searchQuery);
 
         return faqs;
@@ -62,7 +63,8 @@ const getFaqsByAdmin = async (query) => {
                 { answer: { $regex: keyword, $options: "i" } },
             ];
         }
-        if (query?.status) searchQuery.status = query.status;
+        if (query?.show === "true" || query?.show === "false")
+            searchQuery.show = query.show === "true";
         if (query?.from && query?.to) {
             searchQuery.$and = [
                 { createdAt: { $gte: query.from } },
