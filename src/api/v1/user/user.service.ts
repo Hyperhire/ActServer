@@ -208,8 +208,6 @@ const getList = async (query) => {
         } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
         else if (query?.to) searchQuery.createdAt = { $gte: query.to };
 
-        console.log(searchQuery);
-
         const _result = await UserModel.find(searchQuery)
             .sort({ createdAt: -1 })
             .select(selectInfo)
