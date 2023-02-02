@@ -37,32 +37,11 @@ router.patch(
     "/:id",
     jwtMiddleware.verifyToken,
     authMiddleware.validOnlyAdmin,
-    uploadFileToS3("images").fields([
-        { name: "logo", maxCount: 1 },
-        { name: "images", maxCount: 3 },
-    ]),
-    async (request: MulterRequest, response: Response) => {
+    async (request: Request, response: Response) => {
         try {
             const { id } = request.params;
-            const files = request.files;
-            console.log("request", request.files, request.body);
-            const { data } = request.body;
-            if (!data) {
-                throw "no Data";
-            }
-
-            const updateData = {
-                ...JSON.parse(data),
-            };
-
-            if (files.logo.length) {
-                updateData.logoURL = files.logo[0].location;
-            }
-            if (files.images) {
-                updateData.imageUrls = files.images.map(
-                    (file) => file.location
-                );
-            }
+            console.log("request", request.body);
+            const updateData = request.body;
 
             const updatedOrg = await orgsService.updateOrgByAdmin(
                 id,
