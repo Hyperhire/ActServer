@@ -45,7 +45,7 @@ router.patch(
         try {
             const { id } = request.params;
             const files = request.files;
-
+            console.log("request", request.files, request.body);
             const { data } = request.body;
             if (!data) {
                 throw "no Data";
