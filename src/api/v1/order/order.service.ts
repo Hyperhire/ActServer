@@ -186,8 +186,14 @@ const getOrdersByAdmin = async (query) => {
         } else if (query?.from) searchQuery.createdAt = { $gte: query.from };
         else if (query?.to) searchQuery.createdAt = { $gte: query.to };
 
+        console.log("limit", _limit, limit);
         const _result = await OrderModel.aggregate([
             { $match: searchQuery },
+            {
+                $sort: {
+                    createdAt: -1,
+                },
+            },
             { $skip: _lastIndex },
             { $limit: _limit },
             {
@@ -265,11 +271,6 @@ const getOrdersByAdmin = async (query) => {
                 $unwind: {
                     path: "$user",
                     preserveNullAndEmptyArrays: true,
-                },
-            },
-            {
-                $sort: {
-                    createdAt: -1,
                 },
             },
         ]);

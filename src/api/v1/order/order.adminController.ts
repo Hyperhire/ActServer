@@ -17,7 +17,7 @@ router.get(
     authMiddleware.validOnlyAdmin,
     async (request: Request, response: Response) => {
         try {
-            const query = request.body;
+            const query = request.query;
             const orders = await orderService.getOrdersByAdmin(query);
 
             return response.status(200).json({
