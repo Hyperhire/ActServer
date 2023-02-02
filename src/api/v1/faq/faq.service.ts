@@ -34,7 +34,7 @@ const getFaqs = async (query) => {
                 { answer: { $regex: keyword, $options: "i" } },
             ];
         }
-        
+
         const faqs = await FAQModel.find(searchQuery);
 
         return faqs;
@@ -80,10 +80,20 @@ const getFaqsByAdmin = async (query) => {
     }
 };
 
+const deleteFaq = async (id) => {
+    try {
+        const updatedFaq = await FAQModel.findOneAndDelete(id).lean();
+        return updatedFaq;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export default {
     createFaq,
     updateFaq,
     getFaqs,
     getFaqByIdByAdmin,
     getFaqsByAdmin,
+    deleteFaq,
 };
