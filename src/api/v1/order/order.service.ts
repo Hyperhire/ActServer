@@ -177,7 +177,10 @@ const getOrdersByAdmin = async (query) => {
                 { description: { $regex: keyword, $options: "i" } },
             ];
         }
-        if (query?.status) searchQuery.status = query.status;
+        if (query?.paidStatus) searchQuery.paidStatus = query.paidStatus;
+        if (query?.targetType) searchQuery.targetType = query.targetType;
+        if (query?.paymentType) searchQuery.paymentType = query.paymentType;
+        if (query?.withdrawRequestStatus ) searchQuery.withdrawRequestStatus  = query.withdrawRequestStatus ;
         if (query?.from && query?.to) {
             searchQuery.$and = [
                 { createdAt: { $gte: query.from } },
